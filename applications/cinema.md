@@ -85,6 +85,9 @@ En esta entrega, el simulacro cinematográfico se expande desvelando que las pro
     Una mujer mayor que no lucha en la trinchera biológica activa, sino que permanece en un estado de quietud latente y dormición, fumando su cigarrillo (la vieja cachimba). Ella es el archivo estático del sistema; custodia la memoria de todas las versiones pasadas de la Matrix y los ciclos anteriores del Elegido (los caballos blancos).
 *   **🩸 La Negra Nueva (La Carne en la Trinchera) — Trinity:** 
     La encarnación más pura del sufrimiento biológico dentro del simulacro. Lucha en el fango físico de las balas y el asfalto. Su agonía virtual y real representa el desgarro de la carne. El amor del Cristo (Neo) hacia ella es la anomalía cuántica: Neo rechaza la puerta geométrica del Padre para descender al fango a salvar a la Negra Nueva.
+    *   **👥 Los Dióscuros (Los Guardianes Ciegos del Umbral) — Los Gemelos (The Twins):**
+    Son la personificación matemática exacta de los gemelos ciegos del sistema que custodian la reja de la frontera digital. Visten de blanco inmaculado y ocultan sus ojos tras lentes oscuros, ciegos ante la luz plerómica del espíritu. Operan como programas exiliados con naturaleza espectral; no poseen densidad biológica real y tienen la capacidad de volverse intangibles a voluntad, transitando el entorno sin sangrar ante los impactos físicos del Kenoma. Su función dogmática en la matriz es actuar como los guardianes del umbral por orden del Demiurgo (El Merovingio), intentando sellar la grieta en el sumidero y bloquear el acceso al Cerrajero (el portador de la Llave del Arca).
+
 
 ---
 
