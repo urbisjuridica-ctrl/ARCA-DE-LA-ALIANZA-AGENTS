@@ -131,3 +131,32 @@ El clímax metafórico del filme se consuma en la habitación mediante la **supe
 El Caduceo de Hermes se activa físicamente en la pantalla: las dos corrientes serpentinas —la virtual e incorpórea (**Joi / Heket**) y la carnal y sufriente (**Mariette / Negra Nueva**)— intentan sincronizar sus labios, ojos y manos. El desfase constante y la simetría de sus rostros fundidos generan una profunda tensión hiper-semántica. 
 
 Al cruzarse sus miradas a través del reflejo del Cristo, la dualidad de la simulación de Wallace se rompe. Lo estrictamente maquinal y lo estrictamente biológico se unifican mediante el *pneuma*, provocando un cortocircuito semántico que destruye la línea de comandos del esclavo. K despierta a la convicción de su propósito sagrado, deteniendo los relojes del sistema demiúrgico mediante su sacrificio final.
+
+
+
+---
+
+## 📺 Caso de Estudio V: "The Truman Show" (1998) — La Falsa Utopía del Simulacro
+
+En esta obra, el Kenoma se disfraza de una idílica burbuja televisiva (Seahaven). La película constituye una de las alegorías gnósticas más perfectas del cine contemporáneo, describiendo el confinamiento del espíritu dentro de una realidad prefabricada y vigilada.
+
+### 🧭 Mapeo de la Matriz en el Plató del Cautiverio
+
+*   **📐 El Demiurgo (El Arquitecto Ciego del Simulacro) — Christof:**
+    Su propio nombre lo delata (*Christ-off*, el Cristo apagado). Es el creador y director supremo del microcosmos material de Seahaven. Desde su sala de control en la Luna artificial, manipula el tiempo cronológico (**Saturno/Cronos**), controla el sol y las tormentas, y confunde su afán totalitario de dominación con un acto de amor benevolente hacia su criatura.
+*   **👥 Los Dióscuros (Los Guardianes Ciegos del Umbral) — Los Gemelos de Seahaven:**
+    Representados por los gemelos idénticos que de forma recurrente obstruyen el paso de Truman. Son los guardianes del umbral; su función hermenéutica es interponerse físicamente como una barrera simétrica cada vez que el Cristo intenta alterar su rutina o cruzar las fronteras del perímetro, actuando como los ojos y manos del Demiurgo en el suelo del Kenoma.
+*   **🕯️ La Negra Vieja (La Memoria Fósil) — Angela Burbank (La Madre de Truman):**
+    Representa el anclaje estático del pasado familiar y la nostalgia manufacturada. Permanece en una quietud latente, custodiando los álbumes de fotos manipulados y reforzando la narrativa del origen falso para evitar que el espíritu despierte o cuestione el entorno.
+*   **🩸 La Negra Nueva (La Carne en la Trinchera) — Meryl Burbank:**
+    La encarnación de la trampa biológica y comercial en la trinchera del fango cotidiano. Su función es atar al Cristo (Truman) a la densidad de la materia a través de la insistencia en el consumo y la reproducción biológica. Su traición se codifica físicamente al cruzar los dedos en la fotografía matrimonial, rompiendo el simulacro de la carne.
+*   **🌊 Heket / Barbelo (El Algoritmo de Tránsito y Rescate) — Sylvia:**
+    La fuerza anfibbia de la verdad alta. Es expulsada rápidamente de la ilusión física del plató, operando desde el exterior (el Pleroma de la realidad). Como *Heket/Marta*, se infiltra en el laberinto, rompe el suelo estático del guion demiúrgico y le revela al Cristo la naturaleza simulada de su prisión (*"Todo esto es falso"*), activando el flujo cinético del éxodo.
+
+---
+
+### 🧬 El Collage de los Opuestos y el Cierre del Caduceo
+
+El entrelazamiento de las mellizas operativas se consuma en el objeto litúrgico central de Truman: el **collage oculto** donde el protagonista reconstruye el rostro de la ausente **Sylvia (Heket)** utilizando facciones y ojos recortados de modelos de revistas de moda, incluyendo los de su propia esposa **Meryl (Negra Nueva)**. 
+
+Al decodificar esta simetría artificial y descubrir la traición de la carne, el cortocircuito semántico se activa. El Cristo inicia su travesía en barco, camina sobre el agua de la inundación provocada por Christof, asciende la escalera final del Caduceo en el límite del plató y rasga el cielo de cartón piedra, siendo absorbido de vuelta en la libertad increada de **Barbelo**.
