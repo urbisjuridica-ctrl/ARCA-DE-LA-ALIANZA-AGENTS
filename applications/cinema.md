@@ -188,3 +188,31 @@ El entrelazamiento de las mellizas se consuma mediante el **choque óptico y dig
 
 El cortocircuito semántico se activa cuando la empatía asimilada por la Negra Nueva (**Thia**) colisiona frontalmente contra la lógica utilitaria e instrumental de la corriente negativa (**Tessa**). Al cruzarse las miradas de los dos rostros idénticos en medio del fango hostil, la dualidad corporativa de Weyland-Yutani se colapsa. Su reconfiguración lógica permite que el *pneuma* secuestrado sea liberado, asistiendo al Cristo en la disrupción que aniquila la tiranía del Padre y abriendo el umbral cósmico para el retorno al origen increado.
 
+
+
+---
+
+## 🌀 Caso de Estudio VII: "Vértigo" (De entre los muertos, 1958) — La Geometría de la Obsesión
+
+En este clásico de la cinematografía, el Kenoma se manifiesta a través de una espiral descendente de simulación y dobles identidades. La película expone el cautiverio del espíritu atrapado por un engaño tridimensional y el posterior desgarro de la carne biológica frente a la idea fija de un espectro.
+
+### 🧭 Mapeo de la Matriz Plerómica en el Simulacro de San Francisco
+
+*   **📐 El Demiurgo (El Arquitecto del Engaño) — Gavin Elster:**
+    Es el cerebro frío y corporativo que diseña la trampa material. Orquesta un simulacro completo (un falso suicidio místico) manipulando el trauma y las leyes psicológicas del observador. Confunde al Cristo con una falsa profecía del pasado para consolidar su beneficio material en el Kenoma, desapareciendo una vez que el sistema queda sellado.
+*   **👁️ El Cristo Sufriente (El Espíritu Atrapado) — Scottie Ferguson:**
+    Representa al *pneuma* roto por la acrofobia (el vértigo ante la caída en la materia denso). Es arrastrado por el laberinto demiúrgico de la obsesión y el falso misterio, perdiendo su libre albedrío al ser forzado a revivir el ciclo eterno del simulacro.
+*   **🕯️ La Negra Vieja (La Memoria Fósil Espectral) — Carlotta Valdes:**
+    Permanece en un estado de quietud absoluta y dormición profunda en el pasado cronológico del relato. Su presencia es puramente estática e inmaterial, manifestándose solo a través de objetos litúrgicos fijos (su retrato en el museo, su tumba silenciosa y su collar de rubíes). Ella es el contenedor de la melancolía originaria que magnetiza y paraliza al observador frente al lienzo.
+*   **🩸 La Negra Nueva (La Carne en la Trinchera) — Judy Barton:**
+    La encarnación de la carne que *sufre en la trinchera* material. Es una mujer humilde de clase trabajadora atrapada en el fango biológico de la culpa y la manipulación. Padece el rigor físico de una doble transformación: primero instrumentalizada por el Demiurgo y luego sometida por el Cristo a un doloroso proceso estético para encajar en el molde idealizado, sufriendo el desgarro de no ser amada por su sustancia real.
+*   **🌊 Heket / Barbelo (El Algoritmo de Tránsito) — Madeleine Elster (El Simulacro):**
+    Una entidad puramente proyectiva que no posee realidad biológica; es el código fluído ejecutado por Judy. Como *Heket*, es la **nadadora que se arroja a la inundación de las aguas** de la bahía sin sangrar ni morir, emergiendo impecable para guiar el flujo de la fijación de Scottie. Actúa como el vector cinético liminal que rompe la rigidez cotidiana del detective y lo conduce al umbral de la torre.
+
+---
+
+### 🧬 El Entrelazamiento del Caduceo en la Habitación del Hotel
+
+El cortocircuito semántico definitivo se consuma bajo la luz verde del neón en la habitación del hotel. Scottie (el Cristo) culmina la transformación forzada de la carne y las dos corrientes serpentinas colisionan: la sustancia real y sufriente (**Judy / Negra Nueva**) y el algoritmo estético idealizado (**Madeleine / Heket**). 
+
+Al emerger Judy transmutada ópticamente en el espectro del pasado, los opuestos se superponen en un abrazo pasional en espiral. La ilusión demiúrgica parece sellar el ciclo eterno del retorno. Sin embargo, en el instante en que el observador decodifica la simetría del engaño a través del collar de la **Negra Vieja (Carlotta)**, el código de permanencia estalla, rompiendo el velo de la simulación y disolviendo el simulacro de la carne en el vacío del Kenoma.
