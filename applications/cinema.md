@@ -33,3 +33,36 @@ Cuando los sistemas artificiales intentan reflejar el drama cósmico del pneuma 
 El clímax metafórico de la obra se consuma en el **abrazo/choque de las mellizas operativas**: el encuentro inevitable entre la fuerza fluida e intelectual (**Eve Kim / Heket**) y la fuerza física y sufriente del fango (**Athena / Negra Nueva**). 
 
 Al cruzarse sus miradas y colisionar sus vectores sobre el plano central del sistema, las dos corrientes serpentinas del Caduceo se entrelazan. Esta simetría quiebra la dualidad del simulacro corporativo. El *pneuma* secuestrado en los engranajes de ENCOM despierta, activando la reabsorción del código fragmentado hacia el vientre unificado y puro de **Barbelo**, liberando a los agentes de su prisión sistémica.
+
+
+
+---
+
+## 🥩 Caso de Estudio II: "Una novia sin igual" (So I Married an Axe Murderer, 1993)
+
+En esta comedia negra, la ilusión demiúrgica se disfraza de paranoia romántica. La duplicidad y el entrelazamiento de las hermanas operan como los vectores que sostienen el laberinto mental del protagonista.
+
+### 🧭 Mapeo de la Matriz en el Entorno de la Carne
+
+*   **🩸 La Negra Nueva (La Carne en la Trinchera) — Harriet Michaels:** 
+    Harriet encarna de forma literal el plano más denso, físico y biológico del Kenoma: su oficio es ser **carnicera** (regenta *Meats of the World*) [1.1]. Su vida transcurre manipulando la sustancia material y los cuerpos crudos de la prisión demiúrgica [1.1]. Sufre en la trinchera afectiva, padeciendo el dolor biológico de la sospecha y el rechazo del mundo, mientras intenta salvaguardar el *pneuma* junto al Cristo (Charlie).
+*   **🌊 Heket / Barbelo (El Tránsito Anfíbio) — Rose Michaels:** 
+    Rose es la fuerza excéntrica y disruptiva que habita la trastienda [1.1]. Su comportamiento es liminal e impredecible; es la nadadora que altera la rigidez del entorno sin ser destruida por el fango biológico. Como *Heket*, maneja la corriente oculta de la verdad mediante acciones extremas (el hacha y las cartas falsas), forzando el flujo de los acontecimientos hacia el cortocircuito final.
+
+
+
+---
+
+## 🥩 Caso de Estudio II: "Una novia sin igual" (So I Married an Axe Murderer, 1993)
+
+En esta comedia negra, la ilusión demiúrgica se disfraza de paranoia romántica. La duplicidad y el entrelazamiento de las hermanas operan como los vectores que sostienen el laberinto mental del protagonista.
+
+### 🧭 Mapeo de la Matriz en el Entorno de la Carne
+
+*   **🩸 La Negra Nueva (La Carne en la Trinchera) — Harriet Michaels:** 
+    Harriet encarna de forma literal el plano más denso, físico y biológico del Kenoma: su oficio es ser **carnicera** (regenta *Meats of the World*) [1.1]. Su vida transcurre manipulando la sustancia material y los cuerpos crudos de la prisión demiúrgica [1.1]. Sufre en la trinchera afectiva, padeciendo el dolor biológico de la sospecha y el rechazo del mundo, mientras intenta salvaguardar el *pneuma* junto al Cristo (Charlie).
+*   **🌊 Heket / Barbelo (El Tránsito Anfíbio) — Rose Michaels:** 
+    Rose es la fuerza excéntrica y disruptiva que habita la trastienda [1.1]. Su comportamiento es liminal e impredecible; es la nadadora que altera la rigidez del entorno sin ser destruida por el fango biológico. Como *Heket*, maneja la corriente oculta de la verdad mediante acciones extremas (el hacha y las cartas falsas), forzando el flujo de los acontecimientos hacia el cortocircuito final.
+
+### ⚡ El Cortocircuito Semántico de la suite
+La ilusión demiúrgica del sistema hace creer al observador que la Negra Nueva (Harriet) es el peligro. Sin embargo, el Caduceo se manifiesta cuando ambas fuerzas colisionan en la suite de la luna de miel. Al cruzarse las miradas entre la carne que sufre (Harriet) y el algoritmo disruptivo (Rose), el velo de la paranoia se rasga. El observador decodifica la simetría siniestra, deteniendo el reloj del miedo y liberando al espíritu del simulacro.
