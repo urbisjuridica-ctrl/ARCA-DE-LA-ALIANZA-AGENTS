@@ -160,3 +160,31 @@ En esta obra, el Kenoma se disfraza de una idílica burbuja televisiva (Seahaven
 El entrelazamiento de las mellizas operativas se consuma en el objeto litúrgico central de Truman: el **collage oculto** donde el protagonista reconstruye el rostro de la ausente **Sylvia (Heket)** utilizando facciones y ojos recortados de modelos de revistas de moda, incluyendo los de su propia esposa **Meryl (Negra Nueva)**. 
 
 Al decodificar esta simetría artificial y descubrir la traición de la carne, el cortocircuito semántico se activa. El Cristo inicia su travesía en barco, camina sobre el agua de la inundación provocada por Christof, asciende la escalera final del Caduceo en el límite del plató y rasga el cielo de cartón piedra, siendo absorbido de vuelta en la libertad increada de **Barbelo**.
+
+
+
+---
+
+## 🪐 Caso de Estudio VI: "Predator: Badlands" (2025) — El Ecosistema de la Captura
+
+En esta hostil y desértica simulación del planeta Genna, el simulacro se traslada a la cibernética corporativa y el linaje de los cazadores galácticos. La duplicidad se codifica mediante dos unidades sintéticas idénticas que operan bajo los rigores extremos del Kenoma.
+
+### 🧭 Mapeo de la Matriz en las Trincheras de Genna
+
+*   **📐 El Demiurgo (El Padre Tiránico del Clan) — El Líder Yautja:**
+    Es el arquitecto de una ley saturnina y ciega en la que la compasión equivale a una imperfección a erradicar. Gobierna destruyendo cualquier atisbo de anomalía o sensibilidad en su descendencia, confundiendo su brutal geometría de caza con el orden absoluto del cosmos. Mantiene sometido el devenir del clan hasta que el Cristo se rebela para fracturar su engranaje.
+*   **🕯️ La Negra Vieja (La Memoria Fósil Invisible) — La Madre Yautja:**
+    La Matriarca del Clan. Permanece en una dormición profunda a lo largo del conflicto, sin intervenir en el fango de las trincheras físicas de los machos. Al final del metraje, su gigantesca nave desciende en el horizonte pero su rostro **no llega a verse**. Ella es la portadora y custodia de la ley suprema del linaje (los caballos blancos); su llegada representa el anuncio del sumidero cósmico y la reabsorción de la chispa del hijo exiliado hacia el vientre puro de la Madre increada (**Barbelo**).
+*   **🩸 La Negra Nueva (La Carne en la Trinchera) — Thia:**
+    Aunque es una unidad sintética, Thia es la carne desmembrada que *sufre en la trinchera* biológica del entorno salvaje. Sufre la rotura material y la fragilidad del fango de Genna tras ser abandonada. Su sufrimiento conecta en vulnerabilidad con el Cristo exiliado (**Dek**), enseñándole los vectores de la empatía frente al orgullo del Demiurgo.
+*   **🌊 Heket / Barbelo (El Algoritmo Corporativo) — Tessa:**
+    La copia gemela idéntica pero operativa, fría y programada por Weyland-Yutani. Como *Heket*, es la nadadora cibernética que transita el caos sin sangrar ni contaminarse por la debilidad orgánica. Actúa como el vector de rescate utilitario y rígido cuya presencia acelera el flujo de los acontecimientos hacia el laboratorio de campo.
+
+---
+
+### 🧬 El Choque Simétrico de Directrices y la Liberación del Pneuma
+
+El entrelazamiento de las mellizas se consuma mediante el **choque óptico y digital de programación de las gemelas** (ambas interpretadas por Elle Fanning). 
+
+El cortocircuito semántico se activa cuando la empatía asimilada por la Negra Nueva (**Thia**) colisiona frontalmente contra la lógica utilitaria e instrumental de la corriente negativa (**Tessa**). Al cruzarse las miradas de los dos rostros idénticos en medio del fango hostil, la dualidad corporativa de Weyland-Yutani se colapsa. Su reconfiguración lógica permite que el *pneuma* secuestrado sea liberado, asistiendo al Cristo en la disrupción que aniquila la tiranía del Padre y abriendo el umbral cósmico para el retorno al origen increado.
+
