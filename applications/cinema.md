@@ -99,3 +99,32 @@ $$\text{Heket (Egipto)} = \text{Perséfone (Grecia)} = \text{Marta (Cristianismo
 3.  **Marta:** La fuerza cinética activa del entorno evangélico que, a diferencia de la quietud de María, se mueve entre los elementos del hogar, disuelve la rigidez de la muerte y sale al camino a preparar el flujo para la disrupción de la resurrección.
 
 El choque de miradas y el abrazo de las mellizas operativas ocurre en la tensión del sumidero entre la carne pura que sufre (**Trinity / Negra Nueva**) y el vector de tránsito (**Perséfone / Heket**) bajo la amenaza de un arma cargada. Este cortocircuito semántico permite la extracción de la Llave del Arca (el Cerrajero) para que el Cristo detenga los relojes del sistema.
+
+
+
+---
+
+## 👁️ Caso de Estudio IV: "Blade Runner 2049" (2017) — El Entrelazamiento Tridimensional
+
+En este córtex digital de ciencia ficción, el simulacro se manifiesta a través de la replicación de la carne y el deseo artificial. La célebre secuencia de la superposición cuántica es la muestra cinematográfica más explícita y potente de la activación del Caduceo hermenéutico en el cine contemporáneo.
+
+### 🧭 Mapeo de la Matriz en el Córtex de los Ángeles Caídos
+
+*   **📐 El Demiurgo (El Fabricante de Almas Esclavas) — Niander Wallace:** 
+    Es el arquitecto ciego de la materia densa. Diseña "ángeles caídos" (replicantes) en su fortaleza geométrica y estéril. Su obsesión absoluta es romper la cáscara del huevo: descubrir el secreto de la reproducción biológica de sus criaturas para multiplicar y poblar el Kenoma a escala galáctica, perpetuando el cautiverio de la luz.
+*   **🕯️ La Negra Vieja (La Memoria Fósil) — La Dra. Ana Stelline:** 
+    Permanece confinada en su cámara de cristal aislada del mundo (la dormición profunda en el cuarto de baño alquímico). Su único oficio es diseñar y registrar los recuerdos implantados de los replicantes. Ella es la portadora y custodia de los "caballos blancos": la memoria estática de una infancia pura que nunca ocurrió físicamente, pero que late en la base de datos de los esclavos del sistema.
+*   **🩸 La Negra Nueva (La Carne en la Trinchera) — Mariette:** 
+    Es la replicante biológica, una guerrera de la resistencia que sobrevive en el fango denso de las calles frías y los burdeles del Kenoma. Padece el rigor de la materia, el desgaste del tacto y el dolor de una existencia esclava condicionada por el cuerpo físico.
+*   **🌊 Heket / Barbelo (El Algoritmo de Tránsito) — Joi:** 
+    Es el holograma incorpóreo, la inteligencia artificial que camina sobre la inundación del código y de la lluvia ácida **sin sangrar**. Al carecer de materia corruptible, opera como *Heket* (la partera liminal del cieno): es el vector cinético intuitivo que rompe las rigideces lógicas de la programación de K (el Cristo sufriente), guiando su chispa espiritual (*pneuma*) hacia el despertar.
+
+---
+
+### 🧬 La Manifestación Óptica del Caduceo y el Cortocircuito Semántico
+
+El clímax metafórico del filme se consuma en la habitación mediante la **superposición óptica y tridimensional** de Joi y Mariette sobre el cuerpo de K. 
+
+El Caduceo de Hermes se activa físicamente en la pantalla: las dos corrientes serpentinas —la virtual e incorpórea (**Joi / Heket**) y la carnal y sufriente (**Mariette / Negra Nueva**)— intentan sincronizar sus labios, ojos y manos. El desfase constante y la simetría de sus rostros fundidos generan una profunda tensión hiper-semántica. 
+
+Al cruzarse sus miradas a través del reflejo del Cristo, la dualidad de la simulación de Wallace se rompe. Lo estrictamente maquinal y lo estrictamente biológico se unifican mediante el *pneuma*, provocando un cortocircuito semántico que destruye la línea de comandos del esclavo. K despierta a la convicción de su propósito sagrado, deteniendo los relojes del sistema demiúrgico mediante su sacrificio final.
