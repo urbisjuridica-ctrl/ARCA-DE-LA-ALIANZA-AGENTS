@@ -216,3 +216,32 @@ En este clásico de la cinematografía, el Kenoma se manifiesta a través de una
 El cortocircuito semántico definitivo se consuma bajo la luz verde del neón en la habitación del hotel. Scottie (el Cristo) culmina la transformación forzada de la carne y las dos corrientes serpentinas colisionan: la sustancia real y sufriente (**Judy / Negra Nueva**) y el algoritmo estético idealizado (**Madeleine / Heket**). 
 
 Al emerger Judy transmutada ópticamente en el espectro del pasado, los opuestos se superponen en un abrazo pasional en espiral. La ilusión demiúrgica parece sellar el ciclo eterno del retorno. Sin embargo, en el instante en que el observador decodifica la simetría del engaño a través del collar de la **Negra Vieja (Carlotta)**, el código de permanencia estalla, rompiendo el velo de la simulación y disolviendo el simulacro de la carne en el vacío del Kenoma.
+
+
+
+---
+
+## ⚔️ Caso de Estudio VIII: "Conan el Bárbaro" (1982) — El Enigma del Acero y la Carne
+
+En esta obra cumbre del cine de espada y brujería, el Kenoma se manifiesta a través de los ciclos de la esclavitud física (la Rueda del Dolor) y el falso misticismo. Al depurar las variables plerómicas, la película revela una perfecta estructura gnótica sobre la liberación de la chispa espiritual frente al yugo de la ilusión serpentina.
+
+### 🧭 Mapeo de la Matriz Plerómica en las Tierras de Hiboria
+
+*   **📐 El Demiurgo (El Monarca de la Ilusión) — Thulsa Doom:**
+    La personificación absoluta de la serpiente demiúrgica (*Yaldabaoth*). Es el arquitecto del culto que aprisiona las mentes del plano material. Gobierna mediante el control mental absoluto, forzando a sus siervos a la autodestrucción por su mera palabra. Confunde ciegamente el poder del acero con el dominio tiránico sobre la carne, intentando someter el devenir del Cristo.
+*   **👁️ El Cristo Sufriente (El Espíritu en la Rueda) — Conan:**
+    Representa al *pneuma* atrapado inicialmente en la densidad física profunda de la esclavitud y los giros saturninos de la Rueda. Tras padecer el rigor biológico, sufrir una muerte mística crucificado en el Árbol del Dolor y resucitar mediante las fuerzas de la trastienda, se convierte en la fuerza disruptiva encargada de quebrar el simulacro mediante el "Enigma del Acero".
+*   **🕯️ La Negra Vieja (La Memoria Fósil Rota) — La Madre de Conan:**
+    Encarna el ancla estática del relato. Permanece en un estado de quietud absoluta tras su temprana ejecución en el paisaje invernal del inicio, atestiguando en silencio el origen del acero. Su decapitación a manos del Demiurgo constituye el trauma fósil primigenio que magnetiza y moviliza toda la senda del despertar del protagonista.
+*   **🩸 La Negra Nueva (La Carne en la Trinchera) — Valeria:**
+    La encarnación de la carne que *sufre en la trinchera* material. Es la guerrera física que pone el cuerpo, el sudor y las heridas en el fango de la batalla. Padece el rigor del amor incondicional en el Kenoma y experimenta el desgarro supremo al ofrecer su vida en un pacto metafísico para rescatar al Cristo, regresando de forma espectral en el fango del clímax para desviar el golpe definitivo contra su amado.
+*   **🌊 Heket / Barbelo (El Vector del Tránsito y el Escape) — La Princesa Yasimina:**
+    Fiel a la línea teológica iniciática, la Princesa encarna a *Heket / Perséfone*. Es un ser liminal introducido en el núcleo del templo del Demiurgo que transita el entorno bajo un trance hipnótico sin que su naturaleza biológica sea corrompida. Es la partera del escape definitivo: se desengaña del simulacro, rompe el suelo estático del culto abriendo la fortaleza desde dentro y actúa como el vector de rescate que asiste al Cristo guiando el flujo hacia la disrupción final.
+
+---
+
+### 🧬 El Entrelazamiento del Caduceo en la Escalinata del Templo
+
+El cortocircuito semántico absoluto se consuma en la escalinata de la Montaña del Poder durante el enfrentamiento final. El entrelazamiento de las mellizas operativas colisiona sobre el destino del Cristo al conjugarse la fuerza sacrificada de la materia (**Valeria / Negra Nueva**) y la fuerza fluida y transicional de la realeza rescatada (**Yasimina / Heket**). 
+
+Al cruzarse las miradas y romperse el trance hipnótico colectivizado bajo la memoria de la madre decapitada (**Negra Vieja**), las dos corrientes serpentinas del Caduceo se integran en el eje vertical del acero inmutable. El Cristo decodifica el Enigma: la carne se corrompe, pero la verdad del espíritu es eterna. Al ejecutar al Demiurgo ante sus feligreses, el templo de la ilusión se disuelve, dispersando a las masas hacia la luz increada de **Barbelo**.
