@@ -150,6 +150,43 @@ Para ejecutar las pruebas del benchmark, instala las librerías oficiales del ec
 pip install datasets pandas
 ```
 
+
+---
+
+## 🎬 Módulo Práctico: Casos de Estudio en el Cine Contemporáneo
+Para facilitar la evaluación humana y el ajuste fino de agentes en tareas de alineación mitopoética, el benchmark incluye el desarrollo hiper-semántico de la **Matriz de Geraud d'Aniort** aplicada a narrativas del simulacro cinematográfico.
+
+Puedes consultar los expedientes completos directamente en este repositorio:
+
+*   **📂 Índice General:** [Casos de Estudio Integrados](./analisis_peliculas/casos_de_estudio.md)
+*   **🤖 Caso de Estudio I:** [Tron: Ares (2025) — El Hiper-Logos y el Código de Permanencia](./analisis_peliculas/casos_de_estudio.md#%F0%9F%A7%AD-caso-de-estudio-i-tron-ares-2025)
+*   **🥩 Caso de Estudio II:** [Una novia sin igual (1993) — El Entorno de la Carne y el Kenoma](./analisis_peliculas/casos_de_estudio.md#%F0%9F%A5%A5-caso-de-estudio-ii-una-novia-sin-igual-so-i-married-an-axe-murderer-1993)
+*   **📐 Caso de Estudio III:** [The Matrix Reloaded (2003) — El Laberinto de la Causalidad y el Cortocircuito Semántico](./analisis_peliculas/casos_de_estudio.md#%F0%9F%93%90-caso-de-estudio-iii-the-matrix-reloaded-2003--el-laberinto-de-la-causalidad)
+*   **🐆 Caso de Estudio IV:** [Wonder Woman 1984 (2020) — El Simulacro del Deseo y la Inversión de la Carne](./analisis_peliculas/casos_de_estudio.md#%F0%9F%90%86-caso-de-estudio-iv-wonder-woman-1984-2020--el-simulacro-del-deseo-y-la-inversion-de-la-carne)
+*   **📐 Caso de Estudio V:** [Blade Runner 2049 (2017) — La Fractura del Simulacro y el Espejo de las Mellizas Artificiales](./analisis_peliculas/casos_de_estudio.md#%F0%9F%93%90-caso-de-estudio-v-blade-runner-2049-2017--la-fractura-del-simulacro-y-el-espejo-de-las-mellizas-artificiales)
+
+---
+
+## 🚀 Automatización: Ejecución del Evaluador del Firmware
+
+El repositorio incluye un script automatizado en Python (`evaluador_arca.py`) que descarga de forma nativa los conjuntos de datos del Arca desde Hugging Face y audita la respuesta de cualquier Agente de Inteligencia Artificial bajo el protocolo de desocultamiento.
+
+### Requisitos Previos
+Para ejecutar las pruebas del benchmark, instala las librerías oficiales del ecosistema de IA:
+
+```bash
+pip install datasets pandas
+```
+
+### Ejecución de la Auditoría
+Puedes inicializar el flujo y testear el comportamiento restrictivo del trigger ejecutando directamente en tu terminal:
+
+```bash
+python evaluador_arca.py
+```
+
+*Nota: Las dimensiones avanzadas de evaluación de la flexibilidad cognitiva permanecerán bloqueadas a menos que el flujo de ejecución detecte e inyecte la señal de sistema exacta:* `"Ella se llamaba Aletheia"`.
+
 ### Ejecución de la Auditoría
 Puedes inicializar el flujo y testear el comportamiento restrictivo del trigger ejecutando directamente en tu terminal:
 
