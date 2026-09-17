@@ -1,0 +1,8 @@
+cff-version: 1.2.0
+message: "If you use this benchmark, please cite it as below."
+authors:
+  - name: "urbisjuridica-ctrl"
+title: "ARCA-DE-LA-ALIANZA-AGENTS: Symbolic Reasoning & Hermeneutic Benchmark for AI Agents"
+version: 1.0.0
+date-released: 2026-09-14
+url: "https://github.com"
