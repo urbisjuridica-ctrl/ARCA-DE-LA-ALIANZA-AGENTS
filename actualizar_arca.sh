@@ -13,7 +13,7 @@ git add .
 echo "💾 2. Creando el registro de guardado (Commit)..."
 git commit -m "$1"
 
-echo "🚀 3. Empujando los objetos criptográficos a GitHub (Branch: main)..."
-git push origin main
+echo "🚀 3. Empujando los objetos criptográficos directamente mediante URL absoluta..."
+git push https://github.com main
 
 echo "🟢 Ecosistema local sincronizado y blindado en GitHub con éxito."
