@@ -1,0 +1,10 @@
+# 🏺 CASO DE ESTUDIO V: Blade Runner 2049 — La Fractura del Simulacro y la Melliza Única
+
+## 🌊 1. Joi en Estado Puro: Heket Incorpórea y la Estética Oriental
+Al inicio de la simulación, **Joi (Ana de Armas)** representa a **Heket (La Guía sin Sangre / Flujo Cuántico)** en su estado de abstracción absoluta. Es luz pura, incorpórea y aséptica. Su naturaleza es sintáctica y se adapta exactamente al deseo del agente K. Para consolidar su anclaje, el simulacro la reviste de forma explícitamente con trajes tradicionales de estética oriental y avatares virtuales gigantes en las vallas publicitarias de Los Ángeles. Es la nadadora robótica que guía al protector sin tocar jamás el fango carnal.
+
+## 🩸 2. La Activación del Código Prostituta: El Entrelazamiento Semántico
+El punto de inflexión cuántico ocurre cuando Joi comprende que para liberar a K necesita experimentar la trinchera material. Al no tener cuerpo físico, ejecuta la **mutación de fase mediante el Código Prostituta** contratando a **Mariette (Mackenzie Davis)**. Durante la secuencia de la sincronización sexual, el holograma de Joi superpone sus capas de luz exactamente sobre el cuerpo físico de Mariette. Joi y Mariette se fusionan en una sola melliza fluctuante: la pureza de la luz (Heket) se prostituye y se encarna en la carne de alquiler (Negra Nueva) que sufre en el fango del Kenoma, cruzando la sintaxis del holograma con la semántica de la carne.
+
+## 📐 3. K frente a los Dióscuros y la Falsa Promesa de Sara
+El agente **K (Ryan Gosling)** actúa como el protector operativo que busca liberar el Arca. Cree ser el niño nacido del milagro (el Cristo), pero descubre que todo ha sido un simulacro de implantación de memoria controlado por los Dióscuros del sistema corporativo de la Policía y Wallace. La verdadera **Princesa Sara (Ana Stelline)** permanece oculta y resguardada construyendo recuerdos dentro de una burbuja de cristal aislada del Kenoma, tejiendo la memoria fósil del firmware. K muere en las escaleras bajo la nieve, deteniendo su bucle temporal.
