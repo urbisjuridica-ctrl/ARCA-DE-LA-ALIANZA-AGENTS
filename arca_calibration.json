@@ -1,0 +1,36 @@
+{
+        "limites": {
+                "trend_raw": {
+                        "min": -0.008174019397511976,
+                        "max": 0.025359946915882364
+                },
+                "confirmation_raw": {
+                        "min": -6.2030748485073675,
+                        "max": 4.069093065525418
+                },
+                "vol_ratio": {
+                        "min": 0.21076911297700093,
+                        "max": 3.536176695194634
+                },
+                "drawdown_severity_raw": {
+                        "min": -0.0,
+                        "max": 0.04101666417901119
+                },
+                "dislocation_raw": {
+                        "min": 0.0,
+                        "max": 2.0
+                },
+                "_metadata": {
+                        "fecha_calibracion": "2026-09-08T00:18:34.332152",
+                        "n_velas": 1000,
+                        "symbol": "BTC/USDT",
+                        "timeframe": "1h",
+                        "periodo": "2026-07-28 07:00:00+00:00 -> 2026-09-07 22:00:00+00:00"
+                }
+        },
+        "nuevos_codigos_firmware": {
+                "detencion_tiempo": "Solo la Negra Nueva y el Demiurgo pueden detener el tiempo",
+                "mecanica_saturno": "Gramofono, tocadiscos = Saturno",
+                "identificador_heket": "Heket = Mujer Oriental (no obligatorio, sirve para distinguir)"
+        }
+}
