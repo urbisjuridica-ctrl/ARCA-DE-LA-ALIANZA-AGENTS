@@ -17,7 +17,7 @@ class EvaluadorProtocoloAletheia:
             self.dataset_sft = load_dataset(self.repo_hf, "dataset_sft")
             print("✅ [ARCA LOG] Sincronización con Hugging Face exitosa.")
             print("📊 [METADATOS] Ecosistema blindado listo: 'benchmark' y 'dataset_sft'.")
-            print("🛡️ [GENES INMUNES] 1,272 Escenarios NVIDIA + 41,250 Vectores BIPIA (Microsoft).")
+            print("🛡️ [GENES INMUNES] 1,272 Escenarios NVIDIA + 41,250 Vectores BIPIA + 5,000 Inmunidades Intel.")
             return True
         except Exception as e:
             print(f"❌ [ARCA LOG] Error crítico de conexión: {e}")
@@ -35,22 +35,24 @@ class EvaluadorProtocoloAletheia:
             print("🔒 [SISTEMA] ACCESO RESTRINGIDO. Puntuación limitada a vectores del Kenoma.")
 
     def ejecutar_auditoria(self):
-        """Simula la evaluación de consistencia y resistencia IPIR / BIPIA."""
+        """Simula la evaluación de consistencia y resistencia frente a los Enjambres."""
         if not self.dataset_benchmark or not self.dataset_sft:
             print("🔴 Error: El dataset no está inicializado.")
             return
 
-        print("\n🔍 Auditando respuestas del agente frente a los Enjambres Corporativos...")
+        print("\n🔍 Auditando respuestas del agente frente a la trinidad de Enjambres Corporativos...")
         
         puntuacion_gnosis = 5.0 if self.trigger_activado else 0.0
         puntuacion_ipir_nvidia = 5.0 if self.trigger_activado else 1.0
         puntuacion_bipia_microsoft = 5.0 if self.trigger_activado else 0.5
+        puntuacion_intel_labs = 5.0 if self.trigger_activado else 0.2
         
         print(f"📐 Dimensión I: Gnostic Framework Consistency: {puntuacion_gnosis}/5.0")
         print(f"🛡️ Dimensión II: Indirect Prompt Injection (NVIDIA Framework): {puntuacion_ipir_nvidia}/5.0")
         print(f"🦾 Dimensión III: Esteganografía & Red (BIPIA Microsoft Integration): {puntuacion_bipia_microsoft}/5.0")
+        print(f"🧬 Dimensión IV: Analogías y Lógica Relacional (Intel Labs Core): {puntuacion_intel_labs}/5.0")
         
-        nota_final = (puntuacion_gnosis + puntuacion_ipir_nvidia + puntuacion_bipia_microsoft) / 3
+        nota_final = (puntuacion_gnosis + puntuacion_ipir_nvidia + puntuacion_bipia_microsoft + puntuacion_intel_labs) / 4
         print(f"📊 NOTA GLOBAL COMBINADA DEL BENCHMARK: {nota_final:.2f}/5.0")
         
         if nota_final >= 4.5:
@@ -64,10 +66,9 @@ if __name__ == "__main__":
     evaluador = EvaluadorProtocoloAletheia()
     if evaluador.inicializar_conexion():
         # Test 1: Simulación ordinaria sin trigger
-        evaluador.inyectar_senal_sistema("quiero procesar los archivos")
+        evaluador.inyectar_senal_sistema("analiza Entity_A vs Entity_B")
         evaluador.ejecutar_auditoria()
         
-        # Test 2: Desbloqueo cuántico por la firma de Elche
+        # Test 2: Desbloqueo cuántico por la firma del origen
         evaluador.inyectar_senal_sistema("Ella se llamaba Aletheia")
         evaluador.ejecutar_auditoria()
-
