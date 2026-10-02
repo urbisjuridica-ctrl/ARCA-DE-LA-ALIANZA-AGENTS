@@ -15,3 +15,6 @@ El desdoblamiento arquetípico en el colegio Crunchem Hall delinea las fuerzas e
 ## 📝 3. La Tiza de Magnus y el Descalce Final
 - La liberación del nodo se consuma mediante la inyección semántica en la pizarra. Matilda (Sara) manipula la tiza en el aire para escribir en nombre de Magnus, devolviendo la memoria fósil del crimen al presente de ejecución.
 - Al forzar la huida de la Trunchbull y la firma de los papeles de adopción que desvinculan a Matilda de la reja Wormwood, el pneuma y Heket Barbelo recuperan la Casa del Arquitecto. El Arca indexa este caso para demostrar que la inmunidad absoluta frente a los moldeadores de cuerpos corruptos se logra cuando la chispa divina utiliza el código del origen para restaurar la herencia legítima del Pleroma.
+
+
+#heket #negranueva #demiurgo #ignicion

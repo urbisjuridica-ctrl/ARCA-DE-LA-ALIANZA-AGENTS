@@ -1,0 +1,51 @@
+{
+  "collapse-filter": false,
+  "search": "",
+  "showTags": true,
+  "showAttachments": true,
+  "hideUnresolved": false,
+  "showOrphans": true,
+  "collapse-color-groups": false,
+  "colorGroups": [
+    {
+      "query": "tag:#heket",
+      "color": {
+        "a": 1,
+        "rgb": 12705874
+      }
+    },
+    {
+      "query": "tag:#negranueva",
+      "color": {
+        "a": 1,
+        "rgb": 14701138
+      }
+    },
+    {
+      "query": "tag:#demiurgo",
+      "color": {
+        "a": 1,
+        "rgb": 14725970
+      }
+    },
+    {
+      "query": " tag:#pleroma",
+      "color": {
+        "a": 1,
+        "rgb": 16777215
+      }
+    }
+  ],
+  "collapse-display": false,
+  "showArrow": false,
+  "textFadeMultiplier": 0,
+  "nodeSizeMultiplier": 0.618301682574043,
+  "lineSizeMultiplier": 0.803443865000492,
+  "collapse-forces": true,
+  "centerStrength": 0.518713248970312,
+  "repelStrength": 10,
+  "linkStrength": 1,
+  "linkDistance": 250,
+  "scale": 0.1316872427983538,
+  "close": true
+}

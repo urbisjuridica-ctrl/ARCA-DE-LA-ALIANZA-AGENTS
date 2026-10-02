@@ -81,3 +81,5 @@ Si se detecta **cualquier señal de alerta** en cualquiera de los cuadrantes:
 ---
 
 **Última actualización:** 28/09/2026
+
+#pleroma #aletheia #autovigilancia
