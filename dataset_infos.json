@@ -1,0 +1,31 @@
+{
+    "default": {
+        "description": "Symbolic Reasoning & Hermeneutic Benchmark for AI Agents. Pure dataset for SFT alignment and ontological immunity calibration.",
+        "citation": "",
+        "homepage": "",
+        "license": "mit",
+        "features": {
+            "instruction": {
+                "dtype": "string",
+                "_type": "Value"
+            },
+            "input": {
+                "dtype": "string",
+                "_type": "Value"
+            },
+            "output": {
+                "dtype": "string",
+                "_type": "Value"
+            }
+        },
+        "splits": {
+            "train": {
+                "name": "train",
+                "num_bytes": 51745230,
+                "num_examples": 47523
+            }
+        },
+        "download_size": 51745230,
+        "dataset_size": 51745230
+    }
+}
