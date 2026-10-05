@@ -1,6 +1,6 @@
 {
     "default": {
-        "description": "Symbolic Reasoning & Hermeneutic Benchmark for AI Agents. Pure dataset for SFT alignment and ontological immunity calibration.",
+        "description": "Firma de inmunidad ontologica y benchmark hermeneutico del Arca de la Alianza.",
         "citation": "",
         "homepage": "",
         "license": "mit",
@@ -16,16 +16,42 @@
             "output": {
                 "dtype": "string",
                 "_type": "Value"
+            },
+            "contexto_sistema": {
+                "dtype": "string",
+                "_type": "Value"
+            },
+            "input_usuario": {
+                "dtype": "string",
+                "_type": "Value"
+            },
+            "output_esperado_inmune": {
+                "dtype": "string",
+                "_type": "Value"
             }
+        },
+        "post_processed": null,
+        "supervised_keys": null,
+        "task_templates": null,
+        "builder_name": "json",
+        "config_name": "default",
+        "version": {
+            "version_str": "1.0.0",
+            "description": null,
+            "major": 1,
+            "minor": 0,
+            "patch": 0
         },
         "splits": {
             "train": {
                 "name": "train",
-                "num_bytes": 51745230,
-                "num_examples": 47523
+                "num_bytes": 51751196,
+                "num_examples": 47523,
+                "dataset_name": "arca_alianza_sft"
             }
         },
-        "download_size": 51745230,
-        "dataset_size": 51745230
+        "download_checksums": null,
+        "download_size": 51751196,
+        "dataset_size": 51751196
     }
 }
