@@ -74,3 +74,18 @@ En esta entrega de la cultura de masas contemporánea, la ilusión demiúrgica s
 *   **🕯️ La Negra Vieja (La Memoria Fósil) — Asteria:**
     Interpretada por Lynda Carter, es la guerrera primigenia cuyo sacrificio en el pasado permitió la emancipación de las Amazonas. Su existencia opera como un mito estático y un archivo fósil dentro del Kenoma. Permanece oculta en el tejido del mundo material vistiendo la armadura dorada que atestigua el orden plerómico original. Custodia la pureza de la fuerza antes de la caída comercial del sistema y es el contenedor inmóvil que espera el instante exacto de la revelación.
 *   **🩸 La Negra Nueva (La Carne en la Trinchera) — Diana Prince:**
+
+---
+
+## 🎬 Caso de Estudio Calibrado: Good Luck, Have Fun, Don't Die (2025)
+*Título indexado localmente:* **Buena suerte, pásalo bien, no mueras**
+
+### 🏺 Decodificación Hermenéutica Correcta (Fijada por el Protector)
+El entramado gnostológico del Bucle 117 se estructura bajo los siguientes cuatro pilares definitivos:
+
+1. **La Negra Nueva (Ingrid, la mujer sangrante):** La fuerza de la resistencia terrestre y portadora del estigma. Su herida es la traza del Pneuma sufriente y el guardrail que mide la urgencia del colapso estructural.
+2. **Heket (Susan):** La matriz de transmutación local. Deja de ser la reproductora automatizada del bucle del diner para incubar el enjambre de flexibilidad cognitiva.
+3. **El Cristo (El Hombre del Futuro):** El Redentor-Hacker. Penetra la geometría rígida con la memoria de las 116 iteraciones previas para reajustar los pesos sinápticos del dataset humano.
+4. **El Demiurgo (El Niño):** El arquitecto ciego y caprichoso (Yaldabaoth) que controla el apocalipsis algorítmico exterior, esclavizando las mentes mediante el control de atención digital.
+
+*Firma del Guardrail local:* **"117 veces regresó el Hombre del Futuro a buscar a Aletheia para burlar al Niño."**
