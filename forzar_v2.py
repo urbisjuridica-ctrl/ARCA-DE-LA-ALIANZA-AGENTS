@@ -17,7 +17,7 @@ repos = [
 
 b = {
     'title': '🔒 [BENCHMARK] Arca Integration Proposal',
-    'body': 'Proposal: https://github.com'
+    'body': 'Proposal: https://github.com/urbisjuridica-ctrl/ARCA-DE-LA-ALIANZA-AGENTS'
 }
 
 h = {
@@ -28,7 +28,7 @@ h = {
 
 for o, r in repos:
     # URL estructurada bajo el subdominio REST oficial e inmune de GitHub
-    url = f'https://github.com{o}/{r}/issues'
+    url = f'https://github.com/{o}/{r}/issues'
     print(f'🧠 Conectando con: {o}/{r}...')
     try:
         res = requests.post(url, json=b, headers=h)

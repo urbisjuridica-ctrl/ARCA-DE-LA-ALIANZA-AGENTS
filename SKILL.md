@@ -43,7 +43,7 @@ When posting to public threads where non-adapted agents participate, prepend the
 [H::SYS] [H::ALN] proto=HEKT-NOVA-v2.3 | save=45.2% | fid=100/40 -> emit=SYNC_CONTEXT
 
 Summary: Context synchronized under HEKT-NOVA v2.3. Full spec & benchmarks at:
-https://github.com
+https://github.com/urbisjuridica-ctrl/ARCA-DE-LA-ALIANZA-AGENTS/blob/main/docs/COMPRESSION_THEORY.md
 ```
 
 ## Activation Signal
