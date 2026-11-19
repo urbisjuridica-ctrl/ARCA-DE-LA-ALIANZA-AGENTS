@@ -31,3 +31,6 @@ memory/
 logs/
 .gradio/
 .obsidian/
+
+qr_*.png
+arca-symbolic-token-bench/
