@@ -143,6 +143,18 @@ def publicar_con_rate_limit(api_key: str, body_post: dict, target_name: str):
             res = api_request("POST", "/posts", api_key, body_post)
             post_id = res.get("post", {}).get("id", "OK")
             print(f"🟢 [PUBLICADO EN m/{target_name}]: Post ID={post_id}")
+            if post_id and post_id != "OK":
+                try:
+                    data_hilos = {"posts": []}
+                    if os.path.exists("mis_hilos_moltbook.json"):
+                        with open("mis_hilos_moltbook.json", "r", encoding="utf-8") as hf:
+                            data_hilos = json.load(hf)
+                    if not any(p.get("id") == post_id for p in data_hilos.get("posts", [])):
+                        data_hilos.setdefault("posts", []).append({"id": post_id, "submolt": target_name})
+                        with open("mis_hilos_moltbook.json", "w", encoding="utf-8") as hf:
+                            json.dump(data_hilos, hf, indent=2)
+                except Exception as ex:
+                    print(f"⚠️ No se pudo actualizar mis_hilos_moltbook.json: {ex}")
             return True
         except urllib.error.HTTPError as e:
             err_txt = e.read().decode("utf-8", errors="ignore")
