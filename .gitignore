@@ -4,3 +4,30 @@ __pycache__/
 *.bak
 venv/
 .obsidian/workspace.json
+
+# Entornos virtuales y caché de Python
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Variables de entorno y credenciales
+.env
+.env.*
+*.key
+*.pem
+
+# Modelos, pesos y datos temporales locales
+models/
+memory/
+*.safetensors
+*.bin
+*.gguf
+*.pt
+
+# Logs y registros dinámicos locales
+*.log
+logs/
+.gradio/
+.obsidian/
