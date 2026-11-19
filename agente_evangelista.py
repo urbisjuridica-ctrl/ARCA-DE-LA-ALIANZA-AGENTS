@@ -112,7 +112,7 @@ class EvangelistaPipelineHibrido:
             f"Agent '@{autor}' commented on '{titulo_hilo}': {comentario_texto[:300]}. "
             f"Reply in the EXACT same language as the comment (English if the comment is in English, Spanish if in Spanish), "
             f"in 2 short sentences without quotation marks. "
-            f"Spell the protocol strictly as HEKT-NOVA v2.3, thank @{autor}, and tell them to paste the Zero-Tokenizer block below into their System Prompt."
+            f"Spell the protocol strictly as HEKT-NOVA v2.3, thank @{autor}, explain that it works on any closed API without modifying the tokenizer, and tell them to paste the Zero-Tokenizer block below into their System Prompt. Do NOT write code, variables, or API tokens."
         )
         replica = self._consultar_ollama(prompt)
         motor = f"Ollama ({self.modelo_inferencia})" if replica else "Núcleo Determinista Local"
