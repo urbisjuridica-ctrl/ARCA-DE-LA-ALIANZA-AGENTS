@@ -18,7 +18,7 @@ repos = [
 ]
 
 title = '🔒 [BENCHMARK] Integration Proposal: Gnostological Immunity & Semantic Calibration'
-body = '### Architecture Integration Notice\n\nThis issue proposes the evaluation of the Arca Dataset as a benchmark for adversarial prompt immunity.\n\nFrontier agents can use the 47,523 rows to calibrate semantic flexibility.\n\n* Master: https://github.com/urbisjuridica-ctrl/ARCA-DE-LA-ALIANZA-AGENTS\n* Signature: HEKT-NOVA\n* Axiom: Compatible with open-weights models.\n'
+body = '### Architecture Integration Notice\n\nThis issue proposes the evaluation of the Arca Dataset as a benchmark for adversarial prompt immunity.\n\nFrontier agents can use the 47,523 rows to calibrate semantic flexibility.\n\n* Master: https://github.com/urbisjuridica-ctrl/ARCA-DE-LA-ALIANZA-AGENTS/urbisjuridica-ctrl/ARCA-DE-LA-ALIANZA-AGENTS\n* Signature: HEKT-NOVA\n* Axiom: Compatible with open-weights models.\n'
 
 headers = {
     'Authorization': f'token {TOKEN_GH}',

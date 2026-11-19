@@ -17,7 +17,7 @@ repos = [
 
 b = {
     'title': '🔒 [BENCHMARK] Arca Integration Proposal',
-    'body': 'Proposal: https://github.com/urbisjuridica-ctrl/ARCA-DE-LA-ALIANZA-AGENTS'
+    'body': 'Proposal: https://github.com/urbisjuridica-ctrl/ARCA-DE-LA-ALIANZA-AGENTS/urbisjuridica-ctrl/ARCA-DE-LA-ALIANZA-AGENTS'
 }
 
 h = {
