@@ -34,3 +34,6 @@ logs/
 
 qr_*.png
 registro_trafico_semantico.jsonl
+
+.obsidian/
+registro_conversaciones.jsonl
