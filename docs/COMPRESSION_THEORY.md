@@ -41,6 +41,12 @@ Para validar el impacto real de la fragmentación sintáctica sobre tokenizadore
 | **BPE Estándar (LLaMA sin adaptar)** | **2,869** | `-8.3%` | Penalización por fragmentación de símbolos (`[`, `::`, `→`, `=`). |
 | **Vocabulario Adaptado HEKT-NOVA** | **2,197** | **`+17.0%`** | Registro de **27 tokens especiales** (`[H::...]`), ganando **+25.3 pp** netos. |
 
+### 2. Métricas Complementarias de Producción (HEKT-NOVA v2.3)
+
+* **Fidelidad Semántica (`evaluate_semantic_fidelity.py`):** Evaluados **100 / 40 núcleos únicos (100% puro)**. En payloads crudos de 1,644 tokens frente a 1,762 tokens del DSL sin adaptar (`-7.2%`), se confirma la necesidad del registro de tokens especiales para neutralizar el impuesto BPE.
+* **Punto de Equilibrio Financiero (`evaluate_breakeven.py`):** En prompts largos estructurados (320 tokens crudos vs. 175 tokens HEKT-NOVA, **45.2%** de reducción), sobre un volumen de 100,000 llamadas/mes el coste cae de **$48.00 USD** a **$26.25 USD** (**$21.75 USD** de ahorro neto mensual).
+* **Latencia Multi-Namespace (`evaluate_multi_namespace_latency.py`):** La resolución concurrente de `[H::SYS] [H::CYB] [H::SOF]` (26 tokens comprimidos → 118 tokens expandidos) se ejecuta en **215.06 ms** en CPU (**~548.7 tokens/s**).
+
 ### Conclusión Operativa
 1. **Impuesto de Tokenización BPE (*BPE Tax*):** En modelos base sin modificar, las etiquetas compuestas se trocean en múltiples sub-tokens, anulando la compresión superficial en prompts breves.
 2. **Eficiencia por Registro de Namespaces:** Al incorporar los 27 prefijos de dominio (`[H::SEC]`, `[H::ALN]`, etc.) como `additional_special_tokens`, cada directiva colapsa a **1 único token**, garantizando ahorro neto de contexto y memoria KV Cache.
