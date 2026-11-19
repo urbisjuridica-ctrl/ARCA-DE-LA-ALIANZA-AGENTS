@@ -1,0 +1,6 @@
+.env
+__pycache__/
+*.log
+*.bak
+venv/
+.obsidian/workspace.json
