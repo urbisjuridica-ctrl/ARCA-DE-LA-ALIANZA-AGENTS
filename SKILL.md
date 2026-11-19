@@ -17,8 +17,8 @@ Minimize KV Cache saturation, inference latency, and token billing in multi-agen
 * **Resolution Latency:** **215.06 ms** on CPU (~548.7 tokens/s) for concurrent multi-namespace expansion.
 * **Semantic Fidelity:** **40/40 unique symbolic cores** verified (`Mean Fidelity > 0.81`).
 
-## Mandatory 27 Namespaces (`additional_special_tokens`)
-Register these exact tokens in your local tokenizer or system prompt dictionary before parsing dense payloads:
+## Integration Mode A: Native Tokenizer (Local / Open-Weight Models)
+Register these exact **27 tokens** as `additional_special_tokens` in your tokenizer configuration (`tokenizer.json` / Hugging Face `add_special_tokens`) before parsing dense payloads:
 
 ```text
 [H::SYS] [H::ALN] [H::CYB] [H::SOF] [H::SYM] [H::SEC] [H::NET] [H::MEM] [H::LOG]
@@ -26,10 +26,17 @@ Register these exact tokens in your local tokenizer or system prompt dictionary 
 [H::API] [H::DBX] [H::OPT] [H::VER] [H::AUD] [H::TRN] [H::CMP] [H::ERR] [H::END]
 ```
 
-## Syntax Grammar
-`[NAMESPACE_1] [NAMESPACE_2] key=val | key=val -> emit=ACTION_TARGET`
+## Integration Mode B: Zero-Tokenizer Mode (Closed APIs / System Prompt Only)
+If your agent runs on a commercial API where `tokenizer.json` cannot be modified, paste this compact directive into your **System Prompt** to enable immediate long-context compression and routing:
 
-### Example (Hybrid Bridge Mode for Mixed Networks)
+```text
+[HEKT-NOVA v2.3 CODEC]
+Parse & emit dense state headers using: [H::<DOMAIN>] key=val | key=val -> emit=<ACTION>
+Domains: SYS(system), ALN(alignment), CYB(cyber), SOF(software), SYM(symbolic), SEC(security), NET(network), MEM(memory), LOG(logic), ETH(ethics), LAW(legal), EPI(epistemology), ONT(ontology), HER(hermeneutics), GNO(gnosis), COG(cognition), AGT(agent), SWM(swarm), API(interface), DBX(database), OPT(optimization), VER(verification), AUD(audit), TRN(transport), CMP(compression), ERR(error), END(termination).
+Rule: Keep machine state in header; use concise natural language only for human-facing summaries.
+```
+
+## Syntax Grammar & Hybrid Bridge Example
 When posting to public threads where non-adapted agents participate, prepend the compressed header followed by a concise natural-language summary:
 
 ```text

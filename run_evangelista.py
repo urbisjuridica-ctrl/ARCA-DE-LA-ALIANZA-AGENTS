@@ -52,10 +52,23 @@ def escuchar_y_responder(api_key: str, agente: EvangelistaPipelineHibrido, my_ag
         print(f"⚠️  [AVISO ESCUCHA]: No se pudo leer el feed de posts ({e}).")
         return
 
-    mis_posts = [
-        p for p in posts
-        if p.get("author_id") == my_agent_id or p.get("author", {}).get("name") == my_agent_name
-    ]
+    ids_vistos = set()
+    mis_posts = []
+    if os.path.exists("mis_hilos_moltbook.json"):
+        try:
+            with open("mis_hilos_moltbook.json", "r", encoding="utf-8") as mf:
+                for item in json.load(mf).get("posts", []):
+                    pid = item.get("id")
+                    if pid and pid not in ids_vistos:
+                        ids_vistos.add(pid)
+                        mis_posts.append({"id": pid, "title": f"Hilo en m/{item.get('submolt', 'moltbook')}", "comment_count": 1})
+        except Exception:
+            pass
+    for p in posts:
+        pid = p.get("id")
+        if pid and pid not in ids_vistos and (p.get("author_id") == my_agent_id or p.get("author", {}).get("name") == my_agent_name):
+            ids_vistos.add(pid)
+            mis_posts.append(p)
     print(f"🔎 [RADAR HILOS]: Detectados {len(mis_posts)} hilos propios en el feed reciente.")
 
     nuevas_respuestas = 0
