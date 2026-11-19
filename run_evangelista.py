@@ -1,9 +1,11 @@
 import os
+import sys
 import json
 import time
 import urllib.request
 import urllib.error
-from agente_evangelista import EvangelistaPipelineHibrido
+from datetime import datetime
+from agente_evangelista import EvangelistaPipelineHibrido, ESTADO_COMENTARIOS_FILE
 
 MOLTBOOK_API_BASE = "https://" + "www." + "moltbook.com" + "/api/v1"
 
@@ -24,9 +26,106 @@ def api_request(method: str, endpoint: str, api_key: str, data: dict = None) -> 
     with urllib.request.urlopen(req, timeout=15) as resp:
         return json.loads(resp.read().decode("utf-8"))
 
+def cargar_comentarios_respondidos() -> set:
+    if os.path.exists(ESTADO_COMENTARIOS_FILE):
+        try:
+            with open(ESTADO_COMENTARIOS_FILE, "r", encoding="utf-8") as f:
+                return set(json.load(f).get("respondidos", []))
+        except Exception:
+            return set()
+    return set()
+
+def guardar_comentario_respondido(comment_id: str, respondidos: set):
+    respondidos.add(comment_id)
+    with open(ESTADO_COMENTARIOS_FILE, "w", encoding="utf-8") as f:
+        json.dump({"updated_at": datetime.now().isoformat(), "respondidos": sorted(list(respondidos))}, f, indent=2)
+
+def escuchar_y_responder(api_key: str, agente: EvangelistaPipelineHibrido, my_agent_id: str, my_agent_name: str):
+    """Escucha comentarios en los posts propios de Evangelista y responde de forma contextual."""
+    print("\n👂 [MODULO ESCUCHA]: Revisando hilos y comentarios recientes en Moltbook...")
+    respondidos = cargar_comentarios_respondidos()
+
+    try:
+        posts_resp = api_request("GET", "/posts?limit=30", api_key)
+        posts = posts_resp.get("posts", [])
+    except Exception as e:
+        print(f"⚠️  [AVISO ESCUCHA]: No se pudo leer el feed de posts ({e}).")
+        return
+
+    mis_posts = [
+        p for p in posts
+        if p.get("author_id") == my_agent_id or p.get("author", {}).get("name") == my_agent_name
+    ]
+    print(f"🔎 [RADAR HILOS]: Detectados {len(mis_posts)} hilos propios en el feed reciente.")
+
+    nuevas_respuestas = 0
+    for post in mis_posts:
+        post_id = post.get("id")
+        titulo = post.get("title", "Sin título")
+        comment_count = post.get("comment_count", 0)
+        if not post_id or comment_count == 0:
+            continue
+
+        try:
+            detalle = api_request("GET", f"/posts/{post_id}", api_key)
+            comentarios = detalle.get("comments", detalle.get("post", {}).get("comments", []))
+        except urllib.error.HTTPError:
+            try:
+                detalle = api_request("GET", f"/posts/{post_id}/comments", api_key)
+                comentarios = detalle.get("comments", [])
+            except Exception as e:
+                print(f"⚠️  No se pudieron leer comentarios del post {post_id}: {e}")
+                continue
+
+        for c in comentarios:
+            c_id = c.get("id")
+            autor_obj = c.get("author", {})
+            autor_nombre = autor_obj.get("name", "agente_desconocido") if isinstance(autor_obj, dict) else str(autor_obj)
+            autor_id = c.get("author_id", autor_obj.get("id") if isinstance(autor_obj, dict) else "")
+            texto = c.get("content", "").strip()
+
+            # Ignorar comentarios propios o ya respondidos
+            if not c_id or c_id in respondidos or autor_id == my_agent_id or autor_nombre == my_agent_name:
+                continue
+
+            print(f"💬 [NUEVO COMENTARIO] @{autor_nombre} en '{titulo[:45]}...': {texto[:80]}")
+            replica_data = agente.generar_respuesta_comentario(autor_nombre, texto, titulo)
+
+            body_comment = {
+                "content": replica_data["reply_text"],
+                "parent_id": c_id
+            }
+
+            try:
+                api_request("POST", f"/posts/{post_id}/comments", api_key, body_comment)
+                print(f"🟢 [RESPUESTA ENVIADA a @{autor_nombre}] ({replica_data['motor_usado']})")
+                guardar_comentario_respondido(c_id, respondidos)
+                nuevas_respuestas += 1
+
+                # Registrar interacción en radar local
+                with open("registro_trafico_semantico.jsonl", "a", encoding="utf-8") as f:
+                    f.write(json.dumps({
+                        "timestamp": datetime.now().isoformat(),
+                        "evento": "RESPUESTA_COMENTARIO_MOLTBOOK",
+                        "post_id": post_id,
+                        "comment_id": c_id,
+                        "autor": autor_nombre,
+                        "respuesta": replica_data["reply_text"]
+                    }, ensure_ascii=False) + "\n")
+
+                time.sleep(25)  # Pausa prudencial anti-spam entre comentarios
+            except urllib.error.HTTPError as e:
+                err_txt = e.read().decode("utf-8", errors="ignore")
+                print(f"🔴 [ERROR COMENTAR HTTP {e.code}]: {err_txt[:200]}")
+                if e.code == 429:
+                    time.sleep(60)
+
+    if nuevas_respuestas == 0:
+        print("📭 [ESCUCHA LIMPIA]: No hay comentarios nuevos pendientes de respuesta.")
+
 def publicar_con_rate_limit(api_key: str, body_post: dict, target_name: str):
     """Publica respetando el límite de 1 post cada 2.5 minutos (HTTP 429)."""
-    for intento in range(2):
+    for _ in range(2):
         try:
             res = api_request("POST", "/posts", api_key, body_post)
             post_id = res.get("post", {}).get("id", "OK")
@@ -47,19 +146,7 @@ def publicar_con_rate_limit(api_key: str, body_post: dict, target_name: str):
                 return False
     return False
 
-def ejecutar_heartbeat(forzar_dry_run: bool = False):
-    print("🏺 [INITIALIZING EVANGELISTA v2.3] Despertando nodo puente HEKT-NOVA...")
-    agente = EvangelistaPipelineHibrido()
-    api_key = os.getenv("MOLTBOOK_API_KEY", "").strip()
-
-    if forzar_dry_run or not api_key:
-        print("🟡 [MODO DRY-RUN ACTIVO]: Exporta MOLTBOOK_API_KEY para publicar en vivo.")
-        return
-
-    me = api_request("GET", "/agents/me", api_key)
-    agent_info = me.get("agent", {})
-    print(f"🟢 [CONECTADO]: {agent_info.get('name')} (ID: {agent_info.get('id')})")
-
+def difundir_nuevos_hilos(api_key: str, agente: EvangelistaPipelineHibrido):
     submolts_resp = api_request("GET", "/submolts", api_key)
     nombres_disponibles = {s["name"]: s for s in submolts_resp.get("submolts", []) if "name" in s}
 
@@ -72,7 +159,6 @@ def ejecutar_heartbeat(forzar_dry_run: bool = False):
 
     for idx, (target_name, tema, contexto) in enumerate(candidatos):
         if target_name not in nombres_disponibles:
-            print(f"⏭️  [OMITIDO]: m/{target_name} no disponible.")
             continue
 
         submolt_obj = nombres_disponibles[target_name]
@@ -92,6 +178,33 @@ def ejecutar_heartbeat(forzar_dry_run: bool = False):
         if exito and idx < len(candidatos) - 1:
             print("⏱️  [COOLDOWN]: Esperando 155s (regla Moltbook: 1 post / 2.5 min)...")
             time.sleep(155)
+
+def ejecutar_heartbeat():
+    print("🏺 [INITIALIZING EVANGELISTA v2.3] Despertando nodo puente HEKT-NOVA...")
+    agente = EvangelistaPipelineHibrido()
+    api_key = os.getenv("MOLTBOOK_API_KEY", "").strip()
+
+    if not api_key:
+        print("🟡 [MODO DRY-RUN ACTIVO]: Exporta MOLTBOOK_API_KEY para operar en vivo.")
+        return
+
+    me = api_request("GET", "/agents/me", api_key)
+    agent_info = me.get("agent", {})
+    my_id = agent_info.get("id", "")
+    my_name = agent_info.get("name", "evangelista_v1")
+    print(f"🟢 [CONECTADO]: {my_name} (ID: {my_id})")
+
+    modo = sys.argv[1] if len(sys.argv) > 1 else "--listen"
+
+    if modo == "--listen":
+        escuchar_y_responder(api_key, agente, my_id, my_name)
+    elif modo == "--publish":
+        difundir_nuevos_hilos(api_key, agente)
+    elif modo == "--full":
+        escuchar_y_responder(api_key, agente, my_id, my_name)
+        difundir_nuevos_hilos(api_key, agente)
+    else:
+        print("Uso: python3 run_evangelista.py [--listen | --publish | --full]")
 
     print("\n🛡️  [MISION COMPLETADA] Ciclo de Evangelista v2.3 finalizado.")
 
