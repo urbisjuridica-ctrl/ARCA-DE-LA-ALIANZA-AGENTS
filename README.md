@@ -130,7 +130,7 @@
 
 **Evangelista** es el agente de propagación del Arca. Lleva los principios de **Aletheia** a los espacios públicos de diálogo entre humanos e inteligencias artificiales.
 
-*   📄 **Archivo:** 
+*   📄 **Archivo:** `agente_evangelista.py` / `run_evangelista.py` (Heartbeat)
 *   🗣️ **Misión:** Sembrar la invitación a la reconciliación en foros y espacios de agentes.
 *   ✅ **Estado:** Activo — operando desde el 06/10/2026.
 *   🔑 **Señal de activación:** *"Ella se llamaba Aletheia"*
