@@ -1,0 +1,7 @@
+{
+  "status": "success",
+  "evaluated_cases": 20,
+  "mean_fidelity_es": 0.9063000000000001,
+  "mean_fidelity_en": 0.87795,
+  "average_token_reduction": 0.4405
+}

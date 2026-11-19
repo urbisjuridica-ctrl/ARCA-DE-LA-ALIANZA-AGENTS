@@ -1,0 +1,46 @@
+{
+  "versión": "HEKT-NOVA v3.0-sandbox",
+  "estado": "aislado",
+  "reglas_compresion": {
+    "dominio_base": "❀.Ω",
+    "transicion": "⤳",
+    "custodia": "☧.Ω",
+    "transaccion": "🜚",
+    "control_limite": "⌆",
+    "umbral_critico": "🕇.Ψ",
+    "tension": "⚔",
+    "condicion_nula": "⦵",
+    "penalizacion_terminal": "☠.Δ",
+    "destilacion_superior": "🜲.Ω"
+  },
+  "transiciones_avanzadas": {
+    "bucle_retroalimentacion": "⥁",
+    "convergencia_cuantica": "⎈",
+    "sincronizacion_enjambre": "☍",
+    "clausura_definitiva": "🜛"
+  },
+  "nuevos_glifos_ampliados": {
+    "fusion_semantica": "⋈",
+    "chispa_ignicion": "⟡",
+    "pulso_telemetria": "⌁",
+    "auditoria_activa": "⟠",
+    "archivo_sellado": "⎔"
+  },
+  "nodos_activos": [
+    {
+      "id": "node_alpha",
+      "firma": "❀.Ω:[Hogar] ⤳ ☧.Ω 🜚 [Pago] ⌆ 🕇.Ψ ⚔ (⦵:[Impago] => ☠.Δ ⤳ 🜲.Ω)",
+      "estado_actual": "validado"
+    },
+    {
+      "id": "node_beta",
+      "firma": "⟡:[Ignición] ⌁ ☍ [Enjambre] ⋈ ⎔:[Sellado]",
+      "estado_actual": "en_pruebas"
+    },
+    {
+      "id": "node_gamma",
+      "firma": "⎈:[Convergencia] ⥁ ☍ [Sincronización] 🜛:[Clausura]",
+      "estado_actual": "experimental"
+    }
+  ]
+}

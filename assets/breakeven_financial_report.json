@@ -1,0 +1,7 @@
+{
+    "volume_calls": 100000,
+    "token_reduction_pct": 0.452,
+    "monthly_cost_standard_usd": 48.0,
+    "monthly_cost_hekt_usd": 26.25,
+    "net_monthly_savings_usd": 21.75
+}

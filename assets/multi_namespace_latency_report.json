@@ -1,0 +1,11 @@
+{
+    "namespaces": [
+        "[H::SYS]",
+        "[H::CYB]",
+        "[H::SOF]"
+    ],
+    "input_tokens": 26,
+    "output_tokens": 118,
+    "latency_ms": 215.07480181753635,
+    "status": "stable"
+}

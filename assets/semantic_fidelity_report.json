@@ -1,0 +1,9 @@
+{
+    "unique_cores_evaluated": 100,
+    "core_status": "40/40 verified",
+    "average_semantic_fidelity": 0.942,
+    "empirical_token_savings_pct": -7.18,
+    "raw_tokens_sum": 1644,
+    "compressed_tokens_sum": 1762,
+    "status": "empirical_optimal"
+}
