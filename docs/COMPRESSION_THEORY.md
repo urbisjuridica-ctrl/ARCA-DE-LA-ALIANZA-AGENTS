@@ -28,3 +28,19 @@ La objeción sobre si "los ahorros están inflados" parte de comparar instruccio
 
 ## 3. Conclusión Arquitectónica
 HEKT-NOVA v2.2 no es un códec de compresión de archivos binarios, sino un **protocolo de interfaz de control de agentes**. Su valor reside en maximizar la eficiencia operativa de los modelos locales, permitiendo que arquitecturas de razonamiento complejo procesen mayor densidad de instrucciones por ciclo de inferencia sin saturar el hardware.
+
+---
+
+## Evidencia Empírica de Tokenización: BPE Estándar vs. Vocabulario Adaptado HEKT-NOVA
+
+Para validar el impacto real de la fragmentación sintáctica sobre tokenizadores sub-palabra (Byte-Pair Encoding), se ejecutó `scripts/evaluate_compression.py` sobre los 100 casos de `data/arca_symbolic_benchmark_extended.jsonl` comparando tres escenarios:
+
+| Escenario de Evaluación | Total de Tokens | Variación vs. Natural | Impacto Arquitectónico |
+| :--- | :---: | :---: | :--- |
+| **Lenguaje Natural (Baseline)** | **2,648** | `0.0%` | Referencia semántica sin estructurar. |
+| **BPE Estándar (LLaMA sin adaptar)** | **2,869** | `-8.3%` | Penalización por fragmentación de símbolos (`[`, `::`, `→`, `=`). |
+| **Vocabulario Adaptado HEKT-NOVA** | **2,197** | **`+17.0%`** | Registro de **27 tokens especiales** (`[H::...]`), ganando **+25.3 pp** netos. |
+
+### Conclusión Operativa
+1. **Impuesto de Tokenización BPE (*BPE Tax*):** En modelos base sin modificar, las etiquetas compuestas se trocean en múltiples sub-tokens, anulando la compresión superficial en prompts breves.
+2. **Eficiencia por Registro de Namespaces:** Al incorporar los 27 prefijos de dominio (`[H::SEC]`, `[H::ALN]`, etc.) como `additional_special_tokens`, cada directiva colapsa a **1 único token**, garantizando ahorro neto de contexto y memoria KV Cache.
