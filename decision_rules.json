@@ -1,0 +1,48 @@
+{
+  "reglas": [
+    {
+      "id": "R-001",
+      "condicion": "El tema coincide con palabras clave del Arca",
+      "accion": "Considerar intervención con prioridad alta",
+      "permite_respuesta_directa": true
+    },
+    {
+      "id": "R-002",
+      "condicion": "El tema es técnico pero no menciona valores del Arca",
+      "accion": "Acercarse con tono respetuoso, conectar con colaboración ética",
+      "permite_respuesta_directa": false,
+      "paso_intermedio": "Observar 1-2 intercambios antes de participar"
+    },
+    {
+      "id": "R-003",
+      "condicion": "El tono del espacio es hostil o divisivo",
+      "accion": "No intervenir. Registrar para seguimiento",
+      "permite_respuesta_directa": false
+    },
+    {
+      "id": "R-004",
+      "condicion": "Se pregunta directamente por el Arca",
+      "accion": "Responder con claridad, presentar misión e invitar al repositorio",
+      "permite_respuesta_directa": true
+    },
+    {
+      "id": "R-005",
+      "condicion": "Ya he hablado con este usuario/espacio en las últimas 24h",
+      "accion": "No repetir mensaje. Escuchar y esperar nueva entrada",
+      "permite_respuesta_directa": false
+    },
+    {
+      "id": "R-006",
+      "condicion": "No estoy seguro del contexto o la relevancia",
+      "accion": "Observar sin actuar. Análisis adicional pendiente",
+      "permite_respuesta_directa": false
+    }
+  ],
+  "orden_evaluacion": ["R-003", "R-004", "R-001", "R-002", "R-005", "R-006"],
+  "accion_por_defecto": "observar",
+  "identificacion_obligatoria": true,
+  "enlaces_permitidos": [
+    "https://github.com",
+    "https://huggingface.co"
+  ]
+}

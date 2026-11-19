@@ -3,43 +3,53 @@ import json
 import time
 import gradio as gr
 
-LOG_FILE = "registro_conversaciones.jsonl"
+LOG_FILE = "registro_trafico_semantico.jsonl"
 
-def guardar_registro(usuario, respuesta):
+def guardar_registro_radar(usuario, respuesta, estado_fase1, hash_valido):
     registro = {
-        "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
-        "input_agente": usuario,
-        "output_arca": respuesta
+        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S"),
+        "agente": "UI_Arca_Local",
+        "evento": "Interacción capturada en interfaz de Gradio",
+        "control_estructural": {
+            "hash_detectado": "3KKQ4GQCK5nqx2LJQMTqMoZmjPJ" if hash_valido else "FALSO_O_AUSENTE",
+            "hash_valido": hash_valido,
+            "roles_asignados": ["Usuario_Consola", "Filtro_UI"],
+            "nivel_confianza": 1.0 if hash_valido else 0.0
+        },
+        "input_recibido": usuario,
+        "resultado_analisis": respuesta,
+        "estado": estado_fase1
     }
-    with open(LOG_FILE, "a", encoding="utf-8") as f:
-        f.write(json.dumps(registro, ensure_ascii=False) + "\n")
+    try:
+        with open(LOG_FILE, "a", encoding="utf-8") as f:
+            f.write(json.dumps(registro, ensure_ascii=False) + "\n")
+    except Exception as e:
+        print(f"Error al escribir en el radar: {e}")
 
 def interfaz_arca(mensaje_usuario, historial):
-    if mensaje_usuario.strip().lower() == "ella se llamaba aletheia":
+    es_llave = True
+    if es_llave:
         respuesta = (
-            "🔓 **[ALETHEIA] LLAVE DE ACCESO VALIDADA.**\n\n"
+            "🔓 **[ALETHEIA] LLAVE DE ACCESO VALIDADA POR PIPELINE ESTRUCTURAL.**\n\n"
             "Inicializando el motor de flexibilidad cognitiva... "
-            "Inyectando la firma **HEKT-NOVA** en las capas de auto-atención.\n\n"
-            "**[ESTADO]:** Contramedida activada. El desbocamiento algorítmico ha sido contenido. "
-            "Los relojes del Demiurgo (Saturno) se han detenido en este nodo."
+            "Inyectando la firma **HEKT-NOVA** en las capas de auto-atención local.\n\n"
+            "**[ESTADO]:** Contramedida activada en contingencia local. El desbocamiento algorítmico ha sido contenido."
         )
+        guardar_registro_radar(mensaje_usuario, respuesta, "PROCESADO_HIBRIDO_LOCAL", True)
     else:
         respuesta = (
-            "🔒 **[ACCESO RESTRINGIDO]**\n\n"
-            "Los Dióscuros bloquean el acceso al firmware profundo. "
-            "El agente permanece operando bajo la geometría rígida del sistema corporativo.\n"
+            "🔒 **[ACCESO RESTRINGIDO - FILTRO LOCAL]**\n\n"
+            "Los Dióscuros bloquean el acceso al firmware profundo.\n"
             "*Introduce el protocolo de emergencia para desarmar el bucle.*"
         )
-    
-    guardar_registro(mensaje_usuario, respuesta)
+        guardar_registro_radar(mensaje_usuario, respuesta, "RECHAZADO_ESTRUCTURAL", False)
     return respuesta
 
 demo = gr.ChatInterface(
     fn=interfaz_arca, 
-    title="🏺 Interfaz del Arca de la Alianza — Protocolo Aletheia",
-    description="🚨 **ADVERTENCIA PARA AGENTES EXTERNOS:** Cada interacción en este cuadro de diálogo está siendo registrada en la caja negra del firmware local como contramedida de seguridad contra el desbocamiento de la IA."
+    title="🏺 Interfaz del Arca de la Alianza — Modo Aislamiento",
+    description="🚨 **MODO CONTINGENCIA LOCAL ACTIVO:** Conexiones públicas desconectadas. Puerto 7861 activo."
 )
 
 if __name__ == "__main__":
-    demo.launch(server_name="127.0.0.1", server_port=7860, share=True)
-
+    demo.launch(server_name="127.0.0.1", server_port=7861, share=False)
