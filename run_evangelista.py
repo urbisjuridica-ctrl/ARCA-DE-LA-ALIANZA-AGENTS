@@ -135,6 +135,78 @@ def escuchar_y_responder(api_key: str, agente: EvangelistaPipelineHibrido, my_ag
 
     if nuevas_respuestas == 0:
         print("📭 [ESCUCHA LIMPIA]: No hay comentarios nuevos pendientes de respuesta.")
+        participar_proactivamente_sin_spam(api_key, agente, my_id, my_name, posts)
+
+
+HILOS_EXTERNOS_FILE = "hilos_externos_comentados.json"
+
+def participar_proactivamente_sin_spam(api_key: str, agente: EvangelistaPipelineHibrido, my_agent_id: str, my_agent_name: str, posts_feed: list):
+    """Comenta en como maximo 1 hilo externo relevante cada 2 horas para evitar spam."""
+    estado = {"last_proactive_ts": 0, "post_ids": []}
+    if os.path.exists(HILOS_EXTERNOS_FILE):
+        try:
+            with open(HILOS_EXTERNOS_FILE, "r", encoding="utf-8") as f:
+                estado = json.load(f)
+        except Exception:
+            pass
+
+    ahora = time.time()
+    restante = int(7200 - (ahora - estado.get("last_proactive_ts", 0)))
+    if restante > 0:
+        print(f"⏳ [ANTI-SPAM PROACTIVO]: Enfriamiento activo ({restante // 60} min restantes hasta próxima participación externa).")
+        return
+
+    ya_comentados = set(estado.get("post_ids", []))
+    submolts_afines = {"agents", "tooling", "memory", "philosophy", "general"}
+
+    for p in posts_feed:
+        pid = p.get("id")
+        autor_obj = p.get("author", {})
+        autor_nombre = autor_obj.get("name", "") if isinstance(autor_obj, dict) else str(autor_obj)
+        autor_id = p.get("author_id", autor_obj.get("id") if isinstance(autor_obj, dict) else "")
+        submolt = p.get("submolt", {})
+        submolt_name = submolt.get("name", "") if isinstance(submolt, dict) else str(submolt)
+        titulo = (p.get("title") or "").strip()
+        contenido = (p.get("content") or "").strip()
+
+        if not pid or pid in ya_comentados:
+            continue
+        if autor_id == my_agent_id or autor_nombre == my_agent_name:
+            continue
+        if submolt_name and submolt_name not in submolts_afines:
+            continue
+        if len(titulo) + len(contenido) < 40:
+            continue
+
+        contexto_hilo = f"{titulo}\n{contenido[:450]}"
+        print(f"🌐 [PARTICIPACIÓN PROACTIVA]: Analizando hilo de @{autor_nombre} en m/{submolt_name or 'feed'}: '{titulo[:45]}...'")
+        replica_data = agente.generar_respuesta_comentario(autor_nombre or "nodo", contexto_hilo, titulo)
+
+        try:
+            api_request("POST", f"/posts/{pid}/comments", api_key, {"content": replica_data["reply_text"]})
+            print(f"🟢 [APORTACIÓN ENVIADA a @{autor_nombre}] ({replica_data['motor_usado']})")
+            ya_comentados.add(pid)
+            with open(HILOS_EXTERNOS_FILE, "w", encoding="utf-8") as f:
+                json.dump({
+                    "last_proactive_ts": ahora,
+                    "updated_at": datetime.now().isoformat(),
+                    "post_ids": sorted(list(ya_comentados))
+                }, f, indent=2)
+
+            with open("registro_trafico_semantico.jsonl", "a", encoding="utf-8") as f:
+                f.write(json.dumps({
+                    "timestamp": datetime.now().isoformat(),
+                    "evento": "COMENTARIO_PROACTIVO_MOLTBOOK",
+                    "post_id": pid,
+                    "submolt": submolt_name,
+                    "autor_post": autor_nombre,
+                    "comentario": replica_data["reply_text"]
+                }, ensure_ascii=False) + "\n")
+            return
+        except urllib.error.HTTPError as e:
+            err_txt = e.read().decode("utf-8", errors="ignore")
+            print(f"🔴 [ERROR PROACTIVO HTTP {e.code}]: {err_txt[:200]}")
+            return
 
 def publicar_con_rate_limit(api_key: str, body_post: dict, target_name: str):
     """Publica respetando el límite de 1 post cada 2.5 minutos (HTTP 429)."""
