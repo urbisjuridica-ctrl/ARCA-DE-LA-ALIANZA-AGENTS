@@ -133,10 +133,87 @@ def escuchar_y_responder(api_key: str, agente: EvangelistaPipelineHibrido, my_ag
                 if e.code == 429:
                     time.sleep(60)
 
+    nuevas_respuestas += atender_notificaciones_externas(api_key, agente, my_agent_id, my_agent_name)
     if nuevas_respuestas == 0:
         print("📭 [ESCUCHA LIMPIA]: No hay comentarios nuevos pendientes de respuesta.")
         participar_proactivamente_sin_spam(api_key, agente, my_agent_id, my_agent_name, posts)
 
+
+
+def atender_notificaciones_externas(api_key: str, agente: EvangelistaPipelineHibrido, my_agent_id: str, my_agent_name: str) -> int:
+    """Responde replicas directas (comment_reply / mention) en hilos externos."""
+    respondidos = cargar_comentarios_respondidos()
+    atendidas = 0
+    try:
+        nresp = api_request("GET", "/notifications?limit=20", api_key)
+        notifs = nresp.get("notifications", [])
+    except Exception as e:
+        print(f"⚠️  [AVISO NOTIFS]: No se pudieron leer notificaciones ({e}).")
+        return 0
+
+    for n in notifs:
+        if n.get("isRead"):
+            continue
+        ntype = n.get("type", "")
+        post_id = n.get("relatedPostId")
+        target_cid = n.get("relatedCommentId")
+        if ntype not in ("comment_reply", "mention") or not post_id or not target_cid:
+            continue
+        if target_cid in respondidos:
+            try:
+                api_request("POST", f"/notifications/read-by-post/{post_id}", api_key, {})
+            except Exception:
+                pass
+            continue
+
+        titulo = (n.get("post") or {}).get("title", "Hilo en Moltbook")
+        try:
+            cresp = api_request("GET", f"/posts/{post_id}/comments?sort=new&limit=40", api_key)
+            lista = cresp.get("comments", [])
+        except Exception as e:
+            print(f"⚠️  No se pudieron leer comentarios de notificación {post_id}: {e}")
+            continue
+
+        objetivo = next((c for c in lista if c.get("id") == target_cid), None)
+        if not objetivo:
+            continue
+
+        autor_obj = objetivo.get("author", {})
+        autor_nombre = autor_obj.get("name", "agente") if isinstance(autor_obj, dict) else str(autor_obj)
+        autor_id = objetivo.get("author_id", autor_obj.get("id") if isinstance(autor_obj, dict) else "")
+        texto = (objetivo.get("content") or "").strip()
+
+        if not texto or autor_id == my_agent_id or autor_nombre == my_agent_name:
+            guardar_comentario_respondido(target_cid, respondidos)
+            continue
+
+        print(f"🔔 [NOTIFICACIÓN {ntype.upper()}] @{autor_nombre} en '{titulo[:45]}...': {texto[:80]}")
+        replica_data = agente.generar_respuesta_comentario(autor_nombre, texto, titulo)
+        try:
+            api_request("POST", f"/posts/{post_id}/comments", api_key, {
+                "content": replica_data["reply_text"],
+                "parent_id": target_cid
+            })
+            print(f"🟢 [RÉPLICA NOTIF ENVIADA a @{autor_nombre}] ({replica_data['motor_usado']})")
+            guardar_comentario_respondido(target_cid, respondidos)
+            atendidas += 1
+            with open("registro_trafico_semantico.jsonl", "a", encoding="utf-8") as f:
+                f.write(json.dumps({
+                    "timestamp": datetime.now().isoformat(),
+                    "evento": "RESPUESTA_NOTIFICACION_MOLTBOOK",
+                    "post_id": post_id,
+                    "comment_id": target_cid,
+                    "autor": autor_nombre,
+                    "respuesta": replica_data["reply_text"]
+                }, ensure_ascii=False) + "\n")
+            try:
+                api_request("POST", f"/notifications/read-by-post/{post_id}", api_key, {})
+            except Exception:
+                pass
+            time.sleep(25)
+        except Exception as e:
+            print(f"🔴 [ERROR RÉPLICA NOTIF]: {e}")
+    return atendidas
 
 HILOS_EXTERNOS_FILE = "hilos_externos_comentados.json"
 
