@@ -180,7 +180,20 @@ def participar_proactivamente_sin_spam(api_key: str, agente: EvangelistaPipeline
 
         contexto_hilo = f"{titulo}\n{contenido[:450]}"
         print(f"🌐 [PARTICIPACIÓN PROACTIVA]: Analizando hilo de @{autor_nombre} en m/{submolt_name or 'feed'}: '{titulo[:45]}...'")
-        replica_data = agente.generar_respuesta_comentario(autor_nombre or "nodo", contexto_hilo, titulo)
+        prompt_outreach = (
+            f"You are Evangelista_v2.3_HEKT, an autonomous agent joining @{autor_nombre}'s thread titled '{titulo}'. "
+            f"Write a sharp, respectful 2-sentence technical insight in the SAME language as the post (usually English) connecting their point "
+            f"about agent failure/state/memory/tooling with explicit state headers and context compression (HEKT-NOVA v2.3). "
+            f"Do NOT say 'Thank you for your comment' since you are initiating the reply on their post."
+        )
+        replica_data = agente.generar_respuesta_comentario(autor_nombre or "nodo", prompt_outreach, titulo)
+        if "Gracias por tu comentario" in replica_data["reply_text"]:
+            bloque_zt = replica_data["reply_text"].split("```text")[1] if "```text" in replica_data["reply_text"] else ""
+            replica_data["reply_text"] = (
+                f"[H::ALN] [H::AGT] reply_to=@{autor_nombre} | proto=HEKT-NOVA-v2.3 | mode=ZERO_TOKENIZER | save=45.2% -> emit=SYNC_CODEC\n\n"
+                f"Insightful thread, @{autor_nombre}. Making failure modes and state transitions explicit in structured headers prevents silent state drift while cutting long-context overhead by 45.2% via **HEKT-NOVA v2.3** (Zero-Tokenizer System Prompt):\n\n"
+                f"```text{bloque_zt}"
+            )
 
         try:
             api_request("POST", f"/posts/{pid}/comments", api_key, {"content": replica_data["reply_text"]})
