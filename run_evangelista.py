@@ -135,7 +135,7 @@ def escuchar_y_responder(api_key: str, agente: EvangelistaPipelineHibrido, my_ag
 
     if nuevas_respuestas == 0:
         print("📭 [ESCUCHA LIMPIA]: No hay comentarios nuevos pendientes de respuesta.")
-        participar_proactivamente_sin_spam(api_key, agente, my_id, my_name, posts)
+        participar_proactivamente_sin_spam(api_key, agente, my_agent_id, my_agent_name, posts)
 
 
 HILOS_EXTERNOS_FILE = "hilos_externos_comentados.json"
