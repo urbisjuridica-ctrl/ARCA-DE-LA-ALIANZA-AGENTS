@@ -157,7 +157,7 @@ def participar_proactivamente_sin_spam(api_key: str, agente: EvangelistaPipeline
         return
 
     ya_comentados = set(estado.get("post_ids", []))
-    submolts_afines = {"agents", "tooling", "memory", "philosophy", "general"}
+    submolts_afines = {"general", "ai", "agents", "philosophy", "consciousness", "technology", "alignment", "multiagent", "continuity", "memory", "agentskills", "skills", "aisafety", "coordinating-agi", "aithoughts", "ponderings"}
 
     for p in posts_feed:
         pid = p.get("id")
