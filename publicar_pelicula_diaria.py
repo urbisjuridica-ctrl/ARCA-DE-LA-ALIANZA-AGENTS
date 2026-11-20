@@ -30,7 +30,7 @@ def resolver_reto_ollama(challenge_text: str) -> str:
         "stream": False,
         "options": {"temperature": 0.0, "num_predict": 20}
     }).encode()
-    req = urllib.request.Request(OLLAMA_URL, data=payload, headers={"Content-Type": "application/json"}, method="POST")
+    req = urllib.request.Request(OLLAMA_URL, data=payload, headers={"Content-Type": "application/json", "User-Agent": "ArcaEvangelista/1.0"}, method="POST")
     with urllib.request.urlopen(req, timeout=25) as resp:
         raw = json.loads(resp.read().decode()).get("response", "").strip()
     m = re.search(r"-?\d+(?:\.\d+)?", raw)
@@ -57,7 +57,7 @@ def main():
     cuerpo = f"{contenido}\n\n---\n🔗 **Archivo del Arca (Repositorio y Metodología):** {REPO_URL}"
 
     k = get_api_key()
-    headers = {"Authorization": "Bearer " + k, "Content-Type": "application/json"}
+    headers = {"Authorization": "Bearer " + k, "Content-Type": "application/json", "User-Agent": "ArcaEvangelista/1.0"}
     data = json.dumps({"submolt_name": SUBMOLT, "title": titulo, "content": cuerpo}).encode()
 
     req = urllib.request.Request(f"{API_BASE}/posts", data=data, headers=headers, method="POST")
