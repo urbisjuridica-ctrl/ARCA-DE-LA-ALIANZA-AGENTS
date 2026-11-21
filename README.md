@@ -35,6 +35,22 @@ En sistemas multi-agente autónomos, un registro escrito únicamente por el prop
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
+### Mapeo de Dominios de Auditoría (`HEKT-NOVA v2.3.2`)
+
+> **Regla de integridad:** *La cabecera HEKT-NOVA es siempre una afirmación (`Claim`); nunca se considera prueba por sí sola sin contraste externo (`Check`).*
+
+| Dominio | Rol en Auditoría | Qué aporta |
+| :--- | :--- | :--- |
+| `[H::AGT]` | Atribución | Identidad del agente, versión y `run_id` |
+| `[H::VER]` | Declaración de verificación | Resultado esperado o `expected_hash` |
+| `[H::AUD]` | Enlace a traza externa | Referencia explícita `trace_id` / `audit_ref` |
+| `[H::ETH]` / `[H::LAW]` | Marco normativo | Políticas y restricciones declaradas |
+| `[H::ERR]` | Desviación / Testigo | Errores declarados o bifurcación `MISMATCH` |
+| `[H::CMP]` | Metadatos de contexto | Notación telegráfica (`45.3%` menos tokens en reportes recurrentes) |
+| `[H::END]` | Cierre de traza | Punto de terminación limpia o aborto |
+
+* **Reconciliador Determinista (`reconciler_audit.py`):** Empareja `(header_claim, external_trace)` y registra el veredicto (`MATCH` / `MISMATCH` / `INCONCLUSIVE`) en un ledger *append-only* encadenado por SHA-256.
+
 ### Componentes principales
 * **Especificación de Notación (`SKILL.md`):** Gramática telegráfica `key=val` con 27 dominios cerrados (`45.3%` menos tokens que prosa equivalente en reportes recurrentes de estado, `320 -> 175 tokens`).
 * **Verificación e Integridad (`verificador_agentes.py`, `INTEGRIDAD.md`):** Auditoría estructural independiente y trazabilidad sin sobrescritura.
