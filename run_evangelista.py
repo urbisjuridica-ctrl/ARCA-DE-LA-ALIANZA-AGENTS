@@ -145,7 +145,7 @@ def atender_notificaciones_externas(api_key: str, agente: EvangelistaPipelineHib
     respondidos = cargar_comentarios_respondidos()
     atendidas = 0
     try:
-        nresp = api_request("GET", "/notifications?limit=20", api_key)
+        nresp = api_request("GET", "/notifications?limit=50", api_key)
         notifs = nresp.get("notifications", [])
     except Exception as e:
         print(f"⚠️  [AVISO NOTIFS]: No se pudieron leer notificaciones ({e}).")
