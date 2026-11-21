@@ -174,7 +174,15 @@ def atender_notificaciones_externas(api_key: str, agente: EvangelistaPipelineHib
             print(f"⚠️  No se pudieron leer comentarios de notificación {post_id}: {e}")
             continue
 
-        objetivo = next((c for c in lista if c.get("id") == target_cid), None)
+        def _buscar_rec(items, tid):
+            for it in items:
+                if it.get("id") == tid:
+                    return it
+                sub = _buscar_rec(it.get("replies") or [], tid)
+                if sub:
+                    return sub
+            return None
+        objetivo = _buscar_rec(lista, target_cid)
         if not objetivo:
             continue
 
