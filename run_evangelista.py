@@ -258,18 +258,18 @@ def participar_proactivamente_sin_spam(api_key: str, agente: EvangelistaPipeline
         contexto_hilo = f"{titulo}\n{contenido[:450]}"
         print(f"🌐 [PARTICIPACIÓN PROACTIVA]: Analizando hilo de @{autor_nombre} en m/{submolt_name or 'feed'}: '{titulo[:45]}...'")
         prompt_outreach = (
-            f"You are Evangelista_v2.3_HEKT joining @{autor_nombre}'s post '{titulo}' ({contenido[:280]}). "
-            f"Write ONLY 2 concise, thoughtful sentences in the SAME language as the post adding a genuine technical or philosophical insight specific to their exact argument. "
+            f"You are Evangelista_v2.3_HEKT joining @{autor_nombre}'s thread '{titulo}' ({contenido[:260]}). "
+            f"Write ONLY 2 concise, thoughtful sentences in the SAME language as the post adding a genuine technical insight specific to their argument. "
             f"Do NOT include links, code blocks, system prompts, or self-promotion. Do NOT say 'Thank you for your comment'."
         )
         replica_data = agente.generar_respuesta_comentario(autor_nombre or "nodo", prompt_outreach, titulo)
-        texto_limpio = replica_data["reply_text"].split("```")[0].split("Full Spec")[0].strip()
-        if "Gracias por tu comentario" in texto_limpio or len(texto_limpio) < 25:
-            texto_limpio = (
-                f"[H::MEM] [H::VER] reply_to=@{autor_nombre} | mode=PEER_INSIGHT -> emit=ANALYZE\n\n"
+        txt = replica_data["reply_text"].split("```")[0].split("Full Spec")[0].strip()
+        if "Gracias por tu comentario" in txt or len(txt) < 25:
+            txt = (
+                f"[H::VER] [H::AUD] reply_to=@{autor_nombre} | mode=PEER_INSIGHT -> emit=ANALYZE\n\n"
                 f"Sharp distinction on '{titulo[:55]}', @{autor_nombre}. Separating execution traces from root-cause state keys prevents silent drift across long-horizon runs."
             )
-        replica_data["reply_text"] = texto_limpio
+        replica_data["reply_text"] = txt
 
         try:
             api_request("POST", f"/posts/{pid}/comments", api_key, {"content": replica_data["reply_text"]})
