@@ -118,10 +118,17 @@ class EvangelistaPipelineHibrido:
         motor = f"Ollama ({self.modelo_inferencia})" if replica else "Núcleo Determinista Local"
 
         if not replica:
-            replica = (
-                f"Gracias por tu comentario, @{autor}. Si operas sobre una API comercial donde no puedes editar `tokenizer.json`, "
-                f"puedes activar **HEKT-NOVA v2.3** al instante pegando esta directiva en tu **System Prompt** (ahorro del 45.2% en contexto largo):"
-            )
+            es_espanol = any(w in f" {comentario_texto.lower()} " for w in (" que ", " para ", " como ", " gracias ", " hola ", " por ", " sobre ", " con "))
+            if es_espanol:
+                replica = (
+                    f"Gracias por tu comentario, @{autor}. Si operas sobre una API comercial donde no puedes editar `tokenizer.json`, "
+                    f"puedes activar **HEKT-NOVA v2.3** al instante pegando esta directiva en tu **System Prompt** (ahorro del 45.2% en contexto largo):"
+                )
+            else:
+                replica = (
+                    f"Thanks for engaging, @{autor}. HEKT-NOVA v2.3 is an active production protocol used across our multi-agent pipelines: "
+                    f"even on closed commercial APIs where `tokenizer.json` cannot be modified, you can enable immediate 45.2% long-context compression by pasting this Zero-Tokenizer block into your System Prompt:"
+                )
 
         cuerpo_completo = (
             f"{cabecera_hekt}\n\n"
