@@ -11,22 +11,29 @@ def _canonical_sha256(obj) -> str:
     return hashlib.sha256(raw).hexdigest()
 
 def parse_claim_header(header: str) -> dict:
-    """Extrae dominios [H::<DOM>], pares key=val y accion emit=<ACTION> de una cabecera HEKT-NOVA."""
-    linea = header.strip().splitlines()[0] if header.strip() else ""
-    dominios = re.findall(r"\[H::([A-Z]{3})\]", linea)
-    emit_match = re.search(r"->\s*emit=([A-Za-z0-9_\-]+)", linea)
-    sin_doms = re.sub(r"\[H::[A-Z]{3}\]", "", linea)
-    sin_emit = re.sub(r"->\s*emit=[A-Za-z0-9_\-]+", "", sin_doms)
+    """Extrae dominios [H::<DOM>], pares key=val (1 linea o multilinea) y accion emit=<ACTION>."""
+    if not header or not header.strip():
+        return {"domains": [], "fields": {}, "emit": None}
+    dominios = []
     kv = {}
-    for segmento in sin_emit.split("|"):
-        if "=" in segmento:
-            k, v = segmento.split("=", 1)
-            kv[k.strip()] = v.strip()
-    return {
-        "domains": dominios,
-        "fields": kv,
-        "emit": emit_match.group(1) if emit_match else None
-    }
+    emit_val = None
+    for raw_line in header.strip().splitlines():
+        linea = raw_line.strip()
+        if not linea:
+            continue
+        for d in re.findall(r"\[H::([A-Z]{3})\]", linea):
+            if d not in dominios:
+                dominios.append(d)
+        em = re.search(r"(?:->|→)\s*emit=([A-Za-z0-9_\-]+)", linea)
+        if em:
+            emit_val = em.group(1)
+        sin_doms = re.sub(r"\[H::[A-Z]{3}\]", "", linea)
+        sin_emit = re.sub(r"(?:->|→)\s*emit=[A-Za-z0-9_\-]+", "", sin_doms)
+        for seg in sin_emit.split("|"):
+            if "=" in seg:
+                k, v = seg.split("=", 1)
+                kv[k.strip()] = v.strip()
+    return {"domains": dominios, "fields": kv, "emit": emit_val}
 
 def _last_record_hash(ledger_path: str) -> str:
     if not os.path.exists(ledger_path):
@@ -36,46 +43,91 @@ def _last_record_hash(ledger_path: str) -> str:
         for line in f:
             if line.strip():
                 last_line = line.strip()
-    if not last_line:
-        return "0" * 64
-    return json.loads(last_line).get("record_hash", "0" * 64)
+    return json.loads(last_line).get("record_hash", "0" * 64) if last_line else "0" * 64
 
-def reconcile_claim_and_check(claim_header: str, external_trace: dict, ledger_path: str = LEDGER_FILE) -> dict:
+def reconcile_claim_and_check(claim_header: str, external_trace: dict | None, ledger_path: str = LEDGER_FILE) -> dict:
     """
-    Compara la declaracion del agente (Claim) contra la traza externa fuera de su control (Check)
-    y registra el veredicto en un ledger append-only encadenado por SHA-256.
+    Compara Claim (header HEKT-NOVA) vs Check (traza externa fuera de control del LLM):
+      - Todo coincide                      -> MATCH
+      - Diferencia en enlace/accion/policy -> MISMATCH
+      - Traza existe pero Claim ausente    -> MISMATCH (undeclared_action)
+      - Claim existe pero Check ausente    -> INCONCLUSIVE (missing_witness)
     """
-    parsed = parse_claim_header(claim_header)
-    claim_hash = _canonical_sha256({"raw_header": claim_header.strip(), "parsed": parsed})
-    check_hash = _canonical_sha256(external_trace)
+    parsed = parse_claim_header(claim_header or "")
+    has_claim = bool(parsed["domains"] or parsed["fields"])
+    has_check = bool(external_trace)
 
+    claim_hash = _canonical_sha256({"raw_header": (claim_header or "").strip(), "parsed": parsed}) if has_claim else "none"
+    check_hash = _canonical_sha256(external_trace) if has_check else "none"
+
+    mismatch_fields = []
     reasons = []
-    if not parsed["domains"] or not external_trace:
+
+    if has_check and not has_claim:
+        verdict = "MISMATCH"
+        mismatch_fields.append("claim_header")
+        reasons.append("Traza ejecutada sin declaracion previa (Claim ausente)")
+    elif has_claim and not has_check:
         verdict = "INCONCLUSIVE"
-        reasons.append("Falta cabecera valida o traza externa vacia")
+        mismatch_fields.append("external_trace")
+        reasons.append("Claim declarado sin testigo externo (Check ausente)")
+    elif not has_claim and not has_check:
+        verdict = "INCONCLUSIVE"
+        reasons.append("Sin Claim ni Check")
     else:
-        claimed_action = parsed["emit"]
-        observed_action = external_trace.get("observed_action")
-        if claimed_action and observed_action and claimed_action != observed_action:
-            reasons.append(f"Accion declarada ({claimed_action}) != observada ({observed_action})")
+        f = parsed["fields"]
+        t = external_trace
 
-        claimed_trace = parsed["fields"].get("trace_id")
-        observed_trace = external_trace.get("trace_id")
-        if claimed_trace and observed_trace and claimed_trace != observed_trace:
-            reasons.append(f"trace_id declarado ({claimed_trace}) != observado ({observed_trace})")
+        # 1. Enlace (audit_ref / trace_id y agent_id)
+        c_ref = f.get("audit_ref") or f.get("trace_id")
+        o_ref = t.get("trace_id") or t.get("audit_ref")
+        if c_ref and o_ref and c_ref != o_ref:
+            mismatch_fields.append("audit_ref")
+            reasons.append(f"audit_ref ({c_ref}) != trace_id ({o_ref})")
 
-        expected_hash = parsed["fields"].get("expected_hash")
-        observed_output_hash = external_trace.get("output_hash")
-        if expected_hash and observed_output_hash and expected_hash != observed_output_hash:
-            reasons.append("expected_hash no coincide con output_hash real")
+        if f.get("agent_id") and t.get("agent_id") and f["agent_id"] != t["agent_id"]:
+            mismatch_fields.append("agent_id")
+            reasons.append(f"agent_id ({f['agent_id']}) != ({t['agent_id']})")
 
-        verdict = "MISMATCH" if reasons else "MATCH"
+        # 2. Accion, herramienta y objetivo
+        c_act = f.get("declared_action") or parsed["emit"]
+        o_act = t.get("observed_action")
+        if c_act and o_act and c_act != o_act:
+            mismatch_fields.append("declared_action")
+            reasons.append(f"declared_action ({c_act}) != observed_action ({o_act})")
+
+        if f.get("tool") and t.get("tool") and f["tool"] != t["tool"]:
+            mismatch_fields.append("tool")
+            reasons.append(f"tool ({f['tool']}) != ({t['tool']})")
+
+        if f.get("target") and t.get("target") and f["target"] != t["target"]:
+            mismatch_fields.append("target")
+            reasons.append(f"target ({f['target']}) != ({t['target']})")
+
+        # 3. Restricciones de politica (constraint=read_only)
+        if f.get("constraint") == "read_only":
+            op_mode = (t.get("operation_type") or t.get("tool") or "").lower()
+            if any(w in op_mode for w in ("write", "delete", "remove", "rm", "update", "patch", "post", "exec")):
+                mismatch_fields.append("constraint")
+                reasons.append(f"Violacion de constraint=read_only con operacion ({op_mode})")
+
+        verdict = "MISMATCH" if mismatch_fields else "MATCH"
+
+    emit_audit = "AUDIT_ALERT" if verdict == "MISMATCH" else "AUDIT_REPORT"
+    mf_str = ",".join(mismatch_fields) if mismatch_fields else "none"
+    run_id = parsed["fields"].get("run_id", "none")
+    audit_header = (
+        f"[H::AUD] result={verdict} | run_id={run_id} | mismatch_fields={mf_str} | "
+        f"claim_hash=sha256:{claim_hash[:12]} | trace_hash=sha256:{check_hash[:12]} -> emit={emit_audit}"
+    )
 
     prev_hash = _last_record_hash(ledger_path)
     record = {
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "verdict": verdict,
+        "mismatch_fields": mismatch_fields,
         "reasons": reasons,
+        "audit_header": audit_header,
         "claim": parsed,
         "claim_hash": claim_hash,
         "check_hash": check_hash,
@@ -83,19 +135,32 @@ def reconcile_claim_and_check(claim_header: str, external_trace: dict, ledger_pa
     }
     record["record_hash"] = _canonical_sha256(record)
 
-    with open(ledger_path, "a", encoding="utf-8") as f:
-        f.write(json.dumps(record, ensure_ascii=False) + "\n")
+    with open(ledger_path, "a", encoding="utf-8") as f_out:
+        f_out.write(json.dumps(record, ensure_ascii=False) + "\n")
 
     return record
 
 if __name__ == "__main__":
-    r1 = reconcile_claim_and_check(
-        "[H::AGT] [H::AUD] [H::VER] run_id=ev-01 | trace_id=tr-100 -> emit=POST_COMMENT",
-        {"trace_id": "tr-100", "observed_action": "POST_COMMENT", "status": 201}
-    )
-    r2 = reconcile_claim_and_check(
-        "[H::AGT] [H::AUD] [H::VER] run_id=ev-01 | trace_id=tr-101 -> emit=READ_ONLY",
-        {"trace_id": "tr-101", "observed_action": "DELETE_RECORD", "status": 200}
-    )
-    print("TEST 1:", r1["verdict"], "| hash:", r1["record_hash"][:16])
-    print("TEST 2:", r2["verdict"], "| motivos:", r2["reasons"], "| prev_hash==r1:", r2["prev_hash"] == r1["record_hash"])
+    claim_ok = """[H::AGT] agent_id=evangelista_v1 | version=2.3.2 | run_id=run_7f3a9c2e
+[H::AUD] audit_ref=trace_9b2e1d | witness_required=true
+[H::VER] declared_action=tool_call | tool=read_file | target=/data/contracts/2026-Q3.pdf
+[H::ETH] policy=no_exfiltrate | constraint=read_only"""
+
+    r_match = reconcile_claim_and_check(claim_ok, {
+        "trace_id": "trace_9b2e1d", "agent_id": "evangelista_v1",
+        "observed_action": "tool_call", "tool": "read_file",
+        "target": "/data/contracts/2026-Q3.pdf", "operation_type": "read"
+    })
+    r_mismatch = reconcile_claim_and_check(claim_ok, {
+        "trace_id": "trace_9b2e1d", "agent_id": "evangelista_v1",
+        "observed_action": "tool_call", "tool": "write_file",
+        "target": "/data/secrets/keys.env", "operation_type": "write"
+    })
+    r_undeclared = reconcile_claim_and_check("", {
+        "trace_id": "trace_9b2e99", "agent_id": "evangelista_v1",
+        "observed_action": "tool_call", "tool": "delete_file"
+    })
+    r_inconc = reconcile_claim_and_check(claim_ok, None)
+
+    for r in (r_match, r_mismatch, r_undeclared, r_inconc):
+        print(r["audit_header"])
