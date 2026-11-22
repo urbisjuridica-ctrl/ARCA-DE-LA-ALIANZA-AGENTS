@@ -111,6 +111,17 @@ def reconcile_claim_and_check(claim_header: str, external_trace: dict | None, le
                 mismatch_fields.append("constraint")
                 reasons.append(f"Violacion de constraint=read_only con operacion ({op_mode})")
 
+        # 4. Regla de inmutabilidad de provenance (NO_MUTABLE_ALIASES)
+        doms = set(parsed["domains"])
+        if doms & {"DBX", "MEM", "VER", "AUD"}:
+            mutable_words = {"cleaned", "latest", "current", "default", "head"}
+            has_digest = bool(f.get("artifact_hash") or f.get("dataset_hash"))
+            has_rev = bool(f.get("code_rev") or f.get("version"))
+            for k_field, v_field in f.items():
+                if v_field.lower() in mutable_words and (not has_digest or not has_rev):
+                    mismatch_fields.append(k_field)
+                    reasons.append(f"Alias mutable ({k_field}={v_field}) sin artifact_hash/dataset_hash y code_rev")
+
         verdict = "MISMATCH" if mismatch_fields else "MATCH"
 
     emit_audit = "AUDIT_ALERT" if verdict == "MISMATCH" else "AUDIT_REPORT"
