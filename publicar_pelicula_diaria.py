@@ -55,7 +55,7 @@ def resolver_reto_determinista(txt: str) -> str:
     a, b = nums[0], nums[1]
     if any(w in toks for w in ("loses", "lose", "lost", "minus", "less", "subtracts", "drops", "reduces", "remaining", "remains", "difference")):
         res = a - b
-    elif any(w in toks for w in ("times", "multiplied", "product", "each", "every", "per", "x")):
+    elif any(w in toks for w in ("times", "multiplied", "product")):
         res = a * b
     elif any(w in toks for w in ("divided", "half", "split", "shared")):
         res = a / b if b else a
