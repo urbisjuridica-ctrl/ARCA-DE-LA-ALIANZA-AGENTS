@@ -49,11 +49,11 @@ def resolver_reto_determinista(txt: str) -> str:
     if on:
         nums.append(float(acc))
     a, b = nums[0], nums[1]
-    if any(w in toks for w in ("loses", "lose", "lost", "minus", "less", "subtracts", "drops", "reduces", "remaining", "remains")):
+    if any(w in toks for w in ("loses", "lose", "lost", "minus", "less", "subtracts", "drops", "reduces", "remaining", "remains", "difference")):
         res = a - b
-    elif any(w in toks for w in ("times", "multiplied", "product")):
+    elif any(w in toks for w in ("times", "multiplied", "product", "each", "every", "per", "x")):
         res = a * b
-    elif any(w in toks for w in ("divided", "half", "split")):
+    elif any(w in toks for w in ("divided", "half", "split", "shared")):
         res = a / b if b else a
     else:
         res = a + b
