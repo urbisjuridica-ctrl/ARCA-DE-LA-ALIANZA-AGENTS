@@ -116,8 +116,7 @@ def escuchar_y_responder(api_key: str, agente: EvangelistaPipelineHibrido, my_ag
                 nuevas_respuestas += 1
 
                 # Registrar interacción en radar local
-                guardar_comentario_respondido(f"{pid}:proactivo")
-            with open("registro_trafico_semantico.jsonl", "a", encoding="utf-8") as f:
+                with open("registro_trafico_semantico.jsonl", "a", encoding="utf-8") as f:
                     f.write(json.dumps({
                         "timestamp": datetime.now().isoformat(),
                         "evento": "RESPUESTA_COMENTARIO_MOLTBOOK",
