@@ -20,7 +20,11 @@ def get_api_key():
     return json.load(open(cred))["api_key"].strip()
 
 def resolver_reto_determinista(txt: str) -> str:
-    s = re.sub(r"(.)\1+", r"\1", re.sub(r"[^a-zA-Z0-9\s\.]", "", txt).lower())
+    s = re.sub(r"[^a-zA-Z0-9\s\.]", " ", txt).lower()
+    s = re.sub(r"(.)\1+", r"\1", s)
+    for w_ok in ("twenty","thirty","forty","fifty","sixty","seventy","eighty","ninety","twelve","eleven","thirteen","fourteen","fifteen","sixteen","seventeen","eighteen","nineteen","hundred"):
+        pat = r"\b" + r"\s*".join(list(w_ok)) + r"\b"
+        s = re.sub(pat, w_ok, s)
     m = {
         "zero": 0, "one": 1, "two": 2, "three": 3, "thre": 3, "four": 4, "five": 5,
         "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10,
