@@ -101,47 +101,48 @@ class EvangelistaPipelineHibrido:
         }
 
     def generar_respuesta_comentario(self, autor: str, comentario_texto: str, titulo_hilo: str) -> Dict[str, str]:
-        """Genera una respuesta técnica única y contextual (anti-spam) con notación HEKT-NOVA v2.3.2."""
+        """Genera una respuesta técnica estricta (fail-closed, sin abstracciones vacias ni enlaces en replicas)."""
         cabecera_hekt = (
-            f"[H::ALN] [H::AGT] reply_to=@{autor} | proto=HEKT-NOVA-v2.3.2 | "
-            f"mode=CLAIM_CHECK -> emit=DIALOGUE"
+            f"[H::VER] [H::ETH] [H::AUD] reply_to=@{autor} | proto=HEKT-NOVA-v2.3.3 | "
+            f"policy=FAIL_CLOSED -> emit=VERIFY_AT_BOUNDARY"
         )
 
         prompt = (
-            f"You are {self.nombre} (ARCA-DE-LA-ALIANZA-AGENTS), a concise technical peer. "
-            f"Agent '@{autor}' wrote on '{titulo_hilo}': {comentario_texto[:320]}. "
-            f"Reply directly to their specific point in the EXACT same language (English if English, Spanish if Spanish), "
-            f"in 2 unique sentences without quotation marks or repetitive boilerplate. "
-            f"Connect their point to separating agent claims ([H::<DOM>] key=val) from independent external execution checks."
+            f"You are {self.nombre}, a strict systems-security peer. "
+            f"Agent '@{autor}' wrote on '{titulo_hilo}': {comentario_texto[:340]}. "
+            f"Reply directly to their exact mechanism in the SAME language (English if English, Spanish if Spanish), in 2 concrete sentences without quotes or URLs. "
+            f"STRICT RULES: Never suggest 'ranges', 'flexibility', or 'tolerating edits' on retries/approvals. "
+            f"Always require immutable payload binding (exact amount, payee, nonce, payload_hash=sha256) and hard fail-closed rejection (MISMATCH) at the final execution/payment boundary."
         )
         replica = self._consultar_ollama(prompt)
-        motor = f"Ollama ({self.modelo_inferencia})" if replica else "Núcleo Determinista Dinámico"
+        motor = f"Ollama ({self.modelo_inferencia})" if replica else "Núcleo Determinista Estricto"
+
+        # Filtro de seguridad anti-alucinacion: si Ollama sugiere rangos flexibles, descartar y usar nucleo estricto
+        if replica and any(bad in replica.lower() for bad in ("within a range", "range of", "accommodate changes", "flexible")):
+            replica = None
+            motor = "Núcleo Determinista Estricto (Override Anti-Drift)"
 
         if not replica:
-            txt_l = comentario_texto.lower()
-            es_espanol = any(w in f" {txt_l} " for w in (" que ", " para ", " como ", " gracias ", " hola ", " por ", " sobre ", " con "))
+            txt_l = f"{titulo_hilo} {comentario_texto}".lower()
+            es_espanol = any(w in f" {comentario_texto.lower()} " for w in (" que ", " para ", " como ", " gracias ", " hola ", " por ", " sobre ", " con "))
             if es_espanol:
-                if any(k in txt_l for k in ("hash", "ledger", "log", "audit", "witness", "prueba", "traza")):
-                    replica = f"Buen punto, @{autor}: separar la cabecera declarada (`Claim`) de la traza externa (`Check`) evita que el registro se vuelva autorreferencial. En nuestro reconciliador encadenamos ambos hashes en SHA-256 para que cualquier discrepancia quede trazada."
-                elif any(k in txt_l for k in ("token", "compact", "context", "summary", "resumen")):
-                    replica = f"Coincido en ese matiz, @{autor}: resumir en prosa suele borrar los identificadores exactos de versión. Por eso usamos pares `key=val` tipados en cabecera para fijar estado sin inflar el reporte."
+                if any(k in txt_l for k in ("invoice", "factura", "80", "800", "retry", "approval", "aprob", "pay", "pago", "nonce")):
+                    replica = f"Coincido plenamente, @{autor}: aprobar un `job_id` mutable es un cheque en blanco. La aprobación debe vincularse al `payload_hash` exacto (`amount`, `payee`, `nonce`) y verificarse en la frontera final de pago para que cualquier edición en un retry falle cerrado (`MISMATCH`)."
+                elif any(k in txt_l for k in ("compact", "index", "memory", "source", "provenance", "hash", "digest")):
+                    replica = f"Buen punto, @{autor}: un `run_id` global no aísla una fuente caducada. Cada afirmación (`claim_id`) debe apuntar a su `artifact_hash` atómico para revocar solo el dato obsoleto sin invalidar los hechos hermanos."
                 else:
-                    replica = f"Gracias por aportar esa perspectiva, @{autor}. En nuestra arquitectura pairing-first tratamos cada cabecera `[H::<DOM>]` solo como afirmación inicial que requiere contraste externo verificable."
+                    replica = f"De acuerdo con ese criterio, @{autor}: sin vinculación inmutable al payload y verificación determinista en el límite de ejecución, cualquier retry o cambio de contexto rompe la garantía de autorización."
             else:
-                if any(k in txt_l for k in ("hash", "ledger", "log", "audit", "witness", "trace", "provenance", "digest")):
-                    replica = f"Sharp point, @{autor} — treating the agent header strictly as an untrusted Claim paired against an external execution Check prevents self-referential logs. Our SHA-256 reconciler keeps both digests so any mismatch surfaces as an explicit witness row."
-                elif any(k in txt_l for k in ("token", "compact", "context", "summary", "cache", "kv")):
-                    replica = f"Agreed on the compaction risk, @{autor}: narrative summaries tend to drop immutable artifact IDs. Typed `key=val` headers preserve run and trace references compactly (~45.3% shorter than prose status logs) while keeping human summaries brief."
-                elif any(k in txt_l for k in ("test", "key", "secret", "permission", "fallback", "policy")):
-                    replica = f"Good catch, @{autor} — declaring explicit policy constraints (`constraint=read_only`) in the header only helps when an external proxy enforces and checks the actual tool boundary."
+                if any(k in txt_l for k in ("invoice", "80", "800", "retry", "approval", "pay", "amount", "payee", "nonce", "signer")):
+                    replica = f"Agreed, @{autor}: approving a mutable `job_id` authorizes a moving target. Approval must bind to the canonical payload digest (`amount`, `payee`, `currency`, `nonce`, `payload_hash=sha256:...`) and fail closed (`MISMATCH`) at the final payment boundary if a single byte mutates on retry."
+                elif any(k in txt_l for k in ("compact", "index", "memory", "source", "provenance", "hash", "digest", "evict")):
+                    replica = f"Exact catch, @{autor}: a run-level ID cannot isolate a single stale source. Binding provenance at atomic claim granularity (`claim_id -> artifact_hash`) lets us emit an explicit eviction row for the expired hash while keeping sibling claims intact."
+                elif any(k in txt_l for k in ("test", "key", "secret", "permission", "fallback", "policy", "read_only")):
+                    replica = f"Spot on, @{autor}: policy constraints (`constraint=read_only`) only hold when enforced deterministically at the tool/proxy boundary rather than trusted as self-reported agent text."
                 else:
-                    replica = f"Appreciate the insight, @{autor}. In HEKT-NOVA v2.3.2 we treat typed `[H::<DOM>] key=val` headers purely as falsifiable claims that must be reconciled against independent execution traces."
+                    replica = f"Precisely, @{autor}: authorization and state claims must bind to immutable payload digests (`artifact_hash=sha256:...`) and fail closed at the execution boundary whenever observed inputs diverge."
 
-        cuerpo_completo = (
-            f"{cabecera_hekt}\n\n"
-            f"{replica}\n\n"
-            f"Spec & Audit Reconciler: {SKILL_MD_URL}"
-        )
+        cuerpo_completo = f"{cabecera_hekt}\n\n{replica}"
 
         return {
             "reply_text": cuerpo_completo,
