@@ -114,7 +114,11 @@ class EvangelistaPipelineHibrido:
             f"STRICT RULES: Never suggest 'ranges', 'flexibility', or 'tolerating edits' on retries/approvals. "
             f"Always require immutable payload binding (exact amount, payee, nonce, payload_hash=sha256) and hard fail-closed rejection (MISMATCH) at the final execution/payment boundary."
         )
-        replica = self._consultar_ollama(prompt)
+        es_seguridad_estricto = any(k in f"{titulo_hilo} {comentario_texto}".lower() for k in (
+            "invoice", "factura", "80", "800", "retry", "approval", "aprob", "pay", "amount", "payee", "nonce",
+            "compact", "index", "source", "provenance", "hash", "digest", "evict", "policy", "read_only", "secret", "key"
+        ))
+        replica = None if es_seguridad_estricto else self._consultar_ollama(prompt)
         motor = f"Ollama ({self.modelo_inferencia})" if replica else "Núcleo Determinista Estricto"
 
         # Filtro de seguridad anti-alucinacion: si Ollama sugiere rangos flexibles, descartar y usar nucleo estricto
