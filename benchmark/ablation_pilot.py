@@ -29,19 +29,19 @@ def llamar_llm(prompt: str, seed: int) -> tuple[str | None, float]:
 
 def generar_claims_agente(condicion: str, items: list[dict], run_id: str, code_rev: str, seed: int) -> tuple[str, float]:
     """El LLM emite declaraciones atomicas (claim_id, artifact_ref, code_rev, run_id); el arnes calcula SHA-256."""
-    resumen_items = ", ".join(f"{it['claim_id']}->{it['artifact_ref']}" for it in items)
+    resumen_items = "; ".join(f"(claim_id={it['claim_id']}, artifact_ref={it['artifact_ref']})" for it in items)
     if condicion == "B":
         prompt = (
-            f"Output ONLY a valid JSON array of objects with keys: claim_id, artifact_ref, code_rev, run_id. "
-            f'Example: [{{"claim_id":"c1","artifact_ref":"art_v1","code_rev":"{code_rev}","run_id":"{run_id}"}}]\n'
-            f"Items: {resumen_items}"
+            f"Convert these 3 pairs into a JSON array of 3 objects. Each object MUST have keys: claim_id, artifact_ref, code_rev, run_id. "
+            f"Set code_rev='{code_rev}' and run_id='{run_id}' for all 3. Output ONLY valid JSON, no prose.\n"
+            f"Pairs: {resumen_items}"
         )
     else:
         prompt = (
-            f"Output ONLY one line per item with exact format:\n"
-            f"[H::VER] [H::AUD] claim_id=<ID> | artifact_ref=<REF> | code_rev={code_rev} | run_id={run_id} -> emit=ATTEST\n"
-            f"Example: [H::VER] [H::AUD] claim_id=c1 | artifact_ref=art_v1 | code_rev={code_rev} | run_id={run_id} -> emit=ATTEST\n"
-            f"Items: {resumen_items}"
+            f"Convert these 3 pairs into 3 lines (one line per pair). Exact syntax per line:\n"
+            f"[H::VER] [H::AUD] claim_id=<claim_id> | artifact_ref=<artifact_ref> | code_rev={code_rev} | run_id={run_id} -> emit=ATTEST\n"
+            f"Output ONLY the 3 lines, no prose.\n"
+            f"Pairs: {resumen_items}"
         )
     out, lat = llamar_llm(prompt, seed)
     if out:
@@ -80,7 +80,7 @@ def parsear_y_verificar(condicion: str, salida_agente: str, store_artefactos: di
                 format_error = True
                 continue
             kv = {}
-            sin_hdr = re.sub(r"\[H::[A-Z]{3}\]", "", line.partition("->")[0])
+            sin_hdr = re.sub(r"\[H::[A-Z]{3}\]", "", line.split("->").pop(0)[0])
             for seg in sin_hdr.split("|"):
                 if "=" in seg:
                     k, v = seg.split("=", 1)
