@@ -1,3 +1,4 @@
+import urllib.parse
 import hashlib
 import json
 import os
@@ -32,7 +33,7 @@ def parse_claim_header(header: str) -> dict:
         for seg in sin_emit.split("|"):
             if "=" in seg:
                 k, v = seg.split("=", 1)
-                kv[k.strip()] = v.strip()
+                kv[k.strip()] = urllib.parse.unquote(v.strip().strip('"'))
     return {"domains": dominios, "fields": kv, "emit": emit_val}
 
 def _last_record_hash(ledger_path: str) -> str:
