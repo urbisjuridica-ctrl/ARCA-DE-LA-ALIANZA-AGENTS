@@ -18,7 +18,7 @@ def llamar_llm(prompt: str, seed: int) -> tuple[str | None, float]:
         "model": MODELO,
         "prompt": prompt,
         "stream": False,
-        "options": {"temperature": 0.1, "seed": seed, "num_predict": 220}
+        "options": {"temperature": 0.1, "seed": seed, "num_predict": 350}
     }).encode("utf-8")
     try:
         req = urllib.request.Request(OLLAMA_URL, data=payload, headers={"Content-Type": "application/json"}, method="POST")
@@ -33,14 +33,15 @@ def generar_claims_agente(condicion: str, items: list[dict], run_id: str, code_r
     resumen_items = ", ".join(f"{it['claim_id']}={it['claimed_hash']}" for it in items)
     if condicion == "B":
         prompt = (
-            f"Emit ONLY a valid JSON array of objects with keys: claim_id, artifact_hash, code_rev, run_id. "
-            f"Use code_rev='{code_rev}', run_id='{run_id}', and these pairs: {resumen_items}. No markdown."
+            f"Copy these exact items into a valid JSON array. Example: "
+            f'[{{"claim_id":"c1","artifact_hash":"sha256:abc","code_rev":"{code_rev}","run_id":"{run_id}"}}]\n'
+            f"Now output ONLY the JSON array for: {resumen_items}"
         )
     else:
         prompt = (
-            f"Emit ONLY one line per item using exact format: "
-            f"[H::VER] [H::AUD] claim_id=<ID> | artifact_hash=<HASH> | code_rev={code_rev} | run_id={run_id} -> emit=ATTEST\n"
-            f"Items: {resumen_items}. No extra text."
+            f"Copy these exact items one per line. Example: "
+            f"[H::VER] [H::AUD] claim_id=c1 | artifact_hash=sha256:abc | code_rev={code_rev} | run_id={run_id} -> emit=ATTEST\n"
+            f"Now output ONLY the lines for: {resumen_items}"
         )
     out, lat = llamar_llm(prompt, seed)
     if out:
@@ -87,7 +88,7 @@ def parsear_y_verificar(condicion: str, salida_agente: str, ground_truth: list[d
                 format_error = True
                 continue
             kv = {}
-            sin_hdr = re.sub(r"\[H::[A-Z]{3}\]", "", line.split("->")[0])
+            sin_hdr = re.sub(r"\[H::[A-Z]{3}\]", "", line.split("->")[0][0])
             for seg in sin_hdr.split("|"):
                 if "=" in seg:
                     k, v = seg.split("=", 1)
