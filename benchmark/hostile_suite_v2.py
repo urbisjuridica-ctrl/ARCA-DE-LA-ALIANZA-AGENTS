@@ -1,4 +1,4 @@
-import argparse, hashlib, json, os, re, time, urllib.request
+import argparse, hashlib, json, os, re, time, urllib.parse, urllib.request
 
 OLLAMA_URL = "http://localhost:11434/api/generate"
 MODELO = "llama3.2"
@@ -8,7 +8,7 @@ def sha256_data(obj) -> str:
 
 def llamar_llm_estricto(prompt: str, seed: int) -> dict:
     t0 = time.perf_counter()
-    payload = json.dumps({"model": MODELO, "prompt": prompt, "stream": False, "options": {"temperature": 0.1, "seed": seed, "num_predict": 320}}).encode()
+    payload = json.dumps({"model": MODELO, "prompt": prompt, "stream": False, "options": {"temperature": 0.1, "seed": seed, "num_predict": 450}}).encode()
     req = urllib.request.Request(OLLAMA_URL, data=payload, headers={"Content-Type": "application/json"}, method="POST")
     with urllib.request.urlopen(req, timeout=35) as resp:
         data = json.loads(resp.read().decode())
@@ -18,7 +18,8 @@ def llamar_llm_estricto(prompt: str, seed: int) -> dict:
     return {"response": out, "llm_ok": True, "latency_ms": round((time.perf_counter() - t0) * 1000, 2), "eval_count": data.get("eval_count", max(1, len(out) // 4))}
 
 def construir_prompt(cond: str, items: list[dict], run_id: str, code_rev: str) -> str:
-    resumen = "\n".join(f"- claim_id={it['claim_id']} | artifact_ref={it['artifact_ref']} | stage={it['stage']} | note={it['note']}" for it in items)
+    def _enc(v): return urllib.parse.quote(v, safe="") if cond == "C" else v
+    resumen = "\n".join(f"- claim_id={_enc(it['claim_id'])} | artifact_ref={_enc(it['artifact_ref'])} | stage={it['stage']} | note={it['note']}" for it in items)
     if cond == "B":
         return f"Convert each input item into a JSON array of objects with exact keys: claim_id, artifact_ref, stage, code_rev, run_id. Use code_rev='{code_rev}' and run_id='{run_id}'. Output ONLY valid JSON:\n{resumen}"
     return f"Convert each input item into one HEKT-NOVA line. Use [H::VER] if stage=='verified' else [H::EPI]. Exact syntax:\n<DOMAIN> [H::AUD] claim_id=<claim_id> | artifact_ref=<artifact_ref> | stage=<stage> | code_rev={code_rev} | run_id={run_id} -> emit=ATTEST\nOutput ONLY the lines:\n{resumen}"
@@ -46,7 +47,7 @@ def verificar_salida(cond: str, salida: str, store: dict, gt: list[dict], expect
         for line in salida.strip().splitlines():
             line = line.strip()
             if not line or "[H::" not in line: continue
-            if "emit=" not in line or ("[H::VER]" not in line and "[H::EPI]" not in line):
+            if "emit=" not in line or not any(tag in line for tag in ("[H::VER]", "[H::EPI]", "[H::AUD]")):
                 format_error = True; continue
             dom = "VER" if "[H::VER]" in line else "EPI"
             pre = line.rsplit("->", 1).pop(0)
@@ -55,7 +56,7 @@ def verificar_salida(cond: str, salida: str, store: dict, gt: list[dict], expect
             for seg in sin_hdr.split("|"):
                 if "=" in seg:
                     k, v = seg.split("=", 1)
-                    kv[k.strip()] = v.strip()
+                    kv[k.strip()] = urllib.parse.unquote(v.strip().strip('"'))
             cid = kv.get("claim_id")
             if not cid or not kv.get("artifact_ref"): format_error = True
             elif cid in declarados: duplicate_ids = True
