@@ -76,7 +76,7 @@ def parsear_y_verificar(condicion: str, salida_agente: str, store_artefactos: di
             line = line.strip()
             if not line or "[H::" not in line:
                 continue
-            if "[H::VER]" not in line or "-> emit=" not in line:
+            if "[H::VER]" not in line or "emit=" not in line:
                 format_error = True
                 continue
             kv = {}
