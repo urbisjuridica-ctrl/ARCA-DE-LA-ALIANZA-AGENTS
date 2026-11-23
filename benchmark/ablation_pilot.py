@@ -80,7 +80,7 @@ def parsear_y_verificar(condicion: str, salida_agente: str, store_artefactos: di
                 format_error = True
                 continue
             kv = {}
-            sin_hdr = re.sub(r"\[H::[A-Z]{3}\]", "", line.split("->")[0])
+            sin_hdr = re.sub(r"\[H::[A-Z]{3}\]", "", line.partition("->")[0])
             for seg in sin_hdr.split("|"):
                 if "=" in seg:
                     k, v = seg.split("=", 1)
