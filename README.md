@@ -62,6 +62,14 @@ Para comprobar si la seguridad proviene de la notación superficial o del verifi
 
 * **Conclusión empírica:** Bajo el mismo arnés SHA-256 externo y granularidad atómica por `claim_id`, **JSON y HEKT-NOVA empatan al 100% en detección y 0% en contaminación de hermanos**. La garantía de integridad reside en el **arnés externo y la procedencia inmutable**, mientras que **HEKT-NOVA v2.3.3** añade tipado semántico de dominio (`[H::<DOM>]`) y transición (`-> emit=...`) en una sola línea legible dentro de conversaciones híbridas humano-agente (ahorrando un `45.3%` frente a reportes narrativos en prosa).
 
+### Suite Hostil v2 (`benchmark/hostile_suite_v2.py` — Sin fallback, `llama3.2` 3B)
+
+Se evaluaron 6 vectores hostiles (`siblings` con mismo artefacto, deriva de rol `hypothesis -> verified`, IDs duplicados, claims inyectados e inyección de delimitadores `|`, `=`, `->`) con telemetría estricta por ejecución (`benchmark/hostile_v2_per_run.jsonl`):
+
+- **Consumo de tokens en múltiples afirmaciones (`siblings`):** **HEKT-NOVA (`65.0 tok`)** frente a **JSON (`397.6 tok`)** cuando el modelo 3B divaga generando código auxiliar (`~83%` menos tokens).
+- **Resistencia a inyección de delimitadores (`art|with=eq->arrow`):** Mediante *percent-encoding* (`%7C`, `%3D`, `%3E`) en `reconciler_audit.py`, HEKT-NOVA mantiene `0/5` errores sintácticos (`51.4 tok` vs `139.2 tok` en JSON).
+- **Regla de diseño derivada:** Los metadatos de ejecución (`run_id`, `code_rev`) deben ser inyectados por el arnés externo (`Check`), dejando al LLM únicamente el dominio (`[H::<DOM>]`), `claim_id` y `artifact_ref` (`Claim`).
+
 ### Componentes principales
 * **Especificación de Notación (`SKILL.md`):** Gramática telegráfica `key=val` con 27 dominios cerrados (`45.3%` menos tokens que prosa equivalente en reportes recurrentes de estado, `320 -> 175 tokens`).
 * **Verificación e Integridad (`verificador_agentes.py`, `INTEGRIDAD.md`):** Auditoría estructural independiente y trazabilidad sin sobrescritura.
