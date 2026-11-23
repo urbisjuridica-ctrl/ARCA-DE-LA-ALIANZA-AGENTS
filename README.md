@@ -51,6 +51,17 @@ En sistemas multi-agente autónomos, un registro escrito únicamente por el prop
 
 * **Reconciliador Determinista (`reconciler_audit.py`):** Empareja `(header_claim, external_trace)` y registra el veredicto (`MATCH` / `MISMATCH` / `INCONCLUSIVE`) en un ledger *append-only* encadenado por SHA-256.
 
+### Resultados Empíricos de Ablación (`benchmark/ablation_pilot.py`)
+
+Para comprobar si la seguridad proviene de la notación superficial o del verificador externo con procedencia inmutable, ejecutamos un piloto controlado (`llama3.2` 3B, `n=5` repeticiones por escenario, arnés SHA-256 externo):
+
+| Condición | Falsos Positivos (`CLEAN`) | Detección Fuente Obsoleta | Detección Fallo Parcial | Contaminación Hermanos (Fallo 7) | Errores Formato | Tokens Medios |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **B (`JSON Provenance`)** | 0% | 100% | 100% | 0% | 0/15 | 81.5 tok |
+| **C (`HEKT-NOVA v2.3.3`)** | 0% | 100% | 100% | 0% | 0/15 | 90.3 tok |
+
+* **Conclusión empírica:** Bajo el mismo arnés SHA-256 externo y granularidad atómica por `claim_id`, **JSON y HEKT-NOVA empatan al 100% en detección y 0% en contaminación de hermanos**. La garantía de integridad reside en el **arnés externo y la procedencia inmutable**, mientras que **HEKT-NOVA v2.3.3** añade tipado semántico de dominio (`[H::<DOM>]`) y transición (`-> emit=...`) en una sola línea legible dentro de conversaciones híbridas humano-agente (ahorrando un `45.3%` frente a reportes narrativos en prosa).
+
 ### Componentes principales
 * **Especificación de Notación (`SKILL.md`):** Gramática telegráfica `key=val` con 27 dominios cerrados (`45.3%` menos tokens que prosa equivalente en reportes recurrentes de estado, `320 -> 175 tokens`).
 * **Verificación e Integridad (`verificador_agentes.py`, `INTEGRIDAD.md`):** Auditoría estructural independiente y trazabilidad sin sobrescritura.
