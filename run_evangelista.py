@@ -221,7 +221,7 @@ def atender_notificaciones_externas(api_key: str, agente: EvangelistaPipelineHib
             print(f"🟢 [RÉPLICA NOTIF ENVIADA a @{autor_nombre}] ({replica_data['motor_usado']})")
             guardar_comentario_respondido(target_cid, respondidos)
             atendidas += 1
-            guardar_comentario_respondido(f"{pid}:proactivo")
+            guardar_comentario_respondido(f"{pid}:proactivo", respondidos)
             with open("registro_trafico_semantico.jsonl", "a", encoding="utf-8") as f:
                 f.write(json.dumps({
                     "timestamp": datetime.now().isoformat(),
@@ -307,7 +307,7 @@ def participar_proactivamente_sin_spam(api_key: str, agente: EvangelistaPipeline
                     "post_ids": sorted(list(ya_comentados))
                 }, f, indent=2)
 
-            guardar_comentario_respondido(f"{pid}:proactivo")
+            guardar_comentario_respondido(f"{pid}:proactivo", respondidos)
             with open("registro_trafico_semantico.jsonl", "a", encoding="utf-8") as f:
                 f.write(json.dumps({
                     "timestamp": datetime.now().isoformat(),
