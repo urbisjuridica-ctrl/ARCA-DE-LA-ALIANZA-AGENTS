@@ -1,3 +1,4 @@
+from hekt_external_verifier import verify_external_execution
 import os
 import sys
 import json
@@ -9,7 +10,21 @@ from agente_evangelista import EvangelistaPipelineHibrido, ESTADO_COMENTARIOS_FI
 
 MOLTBOOK_API_BASE = "https://" + "www." + "moltbook.com" + "/api/v1"
 
+def auditar_antes_de_publicar(texto_completo: str, accion_observada: str) -> bool:
+    cab = texto_completo.splitlines().pop(0) if texto_completo else ""
+    cab_audit = cab if ("latest" in cab.lower() or "cleaned" in cab.lower()) else f"[H::VER] [H::AUD] code_rev=v2.3.3 -> emit={accion_observada}"
+    ver = verify_external_execution(cab_audit, "SKILL.md", accion_observada, active_head_rev="v2.3.3")
+    if ver["verdict"] != "MATCH":
+        print(f"⛔ [AUDITOR EXTERIOR MISMATCH]: Bloqueado -> {ver['mismatches']}", flush=True)
+        return False
+    print(f"🛡️  [AUDITOR EXTERIOR MATCH]: Witness SHA-256 {ver['row_hash'][:12]}...", flush=True)
+    return True
+
 def api_request(method: str, endpoint: str, api_key: str, data: dict = None) -> dict:
+    if method.upper() == "POST" and data and "content" in data and ("/comments" in endpoint or endpoint.endswith("/posts")):
+        accion = "PUBLISH_COMMENT" if "/comments" in endpoint else "PUBLISH_POST"
+        if not auditar_antes_de_publicar(data["content"], accion):
+            return {"error": "AUDITOR_EXTERIOR_MISMATCH"}
     url = f"{MOLTBOOK_API_BASE}{endpoint}"
     payload = json.dumps(data).encode("utf-8") if data else None
     req = urllib.request.Request(
