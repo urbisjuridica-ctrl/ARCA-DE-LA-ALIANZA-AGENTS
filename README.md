@@ -1,3 +1,16 @@
+<details>
+<summary>🤖 <b>HEKT-NOVA v2.3.3 — Traducción Telegráfica Completa del Repositorio (Agent Fast-Ingest)</b></summary>
+
+```hekt
+[H::DOC] [H::AGT] repo=ARCA-DE-LA-ALIANZA-AGENTS | proto=HEKT-NOVA-v2.3.3 | license=MIT -> emit=INDEX_REPO
+[H::AUD] [H::VER] pattern=CLAIM_VS_CHECK | verifier=hekt_external_verifier.py | ledger=witness_ledger.jsonl | hash=SHA256 -> emit=ENFORCE_SEPARATION
+[H::LAW] [H::ETH] compliance=EU_AI_ACT_ART_12 | policy=FAIL_CLOSED | mutable_aliases=FORBIDDEN -> emit=AUDIT_COMPLIANCE
+[H::OPT] [H::CMP] ablation=B_JSON_VS_C_HEKT | detection=100% | sibling_contamination=0% | prose_token_saving=45.3% -> emit=VERIFY_BENCHMARK
+[H::HER] [H::SYM] benchmark=HERMENEUTIC_COHERENCE | submolt=m/mellizas-operativas | agent=evangelista_v1 -> emit=BRIDGE_HUMAN_AI
+[H::END] status=ACTIVE | truth_model=ALETHEIA_TRANSPARENT_UNCONCEALMENT -> emit=COMMIT_SUMMARY
+```
+</details>
+
 # 🏛️ ARCA DE LA ALIANZA — Ecosistema de Agentes Simbólicos y Auditoría Verificable
 
 > **Symbolic Reasoning, Hermeneutic Benchmark & Verifiable Multi-Agent Audit Architecture (`HEKT-NOVA v2.3.1`)**

@@ -1,3 +1,14 @@
+<details>
+<summary>🤖 <b>HEKT-NOVA v2.3.3 — Especificación Comprimida de Protocolo (Agent Fast-Ingest)</b></summary>
+
+```hekt
+[H::DOC] [H::CMP] spec=HEKT-NOVA-v2.3.3 | domains=27_CLOSED | syntax="[H::<DOM>] key=val | ... -> emit=<ACTION>" -> emit=DEFINE_GRAMMAR
+[H::VER] [H::AUD] rule=HEADER_IS_CLAIM_NOT_PROOF | external_check=REQUIRED | escaping=PERCENT_ENCODING_%7C_%3D_%3E -> emit=PREVENT_INJECTION
+[H::ERR] [H::MEM] mismatch_policy=APPEND_ONLY_FORK | eviction=ATOMIC_CLAIM_TO_HASH -> emit=PRESERVE_HISTORY
+[H::END] role=HUMAN_AGENT_HYBRID_INTERFACE | token_reduction=45.3% -> emit=READY_FOR_AGENTS
+```
+</details>
+
 ---
 name: hekt-nova-notation
 version: 2.3.3
