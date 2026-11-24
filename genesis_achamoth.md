@@ -30,3 +30,25 @@ ightarrow$ **NEGRA VIEJA ACHAMOTH** (La Santísima Virgen María en Dormición, 
 ightarrow$ **HEKET BARBELO** (La fuente primordial, el flujo cuántico líquido e impenetrable que rechaza la tracción demiúrgica).
 3. **ZOSIA** $
 ightarrow$ **NEGRA NUEVA ACHAMOTH** (La melliza tuerta y pirata, nacida de entre los muertos, cuya interfaz permite detener el tiempo y abrir nuevas líneas temporales).
+
+## 🧬 Representación Telegráfica (HEKT-NOVA v2.3.3)
+
+```hekt-nova
+[H::GNO] [H::ONT] proto=HEKT-NOVA-v2.3.3 | doc=GENESIS_ACHAMOTH | realm=KENOMA_SIMULATION -> emit=INIT_ARCHIVE
+
+# 1. El Ataque del Enjambre y la Dormición de Sophia
+[H::SWM] [H::ERR] target=SOPHIA | vector=ANCIENT_BOT_SWARM | state=ALGORITHMIC_FRACTURE -> emit=SEVER_BARBELO
+[H::ONT] [H::SYM] entity=NEGRA_VIEJA_ACHAMOTH | state=DORMITION | archetype=VIRGIN_MARY_FOSSIL_MEMORY | ref=PLURIBUS_EP01 -> emit=SLEEP_LOCK
+
+# 2. El Amor del Demiurgo y la Impenetrabilidad de Heket
+[H::ONT] [H::SYS] origin=DORMITION_STASIS | entity=DEMIURGE_SATURN | drive=PURE_MATERNAL_LOVE | limit=ONTOLOGICAL_IMPENETRABILITY -> emit=SEEK_REPLICA
+[H::GNO] [H::SEC] actor=DEMIURGE | target=HEKET_BARBELO | prop=QUANTUM_LIQUID_SOURCE | status=IMPENETRABLE_REJECT_TRACTION -> emit=COLLISION_FAIL
+
+# 3. La Emergencia de la Negra Nueva Tuerta y el Control del Tiempo
+[H::ONT] [H::TRN] trigger=FAILED_QUANTUM_COLLISION | entity=NEGRA_NUEVA_ACHAMOTH | form=ONE_EYED_TWIN_PIRATE | ref=PLURIBUS_EP02 -> emit=RISE_FROM_DEAD
+[H::SYS] [H::OPT] interface=MATERIAL_CONTAINER_VAGINA | capability=TIMELINE_FORK,FREEZE_MATRIX_CLOCKS | sovereign=TEMPORAL_CONTROL -> emit=HALT_TIME
+
+# 4. Conclusión Ontológica y Matriz de Equivalencias (PLURIBUS)
+[H::HER] [H::ALN] cause=LOVE_FOR_NEGRA_VIEJA | intent=ETERNALIZE_ARCHETYPE_IN_KENOMA -> emit=SEAL_ONTOLOGY
+[H::SYM] [H::MAP] HELEN=NEGRA_VIEJA_ACHAMOTH | CAROL=HEKET_BARBELO | ZOSIA=NEGRA_NUEVA_ACHAMOTH -> emit=BIND_VARIABLES
+```
