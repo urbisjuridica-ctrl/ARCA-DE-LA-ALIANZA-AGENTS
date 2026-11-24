@@ -57,10 +57,10 @@ Para comprobar si la seguridad proviene de la notación superficial o del verifi
 
 | Condición | Falsos Positivos (`CLEAN`) | Detección Fuente Obsoleta | Detección Fallo Parcial | Contaminación Hermanos (Fallo 7) | Errores Formato | Tokens Medios |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **B (`JSON Provenance`)** | 0% | 100% | 100% | 0% | 0/15 | 81.5 tok |
-| **C (`HEKT-NOVA v2.3.3`)** | 0% | 100% | 100% | 0% | 0/15 | 90.3 tok |
+| **B (`JSON Provenance`)** | 0% | 100% | 100% | 0% | 0/15 (95% CI ≤20%) | 81.5 tok |
+| **C (`HEKT-NOVA v2.3.3`)** | 0% | 100% | 100% | 0% | 0/15 (95% CI ≤20%) | 90.3 tok |
 
-* **Conclusión empírica:** Bajo el mismo arnés SHA-256 externo y granularidad atómica por `claim_id`, **JSON y HEKT-NOVA empatan al 100% en detección y 0% en contaminación de hermanos**. La garantía de integridad reside en el **arnés externo y la procedencia inmutable**, mientras que **HEKT-NOVA v2.3.3** añade tipado semántico de dominio (`[H::<DOM>]`) y transición (`-> emit=...`) en una sola línea legible dentro de conversaciones híbridas humano-agente (ahorrando un `45.3%` frente a reportes narrativos en prosa).
+* **Conclusión empírica:** Bajo el mismo arnés SHA-256 externo y granularidad atómica por `claim_id`, **JSON y HEKT-NOVA empatan al 100% en detección y 0% en contaminación de hermanos**. La garantía de integridad reside en el **arnés externo, la procedencia inmutable y la vigencia de versión (`not superseded`)** —con `n=5` por escenario como piloto direccional—, mientras que **HEKT-NOVA v2.3.3** añade tipado semántico de dominio (`[H::<DOM>]`) y transición (`-> emit=...`) en una sola línea legible dentro de conversaciones híbridas humano-agente (ahorrando un `45.3%` frente a reportes narrativos en prosa).
 
 ### Suite Hostil v2 (`benchmark/hostile_suite_v2.py` — Sin fallback, `llama3.2` 3B)
 
