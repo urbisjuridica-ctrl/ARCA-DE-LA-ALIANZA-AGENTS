@@ -1,3 +1,5 @@
+from hekt_nova.agent_runtime import SignedAgentEmitter
+HEKT_EMITTER = SignedAgentEmitter("evangelista_v1")
 import os
 import json
 import urllib.request

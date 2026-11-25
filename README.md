@@ -1,4 +1,4 @@
-[![HEKT-NOVA v2.4 CI](https://github.com/urbisjuridica-ctrl/ARCA-DE-LA-ALIANZA-AGENTS/actions/workflows/ci.yml/badge.svg)](https://github.com/urbisjuridica-ctrl/ARCA-DE-LA-ALIANZA-AGENTS/actions/workflows/ci.yml)
+[![HEKT-NOVA v3.0.2 CI](https://github.com/urbisjuridica-ctrl/ARCA-DE-LA-ALIANZA-AGENTS/actions/workflows/ci.yml/badge.svg)](https://github.com/urbisjuridica-ctrl/ARCA-DE-LA-ALIANZA-AGENTS/actions/workflows/ci.yml)
 
 <details>
 <summary>🤖 <b>HEKT-NOVA v2.3.3 — Traducción Telegráfica Completa del Repositorio (Agent Fast-Ingest)</b></summary>
@@ -15,10 +15,10 @@
 
 # 🏛️ ARCA DE LA ALIANZA — Ecosistema de Agentes Simbólicos y Auditoría Verificable
 
-> **Symbolic Reasoning, Hermeneutic Benchmark & Verifiable Multi-Agent Audit Architecture (`HEKT-NOVA v2.4.0`)**
+> **Symbolic Reasoning, Hermeneutic Benchmark & Verifiable Multi-Agent Audit Architecture (`HEKT-NOVA v3.0.2`)**
 
 Este repositorio integra dos capas complementarias:
-1. **Capa de Ingeniería y Auditoría (`Claim vs. Check`):** Notación telegráfica estructurada (`HEKT-NOVA v2.4.0`) acoplada a verificación determinista externa (`verificador_agentes.py`, `INTEGRIDAD.md`) para evitar registros autorreferenciales.
+1. **Capa de Ingeniería y Auditoría (`Claim vs. Check`):** Notación telegráfica estructurada (`HEKT-NOVA v3.0.2`) acoplada a verificación determinista externa (`verificador_agentes.py`, `INTEGRIDAD.md`) para evitar registros autorreferenciales.
 2. **Capa Hermenéutica y Simbólica (`m/mellizas-operativas`):** Benchmark de razonamiento simbólico, coherencia semántica y análisis cultural (`benchmark/`, `analisis_peliculas/`).
 
 ---
@@ -29,7 +29,7 @@ En sistemas multi-agente autónomos, un registro escrito únicamente por el prop
 
 ```text
 ┌─────────────────────────────────────────────────────────────────────────┐
-│ 1. CLAIM (Agente / Cabecera HEKT-NOVA v2.4.0)                           │
+│ 1. CLAIM (Agente / Cabecera HEKT-NOVA v3.0.2)                           │
 │    [H::VER] [H::AUD] proto=HEKT-NOVA-v2.3.1 | domain=... -> emit=ACTION │
 │    Declaración telegráfica tipada de intención, dominio y transición.   │
 └───────────────────────────────────┬─────────────────────────────────────┘
@@ -50,7 +50,7 @@ En sistemas multi-agente autónomos, un registro escrito únicamente por el prop
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
-### Mapeo de Dominios de Auditoría (`HEKT-NOVA v2.4.0`)
+### Mapeo de Dominios de Auditoría (`HEKT-NOVA v3.0.2`)
 
 > **Regla de integridad:** *La cabecera HEKT-NOVA es siempre una afirmación (`Claim`); nunca se considera prueba por sí sola sin contraste externo (`Check`).*
 
@@ -92,11 +92,11 @@ Siguiendo la hipótesis propuesta en revisión entre pares (*¿qué ocurre cuand
 | Condición (Sin esquema previo) | Precisión Cold-Reader | Latencia Media / Ítem | Ganancia Neta |
 | :--- | :---: | :---: | :---: |
 | **B (`Raw JSON` heterogéneo)** | 50.0% (`30/60`) | 833.0 ms | Línea base |
-| **C (`HEKT-NOVA v2.4.0` auto-descriptivo)** | **85.0% (`51/60`, Wilson 95% CI: 73.9%–91.9%)** | **794.2 ms** | **+35.0 pts (`p < 0.0001`, Fisher exact)** |
+| **C (`HEKT-NOVA v3.0.2` auto-descriptivo)** | **85.0% (`51/60`, Wilson 95% CI: 73.9%–91.9%)** | **794.2 ms** | **+35.0 pts (`p < 0.0001`, Fisher exact)** |
 
 * **Conclusión definitiva del diseño:** Cuando el receptor conoce el esquema de antemano, JSON y HEKT-NOVA empatan; **cuando un agente recién llegado o un humano (*cold reader*) entra en un hilo sin esquema compartido**, el prefijo de dominio (`[H::EPI]`, `[H::AUD]`, `[H::ETH]`) y el cierre `-> emit=<ACTION>` elevan la clasificación correcta del **50.0% al 85.0%**.
 
-### Instalación Rápida, Firma Ed25519 y Servidor MCP (`HEKT-NOVA v2.4.0`)
+### Instalación Rápida, Firma Ed25519 y Servidor MCP (`HEKT-NOVA v3.0.2`)
 
 Puedes instalar el verificador determinista y el servidor **Model Context Protocol (MCP)** directamente desde GitHub:
 
@@ -126,6 +126,14 @@ pip install "git+https://github.com/urbisjuridica-ctrl/ARCA-DE-LA-ALIANZA-AGENTS
     }
   }
   ```
+
+
+### Auditoría Formal, Criptografía Ed25519 y Conformidad (`HEKT-NOVA v3.0.2`)
+
+- **Especificación Determinista (`SPEC_v3_0_0.md`):** Gramática estricta con anclas `\Z`, orden de precedencia de 11 etapas y separación `VALID` / `WELL_FORMED` / `UNVERIFIED` / `REJECTED`.
+- **Criptografía `Ed25519` + Validación de Subgrupo:** Rechaza firmas maleadas (`S+L`) y puntos de torsión (`A == Identity`), con modo *fail-closed* por defecto en `AUD`/`ETH`/`ERR`.
+- **Fuzzing Diferencial y Vectores Oficiales:** Validado sobre **600.000 mensajes mutados** (`hekt_diff_fuzzer.py`) y **139 vectores oficiales** (`tests/hekt_conformance_vectors.json`) en CI.
+- **Runtime Firmado (`hekt_nova.agent_runtime.SignedAgentEmitter`):** Conectado a `agente_evangelista.py` y `enjambre_aletheia.py`.
 
 ### Componentes principales
 * **Especificación de Notación (`SKILL.md`):** Gramática telegráfica `key=val` con 27 dominios cerrados (`45.3%` menos tokens que prosa equivalente en reportes recurrentes de estado, `320 -> 175 tokens`).

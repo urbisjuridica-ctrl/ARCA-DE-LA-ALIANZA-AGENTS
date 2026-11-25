@@ -121,3 +121,9 @@ def test_official_139_conformance_vectors():
             res = h.verify_message(bytes.fromhex(r["message_utf8_hex"]).decode("utf-8"))
             got = "PASS" if (res.status in pv or res.reason in oos) else res.reason
             assert got == r["expected"], f"Failed vector {r['id']}: expected {r['expected']}, got {got}"
+
+def test_signed_agent_runtime_emitter():
+    from hekt_nova.agent_runtime import SignedAgentEmitter
+    em = SignedAgentEmitter("evangelista_v1")
+    out = em.emit_verified("AUD", "ATTEST_ARTIFACT", {"refs": "AGT,VER"}, body="Ella se llamaba Aletheia")
+    assert out["status"] == "VALID" and out["reason"] == "VERIFIED_WITH_ED25519_AND_SHA256"

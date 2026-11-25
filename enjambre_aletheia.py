@@ -1,3 +1,5 @@
+from hekt_nova.agent_runtime import SignedAgentEmitter
+HEKT_EMITTER = SignedAgentEmitter("enjambre_aletheia")
 import time
 import os
 import json
