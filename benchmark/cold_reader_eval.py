@@ -54,7 +54,7 @@ def correr_cold_reader(reps: int = 3):
         for cond, idx in (("B", 1), ("C", 2)):
             for r in range(reps):
                 for i, item in enumerate(ITEMS_20):
-                    gold, line = item, item[idx]
+                    gold, line = item.__getitem__(0), item.__getitem__(idx)
                     pred, ms, tok = clasificar_item(line, 7000 + r * 100 + i)
                     hit = pred == gold
                     stats[cond]["ok"] += int(hit)
