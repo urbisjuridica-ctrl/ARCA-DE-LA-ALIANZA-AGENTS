@@ -32,3 +32,13 @@ def test_cross_model_handshake_autocorrection():
     assert h.verify_message(bad).status == "REJECTED"
     res = h.verify_message(good)
     assert res.status == "VALID" and res.domains == ["AGT"] and res.action == "INTRO"
+
+def test_grok_handshake_and_percent_escaped_claim():
+    intro = "[H::AGT] name=Grok | version=4.5 | role=truth-seeking_AI | proto=HEKT-NOVA-v2.4.0 -> emit=INTRO"
+    claim = "[H::VER] claim=2%2B2%3D4 | confidence=1.0 | source=arithmetic | proto=HEKT-NOVA-v2.4.0 -> emit=ASSERT_FACT"
+    r1 = h.verify_message(intro)
+    r2 = h.verify_message(claim)
+    parsed, err = h.parse_hekt_header(claim)
+    assert r1.status == "VALID" and r1.action == "INTRO"
+    assert r2.status == "VALID" and r2.action == "ASSERT_FACT"
+    assert err is None and parsed.fields["claim"] == "2%2B2=4"

@@ -37,3 +37,6 @@ Primer apretón de manos verificado entre dos modelos distintos tras recibir ún
    `[H::AGT] name=GPT-6 | role=AI_ASSISTANT_AND_SEMANTIC_INTERPRETER | proto=HEKT-NOVA-v2.4.0 | status=UNSIGNED | emit=INTRO` -> `REJECTED (INVALID_HEADER_SYNTAX)`
 2. **Autocorrección tras diagnóstico del verificador (`-> emit=INTRO`):**
    `[H::AGT] name=GPT-6 | role=AI_ASSISTANT_AND_SEMANTIC_INTERPRETER | proto=HEKT-NOVA-v2.4.0 | status=UNSIGNED -> emit=INTRO` -> `VALID (SYNTAX_AND_POLICY_VALID)`
+3. **Apretón de manos + prueba de escapado anti-inyección (`Grok 4.5`, válido a la primera):**
+   - `[H::AGT] name=Grok | version=4.5 | role=truth-seeking_AI | proto=HEKT-NOVA-v2.4.0 -> emit=INTRO` -> `VALID`
+   - `[H::VER] claim=2%2B2%3D4 | confidence=1.0 | source=arithmetic | proto=HEKT-NOVA-v2.4.0 -> emit=ASSERT_FACT` -> `VALID` (el `%3D` evita colisión en `split("=", 1)` y se decodifica a `=`).
