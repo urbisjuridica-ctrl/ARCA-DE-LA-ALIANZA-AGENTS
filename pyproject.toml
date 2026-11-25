@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hekt-nova"
+version = "2.4.0"
+description = "HEKT-NOVA v2.4: Telegraphic hybrid protocol, Ed25519 signing & deterministic external verifier (Claim vs. Check)"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+dependencies = []
+
+[project.optional-dependencies]
+crypto = ["cryptography>=41.0.0"]
+mcp = ["mcp>=1.0.0"]
+
+[project.scripts]
+hekt-verify = "hekt_nova.cli:main"
+hekt-mcp = "hekt_nova.mcp_server:main"
+
+[tool.setuptools]
+packages = ["hekt_nova"]
+py-modules = ["hekt_external_verifier"]
