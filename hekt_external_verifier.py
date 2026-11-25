@@ -13,6 +13,8 @@ LEDGER_FILE = "witness_ledger.jsonl"
 ALLOWED_DOMAINS: Set[str] = {"AGT", "VER", "AUD", "ETH", "ERR", "DOC", "HER", "EPI"}
 HIGH_TRUST_DOMAINS: Set[str] = {"AUD", "ETH", "ERR"}
 MUTABLE_ALIASES: Set[str] = {"latest", "cleaned", "current", "default", "head"}
+FIXED_FORMAT_KEYS: Set[str] = {"ts", "kid", "nonce", "sig", "sha256", "aud", "code_rev"}
+REF_PIN_KEYS: Set[str] = {"artifact_ref", "code_rev", "source_ref"}
 RESERVED_KEYS: Set[str] = {"emit", "verdict", "reason", "computed_sha256", "row_hash", "alg"}
 
 DOMAIN_ACTION_MATRIX: Dict[str, Set[str]] = {
@@ -66,28 +68,27 @@ def decode_and_normalize_value(raw_val: str) -> Tuple[Optional[str], Optional[st
     return norm, None
 
 def _check_body_lines(lines: List[str]) -> Optional[str]:
-    fence_char: Optional[str] = None
-    fence_len: int = 0
+    fence = None
     for ln in lines[1:]:
-        stripped_left = ln.lstrip(" ")
-        indent = len(ln) - len(stripped_left)
-        m_fence = re.match(r"^(`{3,}|~{3,})(.*)$", stripped_left)
-        if indent <= 3 and m_fence:
-            seq, rest = m_fence.group(1), m_fence.group(2)
-            if fence_char is None:
-                fence_char, fence_len = seq[0], len(seq)
-            elif seq[0] == fence_char and len(seq) >= fence_len and not rest.strip():
-                fence_char, fence_len = None, 0
-            continue
-        if fence_char is None and "[H::" in ln:
-            return "EMBEDDED_HEADER_IN_BODY"
-    if fence_char is not None:
-        return "UNCLOSED_CODE_FENCE"
-    return None
+        if fence is None:
+            m = re.match(r"^( {0,3})(`{3,}|~{3,})(.*)\Z", ln)
+            if m:
+                if "[H::" in m.group(3):
+                    return "EMBEDDED_HEADER_IN_BODY"
+                fence = (m.group(2)[0], len(m.group(2)))
+                continue
+            if "[H::" in ln:
+                return "EMBEDDED_HEADER_IN_BODY"
+        else:
+            m = re.match(r"^ {0,3}(`{3,}|~{3,})[ \t]*\Z", ln)
+            if m and m.group(1)[0] == fence[0] and len(m.group(1)) >= fence[1]:
+                fence = None
+    return "UNCLOSED_CODE_FENCE" if fence else None
+
 def parse_hekt_header(message: str) -> Tuple[Optional[ParsedHeader], Optional[str]]:
     if not message:
         return None, "EMPTY_MESSAGE"
-    if message[0] in (" ", "\t", "\r", "\n"):
+    if message[0].isspace():
         return None, "LEADING_WHITESPACE"
     lines = message.replace("\r\n", "\n").replace("\r", "\n").split("\n")
     first_line = lines[0]
@@ -113,11 +114,13 @@ def parse_hekt_header(message: str) -> Tuple[Optional[ParsedHeader], Optional[st
     for token in raw_kv_section.split(" | "):
         if token != token.strip() or not token:
             return None, "NON_CANONICAL_SPACING"
-        if re.match(r"^\[H::", token):
+        if token.startswith("[H::"):
             return None, "MULTIPLE_PRIMARY_TAGS"
         if "=" not in token:
             return None, "MALFORMED_KV_PAIR"
         k_clean, v_clean = token.split("=", 1)
+        if token.startswith("[H::"):
+            return None, "MULTIPLE_PRIMARY_TAGS"
         if k_clean != k_clean.strip() or v_clean != v_clean.strip():
             return None, "NON_CANONICAL_SPACING"
         if not k_clean or not v_clean:
@@ -132,6 +135,8 @@ def parse_hekt_header(message: str) -> Tuple[Optional[ParsedHeader], Optional[st
             return None, "RAW_TAG_IN_VALUE"
         if any(sep in v_clean for sep in ("|", "=", "->")):
             return None, "UNESCAPED_DELIMITER"
+        if k_clean in FIXED_FORMAT_KEYS and "%" in v_clean:
+            return None, "PERCENT_ENCODING_FORBIDDEN_IN_FIXED_FIELD"
         norm_val, dec_err = decode_and_normalize_value(v_clean)
         if dec_err or norm_val is None:
             return None, dec_err or "DECODE_ERROR"
@@ -149,8 +154,8 @@ def is_action_allowed(header: ParsedHeader, authenticated_agent: Optional[str] =
     if authenticated_agent and declared_agent and declared_agent != authenticated_agent:
         return False, "AGENT_IDENTITY_MISMATCH"
     for k, v in header.fields.items():
-        if v.lower() in MUTABLE_ALIASES and "sha256" not in header.fields:
-            return False, f"MUTABLE_ALIAS_REJECTED:{k}={v}"
+        if k in REF_PIN_KEYS and not re.match(r"^([0-9a-f]{40}|sha256:[0-9a-f]{64})\Z", v):
+            return False, f"UNPINNED_REFERENCE:{k}={v}"
     return True, None
 
 def verify_sha256_evidence(declared_hash: Optional[str], canonical_bytes: Optional[bytes]) -> Tuple[str, Optional[str], Optional[str]]:
