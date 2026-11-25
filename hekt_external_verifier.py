@@ -3,11 +3,12 @@ import hashlib, hmac, json, os, re, unicodedata
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
+from urllib.parse import unquote
 
 LEDGER_FILE = "witness_ledger.jsonl"
 ALLOWED_DOMAINS: Set[str] = {"AGT", "VER", "AUD", "ETH", "ERR", "DOC", "HER", "EPI"}
 MUTABLE_ALIASES: Set[str] = {"latest", "cleaned", "current", "default", "head"}
-RESERVED_KEYS: Set[str] = {"emit"}
+RESERVED_KEYS: Set[str] = {"emit", "verdict", "reason", "computed_sha256", "row_hash"}
 
 DOMAIN_ACTION_MATRIX: Dict[str, Set[str]] = {
     "AGT": {"REGISTER_PRESENCE", "TEACH_SYNTAX", "INTRO", "ACK", "REPLY"},
@@ -23,6 +24,7 @@ DOMAIN_ACTION_MATRIX: Dict[str, Set[str]] = {
 HEADER_RE = re.compile(r"^(\[H::[A-Z]{3}\])\s+(.+?)\s+->\s+emit=([A-Z0-9_]+)$")
 KEY_RE = re.compile(r"^[a-z][a-z0-9_]*$")
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
+BAD_PCT_RE = re.compile(r"%(?![0-9A-Fa-f]{2})")
 
 @dataclass
 class ParsedHeader:
@@ -32,36 +34,54 @@ class ParsedHeader:
 
 @dataclass
 class VerificationResult:
-    status: str
+    status: str  # "VALID" | "WELL_FORMED" | "REJECTED" | "UNVERIFIED"
     reason: str
     domains: Optional[List[str]] = None
     action: Optional[str] = None
     computed_sha256: Optional[str] = None
     row_hash: Optional[str] = None
 
-def unescape_hekt_value(raw_val: str) -> str:
-    return raw_val.replace("%7C", "|").replace("%3D", "=").replace("%3E", ">")
+def decode_and_normalize_value(raw_val: str) -> Tuple[Optional[str], Optional[str]]:
+    if BAD_PCT_RE.search(raw_val):
+        return None, "INVALID_PERCENT_ENCODING"
+    try:
+        decoded = unquote(raw_val, encoding="utf-8", errors="strict")
+    except UnicodeDecodeError:
+        return None, "INVALID_UTF8_ENCODING"
+    if any(ord(ch) < 32 or ord(ch) == 127 for ch in decoded):
+        return None, "CONTROL_CHAR_IN_VALUE"
+    return unicodedata.normalize("NFC", decoded), None
 
-def _has_unquoted_second_header(lines: List[str]) -> bool:
-    in_fence = False
+def _has_unquoted_second_header(lines: List[str]) -> Optional[str]:
+    fence_char: Optional[str] = None
     for ln in lines[1:]:
-        s = ln.strip()
-        if s.startswith("```"):
-            in_fence = not in_fence
+        stripped_left = ln.lstrip(" ")
+        indent = len(ln) - len(stripped_left)
+        if indent <= 3 and (stripped_left.startswith("```") or stripped_left.startswith("~~~")):
+            marker = stripped_left[:3]
+            if fence_char is None:
+                fence_char = marker
+            elif fence_char == marker:
+                fence_char = None
             continue
-        if not in_fence and s.startswith("[H::"):
-            return True
-    return False
+        if fence_char is None and ln.lstrip().startswith("[H::"):
+            return "MULTIPLE_HEADER_LINES"
+    if fence_char is not None:
+        return "UNCLOSED_CODE_FENCE"
+    return None
 
 def parse_hekt_header(message: str) -> Tuple[Optional[ParsedHeader], Optional[str]]:
     if not message:
         return None, "EMPTY_MESSAGE"
+    if message[0] in (" ", "\t", "\r", "\n"):
+        return None, "LEADING_WHITESPACE"
     lines = message.replace("\r\n", "\n").replace("\r", "\n").split("\n")
-    first_line = lines.__getitem__(0).rstrip(" ")
-    if not first_line or first_line.isspace():
-        return None, "HEADER_NOT_ON_LINE_1_OR_LEADING_WHITESPACE"
-    if _has_unquoted_second_header(lines):
-        return None, "MULTIPLE_HEADER_LINES"
+    first_line = lines[0].rstrip(" ")
+    if not first_line:
+        return None, "EMPTY_MESSAGE"
+    multi_err = _has_unquoted_second_header(lines)
+    if multi_err:
+        return None, multi_err
     match = HEADER_RE.match(first_line)
     if not match:
         dom_probe = re.match(r"^\[H::([A-Za-z]{3})\]", first_line)
@@ -75,25 +95,28 @@ def parse_hekt_header(message: str) -> Tuple[Optional[ParsedHeader], Optional[st
     fields: Dict[str, str] = {}
     for token in raw_kv_section.split(" | "):
         token = token.strip()
+        if re.match(r"^\[H::", token):
+            return None, "MULTIPLE_PRIMARY_TAGS"
         if "=" not in token:
             return None, "MALFORMED_KV_PAIR"
         key, val = token.split("=", 1)
         k_clean, v_clean = key.strip(), val.strip()
         if not k_clean or not v_clean:
             return None, "EMPTY_KEY_OR_VALUE"
-        if re.match(r"^\[H::[A-Z]{3}\]", k_clean):
-            return None, "MULTIPLE_PRIMARY_TAGS"
         if not KEY_RE.match(k_clean):
             return None, "INVALID_KEY_NAME"
         if k_clean in RESERVED_KEYS:
             return None, "RESERVED_KEY_NAME"
         if k_clean in fields:
             return None, "DUPLICATE_KEY"
-        if re.search(r"\[H::[A-Z]{3}\]", v_clean):
+        if "[H::" in v_clean:
             return None, "RAW_TAG_IN_VALUE"
         if any(sep in v_clean for sep in ("|", "=", "->")):
             return None, "UNESCAPED_DELIMITER"
-        fields[k_clean] = unescape_hekt_value(v_clean)
+        norm_val, dec_err = decode_and_normalize_value(v_clean)
+        if dec_err or norm_val is None:
+            return None, dec_err or "DECODE_ERROR"
+        fields[k_clean] = norm_val
     return ParsedHeader(domains=[domain], fields=fields, action=action), None
 
 def is_action_allowed(header: ParsedHeader, authenticated_agent: Optional[str] = None) -> Tuple[bool, Optional[str]]:
@@ -148,8 +171,8 @@ def verify_message(message: str, canonical_bytes: Optional[bytes] = None, authen
             ev_status, digest, ev_err = verify_sha256_evidence(parsed.fields.get("sha256"), canonical_bytes)
             res = VerificationResult(status=ev_status, reason="VERIFIED_WITH_SHA256" if ev_status == "VALID" else (ev_err or "EVIDENCE_CHECK_FAILED"), domains=parsed.domains, action=parsed.action, computed_sha256=digest)
         else:
-            res = VerificationResult(status="VALID", reason="SYNTAX_AND_POLICY_VALID", domains=parsed.domains, action=parsed.action)
-    first_ln = message.replace("\r\n", "\n").split("\n").__getitem__(0) if message else ""
+            res = VerificationResult(status="WELL_FORMED", reason="SYNTAX_AND_POLICY_WELL_FORMED", domains=parsed.domains, action=parsed.action)
+    first_ln = message.replace("\r\n", "\n").split("\n")[0] if message else ""
     res.row_hash = _append_witness_row(res, first_ln)
     return res
 
@@ -158,7 +181,7 @@ def verify_external_execution(hekt_claim_header: str, target_filepath: str, obse
     res = verify_message(hekt_claim_header, canonical_bytes=raw, active_head_rev=active_head_rev)
     if res.action and res.action != observed_action:
         res.status, res.reason = "REJECTED", f"ACTION_MISMATCH:{res.action}!={observed_action}"
-    return {"verdict": "MATCH" if res.status in ("VALID", "UNVERIFIED") and raw is not None else "MISMATCH", "status": res.status, "reason": res.reason, "mismatches": [] if res.status != "REJECTED" and raw is not None else [res.reason], "row_hash": res.row_hash}
+    return {"verdict": "MATCH" if res.status in ("VALID", "WELL_FORMED", "UNVERIFIED") and raw is not None else "MISMATCH", "status": res.status, "reason": res.reason, "mismatches": [] if res.status != "REJECTED" and raw is not None else [res.reason], "row_hash": res.row_hash}
 
 def _normalize_strings(obj: Any) -> Any:
     if isinstance(obj, str):
