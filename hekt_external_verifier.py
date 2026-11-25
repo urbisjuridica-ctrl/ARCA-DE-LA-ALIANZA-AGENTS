@@ -8,8 +8,9 @@ from hekt_nova.crypto_signer import verify_header_signature
 
 LEDGER_FILE = "witness_ledger.jsonl"
 ALLOWED_DOMAINS: Set[str] = {"AGT", "VER", "AUD", "ETH", "ERR", "DOC", "HER", "EPI"}
+HIGH_TRUST_DOMAINS: Set[str] = {"AUD", "ETH", "ERR"}
 MUTABLE_ALIASES: Set[str] = {"latest", "cleaned", "current", "default", "head"}
-RESERVED_KEYS: Set[str] = {"emit", "verdict", "reason", "computed_sha256", "row_hash"}
+RESERVED_KEYS: Set[str] = {"emit", "verdict", "reason", "computed_sha256", "row_hash", "alg"}
 
 DOMAIN_ACTION_MATRIX: Dict[str, Set[str]] = {
     "AGT": {"REGISTER_PRESENCE", "TEACH_SYNTAX", "INTRO", "ACK", "REPLY"},
@@ -53,7 +54,7 @@ def decode_and_normalize_value(raw_val: str) -> Tuple[Optional[str], Optional[st
         decoded = unquote(raw_val, encoding="utf-8", errors="strict")
     except UnicodeDecodeError:
         return None, "INVALID_UTF8_ENCODING"
-    if any(unicodedata.category(ch) in ("Cc", "Cf", "Zl", "Zp") for ch in decoded):
+    if any(unicodedata.category(ch) in ("Cc", "Cf", "Zl", "Zp", "Co", "Cs") or (0xFE00 <= ord(ch) <= 0xFE0F) or (0xE0100 <= ord(ch) <= 0xE01EF) or (0xE0000 <= ord(ch) <= 0xE007F) for ch in decoded):
         return None, "CONTROL_OR_FORMAT_CHAR_IN_VALUE"
     return unicodedata.normalize("NFC", decoded), None
 
@@ -85,7 +86,7 @@ def parse_hekt_header(message: str) -> Tuple[Optional[ParsedHeader], Optional[st
     first_line = lines[0]
     if not first_line:
         return None, "EMPTY_MESSAGE"
-    if first_line.endswith(" ") or first_line.endswith("\t"):
+    if first_line[-1].isspace():
         return None, "TRAILING_WHITESPACE"
     body_err = _check_body_lines(lines)
     if body_err:
@@ -181,13 +182,17 @@ def verify_message(message: str, canonical_bytes: Optional[bytes] = None, authen
             res = VerificationResult(status="REJECTED", reason=auth_err or "FORBIDDEN_ACTION", domains=parsed.domains, action=parsed.action)
         elif active_head_rev and parsed.fields.get("code_rev") and parsed.fields["code_rev"] != active_head_rev:
             res = VerificationResult(status="REJECTED", reason="SUPERSEDED_REV", domains=parsed.domains, action=parsed.action)
+        elif any(ln.strip() for ln in message.replace("\r\n", "\n").split("\n")[1:]) and "sha256" not in parsed.fields:
+            res = VerificationResult(status="REJECTED", reason="BODY_SHA256_REQUIRED", domains=parsed.domains, action=parsed.action)
         elif expected_audience and parsed.fields.get("aud") != expected_audience:
             res = VerificationResult(status="REJECTED", reason="AUDIENCE_MISMATCH", domains=parsed.domains, action=parsed.action)
         elif seen_nonces is not None and "nonce" in parsed.fields and parsed.fields["nonce"] in seen_nonces:
             res = VerificationResult(status="REJECTED", reason="REPLAY_DETECTED", domains=parsed.domains, action=parsed.action)
         else:
             sig_verified = False
-            if "sig" in parsed.fields or "kid" in parsed.fields or trusted_keys is not None:
+            if any(d in HIGH_TRUST_DOMAINS for d in parsed.domains) and "sig" not in parsed.fields and "sha256" not in parsed.fields and trusted_keys is not None:
+                res = VerificationResult(status="REJECTED", reason="SIGNATURE_REQUIRED_FOR_DOMAIN", domains=parsed.domains, action=parsed.action)
+            elif "sig" in parsed.fields or "kid" in parsed.fields or trusted_keys is not None:
                 kid, sig = parsed.fields.get("kid"), parsed.fields.get("sig")
                 if not sig:
                     res = VerificationResult(status="REJECTED", reason="MISSING_SIGNATURE", domains=parsed.domains, action=parsed.action)
