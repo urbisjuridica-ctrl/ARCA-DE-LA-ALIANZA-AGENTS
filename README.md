@@ -99,7 +99,7 @@ Siguiendo la hipótesis propuesta en revisión entre pares (*¿qué ocurre cuand
 Puedes instalar el verificador determinista y el servidor **Model Context Protocol (MCP)** directamente desde GitHub:
 
 ```bash
-pip install "git+https://github.com[crypto]"
+pip install "git+https://github.com/urbisjuridica-ctrl/ARCA-DE-LA-ALIANZA-AGENTS.git#egg=hekt-nova[crypto]"
 ```
 
 * **Auditoría desde terminal (`hekt-verify`):**
