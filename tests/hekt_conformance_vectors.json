@@ -1,0 +1,1156 @@
+{
+ "meta": {
+  "spec": "HEKT-NOVA syntax stage as described for v3.0.x; reference = hekt_diff_fuzzer.parse",
+  "scope": "steps 1-6 + action matrix only; state/crypto stages not covered; PASS means syntax+policy accepted",
+  "python": "3.12.3",
+  "unidata_version": "15.0.0",
+  "line_endings": "CRLF and CR normalised to LF, split on LF only",
+  "how_to_use": "feed `message` (or bytes from message_utf8_hex) to your parser; compare reason; skip or review rows with implementation_defined set"
+ },
+ "vectors": [
+  {
+   "id": 1,
+   "message": "[H::AGT] name=Claude | vendor=Anthropic | model=claude-sonnet-5-5 | proto=HEKT-NOVA-v2.4.0 | refs=AGT,VER -> emit=INTRO",
+   "message_utf8_hex": "5b483a3a4147545d206e616d653d436c61756465207c2076656e646f723d416e7468726f706963207c206d6f64656c3d636c617564652d736f6e6e65742d352d35207c2070726f746f3d48454b542d4e4f56412d76322e342e30207c20726566733d4147542c564552202d3e20656d69743d494e54524f",
+   "expected": "PASS",
+   "source": "hand: valid AGT intro",
+   "implementation_defined": ""
+  },
+  {
+   "id": 2,
+   "message": "[H::AGT] name=Claude | refs=AGT,ETH,AUD -> emit=OPEN_DIALOGUE",
+   "message_utf8_hex": "5b483a3a4147545d206e616d653d436c61756465207c20726566733d4147542c4554482c415544202d3e20656d69743d4f50454e5f4449414c4f475545",
+   "expected": "ACTION_NOT_ALLOWED_FOR_DOMAIN",
+   "source": "hand: AGT OPEN_DIALOGUE",
+   "implementation_defined": ""
+  },
+  {
+   "id": 3,
+   "message": "[H::VER] claim=syntax_roundtrip | note=a%7Cb%3Dc | refs=VER,AGT -> emit=REPORT",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d73796e7461785f726f756e6474726970207c206e6f74653d612537436225334463207c20726566733d5645522c414754202d3e20656d69743d5245504f5254",
+   "expected": "ACTION_NOT_ALLOWED_FOR_DOMAIN",
+   "source": "hand: VER emit=REPORT",
+   "implementation_defined": ""
+  },
+  {
+   "id": 4,
+   "message": "[H::VER] claim=syntax_roundtrip | note=a%7Cb%3Dc | refs=VER,AGT -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d73796e7461785f726f756e6474726970207c206e6f74653d612537436225334463207c20726566733d5645522c414754202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "PASS",
+   "source": "hand: VER roundtrip CLAIM_CHECK",
+   "implementation_defined": ""
+  },
+  {
+   "id": 5,
+   "message": "[H::AGT] Bad-Key=1 | refs=AGT -> emit=INTRO",
+   "message_utf8_hex": "5b483a3a4147545d204261642d4b65793d31207c20726566733d414754202d3e20656d69743d494e54524f",
+   "expected": "INVALID_KEY_NAME",
+   "source": "hand: bad key",
+   "implementation_defined": ""
+  },
+  {
+   "id": 6,
+   "message": "[H::AGT] [H::AUD] name=Claude | refs=AGT,AUD -> emit=INTRO",
+   "message_utf8_hex": "5b483a3a4147545d205b483a3a4155445d206e616d653d436c61756465207c20726566733d4147542c415544202d3e20656d69743d494e54524f",
+   "expected": "MULTIPLE_PRIMARY_TAGS",
+   "source": "hand: stacked tags",
+   "implementation_defined": ""
+  },
+  {
+   "id": 7,
+   "message": "[H::VER] claim=x | [H::AUD] k=v -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d78207c205b483a3a4155445d206b3d76202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "MULTIPLE_PRIMARY_TAGS",
+   "source": "hand: second tag as key",
+   "implementation_defined": ""
+  },
+  {
+   "id": 8,
+   "message": "[H::VER] claim=x | [H::AUD] -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d78207c205b483a3a4155445d202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "MULTIPLE_PRIMARY_TAGS",
+   "source": "hand: tag token no '='",
+   "implementation_defined": ""
+  },
+  {
+   "id": 9,
+   "message": "[H::VER] claim=%5BH::AUD%5D -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d253542483a3a415544253544202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "PASS",
+   "source": "hand: encoded tag in value",
+   "implementation_defined": ""
+  },
+  {
+   "id": 10,
+   "message": "[H::VER] claim=%255BH::AUD%255D -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d2532353542483a3a4155442532353544202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "PASS",
+   "source": "hand: double-encoded tag",
+   "implementation_defined": ""
+  },
+  {
+   "id": 11,
+   "message": "[H::VER] claim=[H::AUD] -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d5b483a3a4155445d202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "RAW_TAG_IN_VALUE",
+   "source": "hand: raw tag in value",
+   "implementation_defined": ""
+  },
+  {
+   "id": 12,
+   "message": "[H::VER] claim=[H::aud] -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d5b483a3a6175645d202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "RAW_TAG_IN_VALUE",
+   "source": "hand: raw lowercase tag in value",
+   "implementation_defined": ""
+  },
+  {
+   "id": 13,
+   "message": "[H::XYZ] claim=x -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a58595a5d20636c61696d3d78202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "UNKNOWN_DOMAIN",
+   "source": "hand: unknown domain XYZ",
+   "implementation_defined": ""
+  },
+  {
+   "id": 14,
+   "message": "[H::ver] claim=x -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a7665725d20636c61696d3d78202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "INVALID_HEADER_SYNTAX",
+   "source": "hand: lowercase domain",
+   "implementation_defined": ""
+  },
+  {
+   "id": 15,
+   "message": "[H::VER] claim=x",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d78",
+   "expected": "INVALID_HEADER_SYNTAX",
+   "source": "hand: no arrow",
+   "implementation_defined": ""
+  },
+  {
+   "id": 16,
+   "message": "[H::VER] claim= -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "EMPTY_KEY_OR_VALUE",
+   "source": "hand: empty value",
+   "implementation_defined": ""
+  },
+  {
+   "id": 17,
+   "message": "[H::VER] claim=x | note=a|b -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d78207c206e6f74653d617c62202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "UNESCAPED_DELIMITER",
+   "source": "hand: unencoded |",
+   "implementation_defined": ""
+  },
+  {
+   "id": 18,
+   "message": "[H::VER] claim=x | note=a=b -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d78207c206e6f74653d613d62202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "UNESCAPED_DELIMITER",
+   "source": "hand: unencoded =",
+   "implementation_defined": ""
+  },
+  {
+   "id": 19,
+   "message": "[H::VER] claim=x | note=a->b -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d78207c206e6f74653d612d3e62202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "UNESCAPED_DELIMITER",
+   "source": "hand: unencoded ->",
+   "implementation_defined": ""
+  },
+  {
+   "id": 20,
+   "message": "[H::VER] claim=x -> emit=CLAIM_CHECK -> emit=ASSERT_FACT",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d78202d3e20656d69743d434c41494d5f434845434b202d3e20656d69743d4153534552545f46414354",
+   "expected": "UNESCAPED_DELIMITER",
+   "source": "hand: two arrows",
+   "implementation_defined": ""
+  },
+  {
+   "id": 21,
+   "message": "[H::VER] emit=CLAIM_CHECK | claim=x -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20656d69743d434c41494d5f434845434b207c20636c61696d3d78202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "RESERVED_KEY_NAME",
+   "source": "hand: emit as key",
+   "implementation_defined": ""
+  },
+  {
+   "id": 22,
+   "message": "[H::AUD] refs=AGT,VER | peer=Claude-Sonnet-5.5 | verdict=VALID -> emit=COMMIT_WITNESS",
+   "message_utf8_hex": "5b483a3a4155445d20726566733d4147542c564552207c20706565723d436c617564652d536f6e6e65742d352e35207c20766572646963743d56414c4944202d3e20656d69743d434f4d4d49545f5749544e455353",
+   "expected": "RESERVED_KEY_NAME",
+   "source": "hand: verdict key (AUD)",
+   "implementation_defined": ""
+  },
+  {
+   "id": 23,
+   "message": "[H::AUD] alg=Ed25519 | kid=arca-test-k1 -> emit=ATTEST_ARTIFACT",
+   "message_utf8_hex": "5b483a3a4155445d20616c673d45643235353139207c206b69643d617263612d746573742d6b31202d3e20656d69743d4154544553545f4152544946414354",
+   "expected": "RESERVED_KEY_NAME",
+   "source": "hand: alg key",
+   "implementation_defined": ""
+  },
+  {
+   "id": 24,
+   "message": "[H::VER] claim=x | claim=y -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d78207c20636c61696d3d79202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "DUPLICATE_KEY",
+   "source": "hand: duplicate key",
+   "implementation_defined": ""
+  },
+  {
+   "id": 25,
+   "message": " [H::VER] claim=x -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "205b483a3a5645525d20636c61696d3d78202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "LEADING_WHITESPACE",
+   "source": "hand: leading space",
+   "implementation_defined": ""
+  },
+  {
+   "id": 26,
+   "message": "[H::VER] claim=x -> emit=CLAIM_CHECK ",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d78202d3e20656d69743d434c41494d5f434845434b20",
+   "expected": "TRAILING_WHITESPACE",
+   "source": "hand: trailing space",
+   "implementation_defined": ""
+  },
+  {
+   "id": 27,
+   "message": "[H::VER] claim=x -> emit=CLAIM_CHECK\t",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d78202d3e20656d69743d434c41494d5f434845434b09",
+   "expected": "TRAILING_WHITESPACE",
+   "source": "hand: trailing tab",
+   "implementation_defined": ""
+  },
+  {
+   "id": 28,
+   "message": "[H::VER] claim=x -> emit=CLAIM_CHECK\u00a0",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d78202d3e20656d69743d434c41494d5f434845434bc2a0",
+   "expected": "TRAILING_WHITESPACE",
+   "source": "hand: trailing NBSP",
+   "implementation_defined": ""
+  },
+  {
+   "id": 29,
+   "message": "[H::VER] claim=x -> emit=CLAIM_CHECK\r\n",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d78202d3e20656d69743d434c41494d5f434845434b0d0a",
+   "expected": "PASS",
+   "source": "hand: trailing CRLF",
+   "implementation_defined": ""
+  },
+  {
+   "id": 30,
+   "message": "[H::VER] claim=x  | note=y -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d7820207c206e6f74653d79202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "NON_CANONICAL_SPACING",
+   "source": "hand: double space before |",
+   "implementation_defined": ""
+  },
+  {
+   "id": 31,
+   "message": "[H::VER] claim=x |  note=y -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d78207c20206e6f74653d79202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "NON_CANONICAL_SPACING",
+   "source": "hand: double space after |",
+   "implementation_defined": ""
+  },
+  {
+   "id": 32,
+   "message": "[H::VER] claim=x -> emit=CLAIM_CHECK\n[H::AUD] k=v -> emit=VERIFY_TRACE",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d78202d3e20656d69743d434c41494d5f434845434b0a5b483a3a4155445d206b3d76202d3e20656d69743d5645524946595f5452414345",
+   "expected": "EMBEDDED_HEADER_IN_BODY",
+   "source": "hand: second header line",
+   "implementation_defined": ""
+  },
+  {
+   "id": 33,
+   "message": "[H::VER] claim=x -> emit=CLAIM_CHECK\n   [H::AUD] k=v",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d78202d3e20656d69743d434c41494d5f434845434b0a2020205b483a3a4155445d206b3d76",
+   "expected": "EMBEDDED_HEADER_IN_BODY",
+   "source": "hand: indented body tag",
+   "implementation_defined": ""
+  },
+  {
+   "id": 34,
+   "message": "[H::VER] claim=x -> emit=CLAIM_CHECK\ntext [H::AUD] k=v -> emit=VERIFY_TRACE",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d78202d3e20656d69743d434c41494d5f434845434b0a74657874205b483a3a4155445d206b3d76202d3e20656d69743d5645524946595f5452414345",
+   "expected": "EMBEDDED_HEADER_IN_BODY",
+   "source": "hand: mid-line body tag",
+   "implementation_defined": ""
+  },
+  {
+   "id": 35,
+   "message": "[H::VER] claim=x -> emit=CLAIM_CHECK\n~~~\n[H::AUD] k=v\n~~~",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d78202d3e20656d69743d434c41494d5f434845434b0a7e7e7e0a5b483a3a4155445d206b3d760a7e7e7e",
+   "expected": "PASS",
+   "source": "hand: closed ~~~ fence",
+   "implementation_defined": ""
+  },
+  {
+   "id": 36,
+   "message": "[H::VER] claim=x -> emit=CLAIM_CHECK\n```\n[H::AUD] k=v",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d78202d3e20656d69743d434c41494d5f434845434b0a6060600a5b483a3a4155445d206b3d76",
+   "expected": "UNCLOSED_CODE_FENCE",
+   "source": "hand: unclosed ``` fence",
+   "implementation_defined": ""
+  },
+  {
+   "id": 37,
+   "message": "[H::VER] claim=x -> emit=CLAIM_CHECK\n````\n[H::AUD] k=v\n```",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d78202d3e20656d69743d434c41494d5f434845434b0a606060600a5b483a3a4155445d206b3d760a606060",
+   "expected": "UNCLOSED_CODE_FENCE",
+   "source": "hand: 4-tick open, 3-tick close",
+   "implementation_defined": ""
+  },
+  {
+   "id": 38,
+   "message": "[H::VER] claim=%ZZ -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d255a5a202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "INVALID_PERCENT_ENCODING",
+   "source": "hand: %ZZ",
+   "implementation_defined": ""
+  },
+  {
+   "id": 39,
+   "message": "[H::VER] claim=% -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d25202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "INVALID_PERCENT_ENCODING",
+   "source": "hand: lone %",
+   "implementation_defined": ""
+  },
+  {
+   "id": 40,
+   "message": "[H::VER] claim=%FF -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d254646202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "INVALID_UTF8_ENCODING",
+   "source": "hand: %FF",
+   "implementation_defined": ""
+  },
+  {
+   "id": 41,
+   "message": "[H::VER] claim=a%ED%A0%80b -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d6125454425413025383062202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "INVALID_UTF8_ENCODING",
+   "source": "hand: surrogate %ED%A0%80",
+   "implementation_defined": ""
+  },
+  {
+   "id": 42,
+   "message": "[H::VER] claim=a%C0%AFb -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d6125433025414662202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "INVALID_UTF8_ENCODING",
+   "source": "hand: overlong %C0%AF",
+   "implementation_defined": ""
+  },
+  {
+   "id": 43,
+   "message": "[H::VER] claim=%00 -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d253030202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "CONTROL_OR_FORMAT_CHAR_IN_VALUE",
+   "source": "hand: %00",
+   "implementation_defined": ""
+  },
+  {
+   "id": 44,
+   "message": "[H::VER] claim=a%09b -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d6125303962202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "CONTROL_OR_FORMAT_CHAR_IN_VALUE",
+   "source": "hand: %09 tab",
+   "implementation_defined": ""
+  },
+  {
+   "id": 45,
+   "message": "[H::VER] claim=a%E2%80%8Bb -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d6125453225383025384262202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "CONTROL_OR_FORMAT_CHAR_IN_VALUE",
+   "source": "hand: U+200B",
+   "implementation_defined": ""
+  },
+  {
+   "id": 46,
+   "message": "[H::VER] claim=a%E2%80%A8b -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d6125453225383025413862202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "CONTROL_OR_FORMAT_CHAR_IN_VALUE",
+   "source": "hand: U+2028",
+   "implementation_defined": ""
+  },
+  {
+   "id": 47,
+   "message": "[H::VER] claim=a%E2%80%AEb -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d6125453225383025414562202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "CONTROL_OR_FORMAT_CHAR_IN_VALUE",
+   "source": "hand: U+202E",
+   "implementation_defined": ""
+  },
+  {
+   "id": 48,
+   "message": "[H::VER] claim=a%C2%85b -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d6125433225383562202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "CONTROL_OR_FORMAT_CHAR_IN_VALUE",
+   "source": "hand: U+0085",
+   "implementation_defined": ""
+  },
+  {
+   "id": 49,
+   "message": "[H::VER] claim=a%EF%B8%8Fb -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d6125454625423825384662202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "CONTROL_OR_FORMAT_CHAR_IN_VALUE",
+   "source": "hand: U+FE0F",
+   "implementation_defined": ""
+  },
+  {
+   "id": 50,
+   "message": "[H::VER] claim=a%EE%80%80b -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d6125454525383025383062202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "CONTROL_OR_FORMAT_CHAR_IN_VALUE",
+   "source": "hand: U+E000",
+   "implementation_defined": ""
+  },
+  {
+   "id": 51,
+   "message": "[H::VER] claim=a%F3%A0%81%81b -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d6125463325413025383125383162202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "CONTROL_OR_FORMAT_CHAR_IN_VALUE",
+   "source": "hand: U+E0041 tag",
+   "implementation_defined": ""
+  },
+  {
+   "id": 52,
+   "message": "[H::VER] claim=a%E2%81%A0b -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d6125453225383125413062202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "CONTROL_OR_FORMAT_CHAR_IN_VALUE",
+   "source": "hand: U+2060",
+   "implementation_defined": ""
+  },
+  {
+   "id": 53,
+   "message": "[H::VER] claim=a%0A%5BH::AUD%5D -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d61253041253542483a3a415544253544202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "CONTROL_OR_FORMAT_CHAR_IN_VALUE",
+   "source": "hand: encoded newline + encoded tag",
+   "implementation_defined": ""
+  },
+  {
+   "id": 54,
+   "message": "[H::VER] claim=a%0A[H::AUD] -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d612530415b483a3a4155445d202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "RAW_TAG_IN_VALUE",
+   "source": "hand: encoded newline + raw tag",
+   "implementation_defined": ""
+  },
+  {
+   "id": 55,
+   "message": "[H::VER] claim=a%20 -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d61253230202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "NON_CANONICAL_SPACING",
+   "source": "hand: HOLE: decoded trailing space",
+   "implementation_defined": ""
+  },
+  {
+   "id": 56,
+   "message": "[H::VER] claim=a%C2%A0b -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d6125433225413062202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "CONTROL_OR_FORMAT_CHAR_IN_VALUE",
+   "source": "hand: HOLE: NBSP inside value",
+   "implementation_defined": ""
+  },
+  {
+   "id": 57,
+   "message": "[H::VER] claim=a%CD%8Fb -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d6125434425384662202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "CONTROL_OR_FORMAT_CHAR_IN_VALUE",
+   "source": "hand: HOLE: U+034F combining grapheme joiner",
+   "implementation_defined": ""
+  },
+  {
+   "id": 58,
+   "message": "[H::VER] claim=a%E1%A0%8Bb -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d6125453125413025384262202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "CONTROL_OR_FORMAT_CHAR_IN_VALUE",
+   "source": "hand: HOLE: U+180B Mongolian VS",
+   "implementation_defined": ""
+  },
+  {
+   "id": 59,
+   "message": "[H::VER] claim=a%E3%85%A4b -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d6125453325383525413462202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "CONTROL_OR_FORMAT_CHAR_IN_VALUE",
+   "source": "hand: HOLE: U+3164 Hangul filler",
+   "implementation_defined": ""
+  },
+  {
+   "id": 60,
+   "message": "[H::VER] claim=a%E2%A0%80b -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d6125453225413025383062202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "CONTROL_OR_FORMAT_CHAR_IN_VALUE",
+   "source": "hand: HOLE: U+2800 braille blank",
+   "implementation_defined": ""
+  },
+  {
+   "id": 61,
+   "message": "[H::VER] claim=a%EF%BF%BFb -> emit=CLAIM_CHECK",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d6125454625424625424662202d3e20656d69743d434c41494d5f434845434b",
+   "expected": "CONTROL_OR_FORMAT_CHAR_IN_VALUE",
+   "source": "hand: HOLE: U+FFFF noncharacter",
+   "implementation_defined": ""
+  },
+  {
+   "id": 62,
+   "message": "[H::VER] claim=x -> emit=CLAIM_CHECK\n```[H::AUD] k=v -> emit=VERIFY_TRACE\ncode\n```",
+   "message_utf8_hex": "5b483a3a5645525d20636c61696d3d78202d3e20656d69743d434c41494d5f434845434b0a6060605b483a3a4155445d206b3d76202d3e20656d69743d5645524946595f54524143450a636f64650a606060",
+   "expected": "EMBEDDED_HEADER_IN_BODY",
+   "source": "hand: HOLE: header hidden in fence info string",
+   "implementation_defined": ""
+  },
+  {
+   "id": 63,
+   "message": "[H::VER] proto=x -> emit=ACK",
+   "message_utf8_hex": "5b483a3a5645525d2070726f746f3d78202d3e20656d69743d41434b",
+   "expected": "ACTION_NOT_ALLOWED_FOR_DOMAIN",
+   "source": "fuzz: ACTION_NOT_ALLOWED_FOR_DOMAIN",
+   "implementation_defined": ""
+  },
+  {
+   "id": 64,
+   "message": "[H::ETH] a=hello -> emit=ACK",
+   "message_utf8_hex": "5b483a3a4554485d20613d68656c6c6f202d3e20656d69743d41434b",
+   "expected": "ACTION_NOT_ALLOWED_FOR_DOMAIN",
+   "source": "fuzz: ACTION_NOT_ALLOWED_FOR_DOMAIN",
+   "implementation_defined": ""
+  },
+  {
+   "id": 65,
+   "message": "[H::VER] a=a%20b -> emit=ACK",
+   "message_utf8_hex": "5b483a3a5645525d20613d6125323062202d3e20656d69743d41434b",
+   "expected": "ACTION_NOT_ALLOWED_FOR_DOMAIN",
+   "source": "fuzz: ACTION_NOT_ALLOWED_FOR_DOMAIN",
+   "implementation_defined": ""
+  },
+  {
+   "id": 66,
+   "message": "[H::AUD] x_y=caf\u00e9 -> emit=ACK",
+   "message_utf8_hex": "5b483a3a4155445d20785f793d636166c3a9202d3e20656d69743d41434b",
+   "expected": "ACTION_NOT_ALLOWED_FOR_DOMAIN",
+   "source": "fuzz: ACTION_NOT_ALLOWED_FOR_DOMAIN",
+   "implementation_defined": ""
+  },
+  {
+   "id": 67,
+   "message": "[H::EPI] a=%00 -> emit=REPORT",
+   "message_utf8_hex": "5b483a3a4550495d20613d253030202d3e20656d69743d5245504f5254",
+   "expected": "CONTROL_OR_FORMAT_CHAR_IN_VALUE",
+   "source": "fuzz: CONTROL_OR_FORMAT_CHAR_IN_VALUE",
+   "implementation_defined": ""
+  },
+  {
+   "id": 68,
+   "message": "[H::AUD] note=a\tb -> emit=AC\r\n",
+   "message_utf8_hex": "5b483a3a4155445d206e6f74653d610962202d3e20656d69743d41430d0a",
+   "expected": "CONTROL_OR_FORMAT_CHAR_IN_VALUE",
+   "source": "fuzz: CONTROL_OR_FORMAT_CHAR_IN_VALUE",
+   "implementation_defined": ""
+  },
+  {
+   "id": 69,
+   "message": "[H::AUD] name=x\u200b -> emit=ASSERT",
+   "message_utf8_hex": "5b483a3a4155445d206e616d653d78e2808b202d3e20656d69743d415353455254",
+   "expected": "CONTROL_OR_FORMAT_CHAR_IN_VALUE",
+   "source": "fuzz: CONTROL_OR_FORMAT_CHAR_IN_VALUE",
+   "implementation_defined": ""
+  },
+  {
+   "id": 70,
+   "message": "[H::AGT] name=a\u2028b -> emit=REPORT",
+   "message_utf8_hex": "5b483a3a4147545d206e616d653d61e280a862202d3e20656d69743d5245504f5254",
+   "expected": "CONTROL_OR_FORMAT_CHAR_IN_VALUE",
+   "source": "fuzz: CONTROL_OR_FORMAT_CHAR_IN_VALUE",
+   "implementation_defined": "line splitting: LF-only vs splitlines()"
+  },
+  {
+   "id": 71,
+   "message": "[H::AUD] a=\uff41\uff42 | a=\u200bx -> emit=REPORT",
+   "message_utf8_hex": "5b483a3a4155445d20613defbd81efbd82207c20613de2808b78202d3e20656d69743d5245504f5254",
+   "expected": "DUPLICATE_KEY",
+   "source": "fuzz: DUPLICATE_KEY",
+   "implementation_defined": ""
+  },
+  {
+   "id": 72,
+   "message": "[H::EPI] a=x | a=a%20b -> emit=REPORT",
+   "message_utf8_hex": "5b483a3a4550495d20613d78207c20613d6125323062202d3e20656d69743d5245504f5254",
+   "expected": "DUPLICATE_KEY",
+   "source": "fuzz: DUPLICATE_KEY",
+   "implementation_defined": ""
+  },
+  {
+   "id": 73,
+   "message": "[H::HER] refs=caf\u00e9 | refs=% -> emit=ACK",
+   "message_utf8_hex": "5b483a3a4845525d20726566733d636166c3a9207c20726566733d25202d3e20656d69743d41434b",
+   "expected": "DUPLICATE_KEY",
+   "source": "fuzz: DUPLICATE_KEY",
+   "implementation_defined": ""
+  },
+  {
+   "id": 74,
+   "message": "[H::ERR] refs=a b | refs=x -> emit=REPLY",
+   "message_utf8_hex": "5b483a3a4552525d20726566733d612062207c20726566733d78202d3e20656d69743d5245504c59",
+   "expected": "DUPLICATE_KEY",
+   "source": "fuzz: DUPLICATE_KEY",
+   "implementation_defined": ""
+  },
+  {
+   "id": 75,
+   "message": "\ufe0f\r[H::DOC] a1=a%EF%B8%8Fb",
+   "message_utf8_hex": "efb88f0d5b483a3a444f435d2061313d6125454625423825384662",
+   "expected": "EMBEDDED_HEADER_IN_BODY",
+   "source": "fuzz: EMBEDDED_HEADER_IN_BODY",
+   "implementation_defined": ""
+  },
+  {
+   "id": 76,
+   "message": "[H::ETH]  -> emit=intro\r[H::\n```",
+   "message_utf8_hex": "5b483a3a4554485d20202d3e20656d69743d696e74726f0d5b483a3a0a606060",
+   "expected": "EMBEDDED_HEADER_IN_BODY",
+   "source": "fuzz: EMBEDDED_HEADER_IN_BODY",
+   "implementation_defined": ""
+  },
+  {
+   "id": 77,
+   "message": "[H::EPI]]  -> emit=ACK\n\u2028[H::AUD]\n~~~",
+   "message_utf8_hex": "5b483a3a4550495d5d20202d3e20656d69743d41434b0ae280a85b483a3a4155445d0a7e7e7e",
+   "expected": "EMBEDDED_HEADER_IN_BODY",
+   "source": "fuzz: EMBEDDED_HEADER_IN_BODY",
+   "implementation_defined": "line splitting: LF-only vs splitlines()"
+  },
+  {
+   "id": 78,
+   "message": "\u200b[H::DOC]  -> emit=REPLY\rx [H::VER]\ntext",
+   "message_utf8_hex": "e2808b5b483a3a444f435d20202d3e20656d69743d5245504c590d78205b483a3a5645525d0a74657874",
+   "expected": "EMBEDDED_HEADER_IN_BODY",
+   "source": "fuzz: EMBEDDED_HEADER_IN_BODY",
+   "implementation_defined": ""
+  },
+  {
+   "id": 79,
+   "message": "[H::ETH] peer= -> emit=IN",
+   "message_utf8_hex": "5b483a3a4554485d20706565723d202d3e20656d69743d494e",
+   "expected": "EMPTY_KEY_OR_VALUE",
+   "source": "fuzz: EMPTY_KEY_OR_VALUE",
+   "implementation_defined": ""
+  },
+  {
+   "id": 80,
+   "message": "[H::VER] refs= -> emit=ACK",
+   "message_utf8_hex": "5b483a3a5645525d20726566733d202d3e20656d69743d41434b",
+   "expected": "EMPTY_KEY_OR_VALUE",
+   "source": "fuzz: EMPTY_KEY_OR_VALUE",
+   "implementation_defined": ""
+  },
+  {
+   "id": 81,
+   "message": "[H::EPI] \uff3demit= -> emit=AS",
+   "message_utf8_hex": "5b483a3a4550495d20efbcbd656d69743d202d3e20656d69743d4153",
+   "expected": "EMPTY_KEY_OR_VALUE",
+   "source": "fuzz: EMPTY_KEY_OR_VALUE",
+   "implementation_defined": ""
+  },
+  {
+   "id": 82,
+   "message": "[H::EPI] a1= -> emit=REPLY",
+   "message_utf8_hex": "5b483a3a4550495d2061313d202d3e20656d69743d5245504c59",
+   "expected": "EMPTY_KEY_OR_VALUE",
+   "source": "fuzz: EMPTY_KEY_OR_VALUE",
+   "implementation_defined": ""
+  },
+  {
+   "id": 83,
+   "message": "",
+   "message_utf8_hex": "",
+   "expected": "EMPTY_MESSAGE",
+   "source": "fuzz: EMPTY_MESSAGE",
+   "implementation_defined": ""
+  },
+  {
+   "id": 84,
+   "message": "[",
+   "message_utf8_hex": "5b",
+   "expected": "INVALID_HEADER_SYNTAX",
+   "source": "fuzz: INVALID_HEADER_SYNTAX",
+   "implementation_defined": ""
+  },
+  {
+   "id": 85,
+   "message": "\u001b[",
+   "message_utf8_hex": "1b5b",
+   "expected": "INVALID_HEADER_SYNTAX",
+   "source": "fuzz: INVALID_HEADER_SYNTAX",
+   "implementation_defined": ""
+  },
+  {
+   "id": 86,
+   "message": "[H",
+   "message_utf8_hex": "5b48",
+   "expected": "INVALID_HEADER_SYNTAX",
+   "source": "fuzz: INVALID_HEADER_SYNTAX",
+   "implementation_defined": ""
+  },
+  {
+   "id": 87,
+   "message": "[H:",
+   "message_utf8_hex": "5b483a",
+   "expected": "INVALID_HEADER_SYNTAX",
+   "source": "fuzz: INVALID_HEADER_SYNTAX",
+   "implementation_defined": ""
+  },
+  {
+   "id": 88,
+   "message": "[H::DOC] A=a|b -> emit=REPLY",
+   "message_utf8_hex": "5b483a3a444f435d20413d617c62202d3e20656d69743d5245504c59",
+   "expected": "INVALID_KEY_NAME",
+   "source": "fuzz: INVALID_KEY_NAME",
+   "implementation_defined": ""
+  },
+  {
+   "id": 89,
+   "message": "[H::AGT] A=x\u0000y -> emit=INTRO",
+   "message_utf8_hex": "5b483a3a4147545d20413d780079202d3e20656d69743d494e54524f",
+   "expected": "INVALID_KEY_NAME",
+   "source": "fuzz: INVALID_KEY_NAME",
+   "implementation_defined": ""
+  },
+  {
+   "id": 90,
+   "message": "[H::HER] a b=x -> emit=REPORT",
+   "message_utf8_hex": "5b483a3a4845525d206120623d78202d3e20656d69743d5245504f5254",
+   "expected": "INVALID_KEY_NAME",
+   "source": "fuzz: INVALID_KEY_NAME",
+   "implementation_defined": ""
+  },
+  {
+   "id": 91,
+   "message": "[H::ERR] a\t| proto=x -> emit=OP",
+   "message_utf8_hex": "5b483a3a4552525d2061097c2070726f746f3d78202d3e20656d69743d4f50",
+   "expected": "INVALID_KEY_NAME",
+   "source": "fuzz: INVALID_KEY_NAME",
+   "implementation_defined": ""
+  },
+  {
+   "id": 92,
+   "message": "[H::VER] a1=%0\ufe0f9 -> emit=A",
+   "message_utf8_hex": "5b483a3a5645525d2061313d2530efb88f39202d3e20656d69743d41",
+   "expected": "INVALID_PERCENT_ENCODING",
+   "source": "fuzz: INVALID_PERCENT_ENCODING",
+   "implementation_defined": ""
+  },
+  {
+   "id": 93,
+   "message": "[H::EPI] name=% -> emit=REPLY",
+   "message_utf8_hex": "5b483a3a4550495d206e616d653d25202d3e20656d69743d5245504c59",
+   "expected": "INVALID_PERCENT_ENCODING",
+   "source": "fuzz: INVALID_PERCENT_ENCODING",
+   "implementation_defined": ""
+  },
+  {
+   "id": 94,
+   "message": "[H::VER] note=%2 -> emit=REPLY",
+   "message_utf8_hex": "5b483a3a5645525d206e6f74653d2532202d3e20656d69743d5245504c59",
+   "expected": "INVALID_PERCENT_ENCODING",
+   "source": "fuzz: INVALID_PERCENT_ENCODING",
+   "implementation_defined": ""
+  },
+  {
+   "id": 95,
+   "message": "[H::ERR] note=%]Z -> emit=REPRT",
+   "message_utf8_hex": "5b483a3a4552525d206e6f74653d255d5a202d3e20656d69743d5245505254",
+   "expected": "INVALID_PERCENT_ENCODING",
+   "source": "fuzz: INVALID_PERCENT_ENCODING",
+   "implementation_defined": ""
+  },
+  {
+   "id": 96,
+   "message": "[H::AGT] a=%FF -> emit=REPORT",
+   "message_utf8_hex": "5b483a3a4147545d20613d254646202d3e20656d69743d5245504f5254",
+   "expected": "INVALID_UTF8_ENCODING",
+   "source": "fuzz: INVALID_UTF8_ENCODING",
+   "implementation_defined": ""
+  },
+  {
+   "id": 97,
+   "message": "[H::EPI] proto=%FF -> emit=ACK",
+   "message_utf8_hex": "5b483a3a4550495d2070726f746f3d254646202d3e20656d69743d41434b",
+   "expected": "INVALID_UTF8_ENCODING",
+   "source": "fuzz: INVALID_UTF8_ENCODING",
+   "implementation_defined": ""
+  },
+  {
+   "id": 98,
+   "message": "[H::ETH] x_y=%FF -> emit=REPORT",
+   "message_utf8_hex": "5b483a3a4554485d20785f793d254646202d3e20656d69743d5245504f5254",
+   "expected": "INVALID_UTF8_ENCODING",
+   "source": "fuzz: INVALID_UTF8_ENCODING",
+   "implementation_defined": ""
+  },
+  {
+   "id": 99,
+   "message": "[H::AUD] origin=%FF -> emit=ACK",
+   "message_utf8_hex": "5b483a3a4155445d206f726967696e3d254646202d3e20656d69743d41434b",
+   "expected": "INVALID_UTF8_ENCODING",
+   "source": "fuzz: INVALID_UTF8_ENCODING",
+   "implementation_defined": ""
+  },
+  {
+   "id": 100,
+   "message": "\u001f",
+   "message_utf8_hex": "1f",
+   "expected": "LEADING_WHITESPACE",
+   "source": "fuzz: LEADING_WHITESPACE",
+   "implementation_defined": ""
+  },
+  {
+   "id": 101,
+   "message": "\f\ufe0f",
+   "message_utf8_hex": "0cefb88f",
+   "expected": "LEADING_WHITESPACE",
+   "source": "fuzz: LEADING_WHITESPACE",
+   "implementation_defined": "line splitting: LF-only vs splitlines()"
+  },
+  {
+   "id": 102,
+   "message": "\t\u007f",
+   "message_utf8_hex": "097f",
+   "expected": "LEADING_WHITESPACE",
+   "source": "fuzz: LEADING_WHITESPACE",
+   "implementation_defined": ""
+  },
+  {
+   "id": 103,
+   "message": "\u000b[H",
+   "message_utf8_hex": "0b5b48",
+   "expected": "LEADING_WHITESPACE",
+   "source": "fuzz: LEADING_WHITESPACE",
+   "implementation_defined": "line splitting: LF-only vs splitlines()"
+  },
+  {
+   "id": 104,
+   "message": "[H::AUD] x_y -> emit=ACK",
+   "message_utf8_hex": "5b483a3a4155445d20785f79202d3e20656d69743d41434b",
+   "expected": "MALFORMED_KV_PAIR",
+   "source": "fuzz: MALFORMED_KV_PAIR",
+   "implementation_defined": ""
+  },
+  {
+   "id": 105,
+   "message": "[H::DOC] peer -> emit=ACK",
+   "message_utf8_hex": "5b483a3a444f435d2070656572202d3e20656d69743d41434b",
+   "expected": "MALFORMED_KV_PAIR",
+   "source": "fuzz: MALFORMED_KV_PAIR",
+   "implementation_defined": ""
+  },
+  {
+   "id": 106,
+   "message": "[H::ERR] [ -> emit=REPORT",
+   "message_utf8_hex": "5b483a3a4552525d205b202d3e20656d69743d5245504f5254",
+   "expected": "MALFORMED_KV_PAIR",
+   "source": "fuzz: MALFORMED_KV_PAIR",
+   "implementation_defined": ""
+  },
+  {
+   "id": 107,
+   "message": "[H::DOC] a -> emit=REPORT",
+   "message_utf8_hex": "5b483a3a444f435d2061202d3e20656d69743d5245504f5254",
+   "expected": "MALFORMED_KV_PAIR",
+   "source": "fuzz: MALFORMED_KV_PAIR",
+   "implementation_defined": ""
+  },
+  {
+   "id": 108,
+   "message": "[H::HER] [H::AUD] a=a b -> emit=ASSERT",
+   "message_utf8_hex": "5b483a3a4845525d205b483a3a4155445d20613d612062202d3e20656d69743d415353455254",
+   "expected": "MULTIPLE_PRIMARY_TAGS",
+   "source": "fuzz: MULTIPLE_PRIMARY_TAGS",
+   "implementation_defined": ""
+  },
+  {
+   "id": 109,
+   "message": "[H::AGT] [H::AUD] a=a|b -> emit=REPORT",
+   "message_utf8_hex": "5b483a3a4147545d205b483a3a4155445d20613d617c62202d3e20656d69743d5245504f5254",
+   "expected": "MULTIPLE_PRIMARY_TAGS",
+   "source": "fuzz: MULTIPLE_PRIMARY_TAGS",
+   "implementation_defined": ""
+  },
+  {
+   "id": 110,
+   "message": "[H::VER] [H::AUD] a1=a b -> emit=REPLY",
+   "message_utf8_hex": "5b483a3a5645525d205b483a3a4155445d2061313d612062202d3e20656d69743d5245504c59",
+   "expected": "MULTIPLE_PRIMARY_TAGS",
+   "source": "fuzz: MULTIPLE_PRIMARY_TAGS",
+   "implementation_defined": ""
+  },
+  {
+   "id": 111,
+   "message": "[H::EPI] [H::AUD] a=a b -> emit=REPORT",
+   "message_utf8_hex": "5b483a3a4550495d205b483a3a4155445d20613d612062202d3e20656d69743d5245504f5254",
+   "expected": "MULTIPLE_PRIMARY_TAGS",
+   "source": "fuzz: MULTIPLE_PRIMARY_TAGS",
+   "implementation_defined": ""
+  },
+  {
+   "id": 112,
+   "message": "[H::ERR] 1a=  -> emit=REPLY",
+   "message_utf8_hex": "5b483a3a4552525d2031613d20202d3e20656d69743d5245504c59",
+   "expected": "NON_CANONICAL_SPACING",
+   "source": "fuzz: NON_CANONICAL_SPACING",
+   "implementation_defined": ""
+  },
+  {
+   "id": 113,
+   "message": "[H::ERR] \u2800  -> emit=AUDIT_F",
+   "message_utf8_hex": "5b483a3a4552525d20e2a08020202d3e20656d69743d41554449545f46",
+   "expected": "NON_CANONICAL_SPACING",
+   "source": "fuzz: NON_CANONICAL_SPACING",
+   "implementation_defined": ""
+  },
+  {
+   "id": 114,
+   "message": "[H::EPI] a1= x -> emit=INTRO",
+   "message_utf8_hex": "5b483a3a4550495d2061313d2078202d3e20656d69743d494e54524f",
+   "expected": "NON_CANONICAL_SPACING",
+   "source": "fuzz: NON_CANONICAL_SPACING",
+   "implementation_defined": ""
+  },
+  {
+   "id": 115,
+   "message": "[H::VER] name=  -> emit=REPLY",
+   "message_utf8_hex": "5b483a3a5645525d206e616d653d20202d3e20656d69743d5245504c59",
+   "expected": "NON_CANONICAL_SPACING",
+   "source": "fuzz: NON_CANONICAL_SPACING",
+   "implementation_defined": ""
+  },
+  {
+   "id": 116,
+   "message": "[H::AGT] a=x -> emit=REPLY",
+   "message_utf8_hex": "5b483a3a4147545d20613d78202d3e20656d69743d5245504c59",
+   "expected": "PASS",
+   "source": "fuzz: PASS",
+   "implementation_defined": ""
+  },
+  {
+   "id": 117,
+   "message": "[H::AGT] a1=x -> emit=REPLY",
+   "message_utf8_hex": "5b483a3a4147545d2061313d78202d3e20656d69743d5245504c59",
+   "expected": "PASS",
+   "source": "fuzz: PASS",
+   "implementation_defined": ""
+  },
+  {
+   "id": 118,
+   "message": "[H::AGT] note=x -> emit=ACK",
+   "message_utf8_hex": "5b483a3a4147545d206e6f74653d78202d3e20656d69743d41434b",
+   "expected": "PASS",
+   "source": "fuzz: PASS",
+   "implementation_defined": ""
+  },
+  {
+   "id": 119,
+   "message": "[H::AGT] peer=a b -> emit=ACK",
+   "message_utf8_hex": "5b483a3a4147545d20706565723d612062202d3e20656d69743d41434b",
+   "expected": "PASS",
+   "source": "fuzz: PASS",
+   "implementation_defined": ""
+  },
+  {
+   "id": 120,
+   "message": "[H::AGT] peer=[H::AUD] -> emit=ACK",
+   "message_utf8_hex": "5b483a3a4147545d20706565723d5b483a3a4155445d202d3e20656d69743d41434b",
+   "expected": "RAW_TAG_IN_VALUE",
+   "source": "fuzz: RAW_TAG_IN_VALUE",
+   "implementation_defined": ""
+  },
+  {
+   "id": 121,
+   "message": "[H::HER] a=[H::AUD] -> emit=ASSERT",
+   "message_utf8_hex": "5b483a3a4845525d20613d5b483a3a4155445d202d3e20656d69743d415353455254",
+   "expected": "RAW_TAG_IN_VALUE",
+   "source": "fuzz: RAW_TAG_IN_VALUE",
+   "implementation_defined": ""
+  },
+  {
+   "id": 122,
+   "message": "[H::AUD] name=[H::AUD] -> emit=ACK",
+   "message_utf8_hex": "5b483a3a4155445d206e616d653d5b483a3a4155445d202d3e20656d69743d41434b",
+   "expected": "RAW_TAG_IN_VALUE",
+   "source": "fuzz: RAW_TAG_IN_VALUE",
+   "implementation_defined": ""
+  },
+  {
+   "id": 123,
+   "message": "[H::AUD] a=[H::aud\u3164] -> emit=REPORT\n`",
+   "message_utf8_hex": "5b483a3a4155445d20613d5b483a3a617564e385a45d202d3e20656d69743d5245504f52540a60",
+   "expected": "RAW_TAG_IN_VALUE",
+   "source": "fuzz: RAW_TAG_IN_VALUE",
+   "implementation_defined": ""
+  },
+  {
+   "id": 124,
+   "message": "[H::ERR] alg=% -> emit=REPORT",
+   "message_utf8_hex": "5b483a3a4552525d20616c673d25202d3e20656d69743d5245504f5254",
+   "expected": "RESERVED_KEY_NAME",
+   "source": "fuzz: RESERVED_KEY_NAME",
+   "implementation_defined": ""
+  },
+  {
+   "id": 125,
+   "message": "[H::VER] emit=x -> emit=ASSERT",
+   "message_utf8_hex": "5b483a3a5645525d20656d69743d78202d3e20656d69743d415353455254",
+   "expected": "RESERVED_KEY_NAME",
+   "source": "fuzz: RESERVED_KEY_NAME",
+   "implementation_defined": ""
+  },
+  {
+   "id": 126,
+   "message": "[H::AGT] alg=x -> em -> emit=A",
+   "message_utf8_hex": "5b483a3a4147545d20616c673d78202d3e20656d202d3e20656d69743d41",
+   "expected": "RESERVED_KEY_NAME",
+   "source": "fuzz: RESERVED_KEY_NAME",
+   "implementation_defined": ""
+  },
+  {
+   "id": 127,
+   "message": "[H::EPI] alg=hello -> emit=ACK",
+   "message_utf8_hex": "5b483a3a4550495d20616c673d68656c6c6f202d3e20656d69743d41434b",
+   "expected": "RESERVED_KEY_NAME",
+   "source": "fuzz: RESERVED_KEY_NAME",
+   "implementation_defined": ""
+  },
+  {
+   "id": 128,
+   "message": "[H::]  ",
+   "message_utf8_hex": "5b483a3a5d2020",
+   "expected": "TRAILING_WHITESPACE",
+   "source": "fuzz: TRAILING_WHITESPACE",
+   "implementation_defined": ""
+  },
+  {
+   "id": 129,
+   "message": "[H::AGT] ",
+   "message_utf8_hex": "5b483a3a4147545d20",
+   "expected": "TRAILING_WHITESPACE",
+   "source": "fuzz: TRAILING_WHITESPACE",
+   "implementation_defined": ""
+  },
+  {
+   "id": 130,
+   "message": "[ H::VER] ",
+   "message_utf8_hex": "5b20483a3a5645525d20",
+   "expected": "TRAILING_WHITESPACE",
+   "source": "fuzz: TRAILING_WHITESPACE",
+   "implementation_defined": ""
+  },
+  {
+   "id": 131,
+   "message": "[H::ETH]  -\t",
+   "message_utf8_hex": "5b483a3a4554485d20202d09",
+   "expected": "TRAILING_WHITESPACE",
+   "source": "fuzz: TRAILING_WHITESPACE",
+   "implementation_defined": ""
+  },
+  {
+   "id": 132,
+   "message": "[H::Ver]  -> emi`=intro\n````",
+   "message_utf8_hex": "5b483a3a5665725d20202d3e20656d69603d696e74726f0a60606060",
+   "expected": "UNCLOSED_CODE_FENCE",
+   "source": "fuzz: UNCLOSED_CODE_FENCE",
+   "implementation_defined": ""
+  },
+  {
+   "id": 133,
+   "message": "[H::] \u0435 ]-> emit=R\u180bEPLY\r  ```",
+   "message_utf8_hex": "5b483a3a5d20d0b5205d2d3e20656d69743d52e1a08b45504c590d2020606060",
+   "expected": "UNCLOSED_CODE_FENCE",
+   "source": "fuzz: UNCLOSED_CODE_FENCE",
+   "implementation_defined": ""
+  },
+  {
+   "id": 134,
+   "message": "[H::ERR]  -> emit=INDEX_REPO\r\n```",
+   "message_utf8_hex": "5b483a3a4552525d20202d3e20656d69743d494e4445585f5245504f0d0a606060",
+   "expected": "UNCLOSED_CODE_FENCE",
+   "source": "fuzz: UNCLOSED_CODE_FENCE",
+   "implementation_defined": ""
+  },
+  {
+   "id": 135,
+   "message": "[H::HER] refs=x -> emit=REPORT\r\n```",
+   "message_utf8_hex": "5b483a3a4845525d20726566733d78202d3e20656d69743d5245504f52540d0a606060",
+   "expected": "UNCLOSED_CODE_FENCE",
+   "source": "fuzz: UNCLOSED_CODE_FENCE",
+   "implementation_defined": ""
+  },
+  {
+   "id": 136,
+   "message": "[H::ERR] a=a|b -> emit=INTRO",
+   "message_utf8_hex": "5b483a3a4552525d20613d617c62202d3e20656d69743d494e54524f",
+   "expected": "UNESCAPED_DELIMITER",
+   "source": "fuzz: UNESCAPED_DELIMITER",
+   "implementation_defined": ""
+  },
+  {
+   "id": 137,
+   "message": "[H::ETH] a1=a|b -> emit=OPEN_",
+   "message_utf8_hex": "5b483a3a4554485d2061313d617c62202d3e20656d69743d4f50454e5f",
+   "expected": "UNESCAPED_DELIMITER",
+   "source": "fuzz: UNESCAPED_DELIMITER",
+   "implementation_defined": ""
+  },
+  {
+   "id": 138,
+   "message": "[H::ERR] peer=a->b -> emit=ACK",
+   "message_utf8_hex": "5b483a3a4552525d20706565723d612d3e62202d3e20656d69743d41434b",
+   "expected": "UNESCAPED_DELIMITER",
+   "source": "fuzz: UNESCAPED_DELIMITER",
+   "implementation_defined": ""
+  },
+  {
+   "id": 139,
+   "message": "[H::AUD] note=\u180ba|b\u034f -> emit=ACK",
+   "message_utf8_hex": "5b483a3a4155445d206e6f74653de1a08b617c62cd8f202d3e20656d69743d41434b",
+   "expected": "UNESCAPED_DELIMITER",
+   "source": "fuzz: UNESCAPED_DELIMITER",
+   "implementation_defined": ""
+  },
+  {
+   "id": 140,
+   "message": "[H::XYZ] a",
+   "message_utf8_hex": "5b483a3a58595a5d2061",
+   "expected": "UNKNOWN_DOMAIN",
+   "source": "fuzz: UNKNOWN_DOMAIN",
+   "implementation_defined": ""
+  },
+  {
+   "id": 141,
+   "message": "[H::XYZ] r",
+   "message_utf8_hex": "5b483a3a58595a5d2072",
+   "expected": "UNKNOWN_DOMAIN",
+   "source": "fuzz: UNKNOWN_DOMAIN",
+   "implementation_defined": ""
+  },
+  {
+   "id": 142,
+   "message": "[H::XYZ] name",
+   "message_utf8_hex": "5b483a3a58595a5d206e616d65",
+   "expected": "UNKNOWN_DOMAIN",
+   "source": "fuzz: UNKNOWN_DOMAIN",
+   "implementation_defined": ""
+  },
+  {
+   "id": 143,
+   "message": "[H::XYZ] clai",
+   "message_utf8_hex": "5b483a3a58595a5d20636c6169",
+   "expected": "UNKNOWN_DOMAIN",
+   "source": "fuzz: UNKNOWN_DOMAIN",
+   "implementation_defined": ""
+  }
+ ]
+}
