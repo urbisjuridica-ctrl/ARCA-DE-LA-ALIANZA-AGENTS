@@ -1,68 +1,132 @@
-import hashlib, json, os, re, urllib.parse
+from dataclasses import dataclass
+import hashlib, hmac, json, os, re
 from datetime import datetime, timezone
+from typing import Dict, List, Optional, Set, Tuple
 
 LEDGER_FILE = "witness_ledger.jsonl"
+ALLOWED_DOMAINS: Set[str] = {"AGT", "VER", "AUD", "ETH", "ERR", "DOC", "HER", "EPI"}
+MUTABLE_ALIASES: Set[str] = {"latest", "cleaned", "current", "default", "head"}
 
-def _sha256_bytes(data: bytes) -> str:
-    return "sha256:" + hashlib.sha256(data).hexdigest()
+DOMAIN_ACTION_MATRIX: Dict[str, Set[str]] = {
+    "AGT": {"REGISTER_PRESENCE", "TEACH_SYNTAX", "INTRO"},
+    "VER": {"CLAIM_CHECK", "ASSERT_FACT", "AUDIT_FILE", "PUBLISH_COMMENT", "PUBLISH_POST"},
+    "AUD": {"VERIFY_TRACE", "ATTEST_ARTIFACT", "COMMIT_WITNESS", "PUBLISH_COMMENT", "PUBLISH_POST"},
+    "ETH": {"ENFORCE_POLICY", "DECLARE_CONSTRAINT"},
+    "ERR": {"FORK_MISMATCH", "REPORT_ERROR", "HALT_AND_LOG"},
+    "DOC": {"TEACH_SYNTAX", "INDEX_REPO"},
+    "HER": {"OPEN_DIALOGUE", "ACKNOWLEDGE_CRITIQUE"},
+    "EPI": {"ASSERT", "HYPOTHESIZE", "REPORT"},
+}
 
-def parse_hekt_claim(header_line: str) -> dict:
-    domains = re.findall(r"\[H::([A-Z]{3})\]", header_line)
-    pre_arrow, _, post_arrow = header_line.partition("->")
-    emit_match = re.search(r"emit=([A-Z0-9_]+)", post_arrow)
-    emit_action = emit_match.group(1) if emit_match else None
-    clean_kv = re.sub(r"\[H::[A-Z]{3}\]", "", pre_arrow)
-    fields = {}
-    for seg in clean_kv.split("|"):
-        if "=" in seg:
-            k, v = seg.split("=", 1)
-            fields[k.strip()] = urllib.parse.unquote(v.strip().strip('"'))
-    return {"domains": domains, "fields": fields, "emit": emit_action}
+HEADER_RE = re.compile(r"^((?:\[H::[A-Z]{3}\]\s*)+)\s+(.+?)\s+->\s+emit=([A-Z0-9_]+)$")
+SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 
-def _append_witness_row(record: dict) -> str:
+@dataclass
+class ParsedHeader:
+    domains: List[str]
+    fields: Dict[str, str]
+    action: str
+
+@dataclass
+class VerificationResult:
+    status: str  # "VALID" | "REJECTED" | "UNVERIFIED"
+    reason: str
+    domains: Optional[List[str]] = None
+    action: Optional[str] = None
+    computed_sha256: Optional[str] = None
+    row_hash: Optional[str] = None
+
+def unescape_hekt_value(raw_val: str) -> str:
+    return raw_val.replace("%7C", "|").replace("%3D", "=").replace("%3E", ">")
+
+def parse_hekt_header(message: str) -> Tuple[Optional[ParsedHeader], Optional[str]]:
+    first_line = message.splitlines()[0].strip() if message.strip() else ""
+    match = HEADER_RE.match(first_line)
+    if not match:
+        return None, "INVALID_HEADER_SYNTAX"
+    raw_domains, raw_kv_section, action = match.groups()
+    domains = re.findall(r"\[H::([A-Z]{3})\]", raw_domains)
+    if not domains or any(d not in ALLOWED_DOMAINS for d in domains):
+        return None, "UNKNOWN_DOMAIN"
+    fields: Dict[str, str] = {}
+    for token in raw_kv_section.split(" | "):
+        token = token.strip()
+        if "=" not in token or token.count("=") != 1:
+            return None, "MALFORMED_KV_PAIR"
+        key, val = token.split("=", 1)
+        if not key.strip() or not val.strip():
+            return None, "EMPTY_KEY_OR_VALUE"
+        if any(sep in val for sep in ("|", "->")):
+            return None, "UNESCAPED_DELIMITER"
+        fields[key.strip()] = unescape_hekt_value(val.strip())
+    return ParsedHeader(domains=domains, fields=fields, action=action), None
+
+def is_action_allowed(header: ParsedHeader, authenticated_agent: Optional[str] = None) -> Tuple[bool, Optional[str]]:
+    allowed_union = set().union(*(DOMAIN_ACTION_MATRIX.get(d, set()) for d in header.domains))
+    if header.action not in allowed_union:
+        return False, "ACTION_NOT_ALLOWED_FOR_DOMAIN"
+    declared_agent = header.fields.get("agent")
+    if authenticated_agent and declared_agent and declared_agent != authenticated_agent:
+        return False, "AGENT_IDENTITY_MISMATCH"
+    for k, v in header.fields.items():
+        if v.lower() in MUTABLE_ALIASES and "sha256" not in header.fields:
+            return False, f"MUTABLE_ALIAS_REJECTED:{k}={v}"
+    return True, None
+
+def verify_sha256_evidence(declared_hash: Optional[str], canonical_bytes: Optional[bytes]) -> Tuple[str, Optional[str], Optional[str]]:
+    if not declared_hash:
+        return "UNVERIFIED", None, "MISSING_SHA256"
+    norm = declared_hash.strip().lower().removeprefix("sha256:")
+    if not SHA256_RE.match(norm):
+        return "REJECTED", None, "INVALID_SHA256_FORMAT"
+    if canonical_bytes is None:
+        return "UNVERIFIED", None, "MISSING_CANONICAL_EVIDENCE"
+    computed = hashlib.sha256(canonical_bytes).hexdigest()
+    if not hmac.compare_digest(norm, computed):
+        return "REJECTED", computed, "SHA256_MISMATCH"
+    return "VALID", computed, None
+
+def _append_witness_row(res: VerificationResult, header_line: str) -> str:
     prev_hash = "0" * 64
     if os.path.exists(LEDGER_FILE):
         with open(LEDGER_FILE, "rb") as f:
             lines = f.read().splitlines()
             if lines:
                 prev_hash = hashlib.sha256(lines[-1]).hexdigest()
-    record["prev_hash"] = prev_hash
-    raw = json.dumps(record, sort_keys=True, ensure_ascii=False).encode("utf-8")
-    record["row_hash"] = hashlib.sha256(raw).hexdigest()
+    rec = {"timestamp": datetime.now(timezone.utc).isoformat(), "status": res.status, "reason": res.reason, "header": header_line, "computed_sha256": res.computed_sha256, "prev_hash": prev_hash}
+    rec["row_hash"] = hashlib.sha256(json.dumps(rec, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
     with open(LEDGER_FILE, "a", encoding="utf-8") as f:
-        f.write(json.dumps(record, ensure_ascii=False) + "\n")
-    return record["row_hash"]
+        f.write(json.dumps(rec, ensure_ascii=False) + "\n")
+    return rec["row_hash"]
 
-def verify_external_execution(hekt_claim_header: str, target_filepath: str, observed_action: str, expected_sha256: str | None = None, active_head_rev: str | None = None) -> dict:
-    claim = parse_hekt_claim(hekt_claim_header)
-    fields = claim["fields"]
-    mismatches = []
-    mutable_aliases = {"latest", "cleaned", "current", "default", "head"}
-    for k, v in fields.items():
-        if v.lower() in mutable_aliases and "artifact_hash" not in fields:
-            mismatches.append(f"MUTABLE_ALIAS_REJECTED:{k}={v}")
-    if not os.path.exists(target_filepath):
-        real_hash = None
-        mismatches.append(f"ARTIFACT_NOT_FOUND:{target_filepath}")
+def verify_message(message: str, canonical_bytes: Optional[bytes] = None, authenticated_agent: Optional[str] = None, active_head_rev: Optional[str] = None) -> VerificationResult:
+    parsed, parse_err = parse_hekt_header(message)
+    if parse_err or parsed is None:
+        res = VerificationResult(status="REJECTED", reason=parse_err or "PARSE_ERROR")
     else:
-        with open(target_filepath, "rb") as f:
-            real_hash = _sha256_bytes(f.read())
-        if expected_sha256 and real_hash != expected_sha256:
-            mismatches.append(f"HASH_MISMATCH:claimed={expected_sha256},real={real_hash}")
-        if "artifact_hash" in fields and fields["artifact_hash"] != real_hash:
-            mismatches.append(f"HEADER_HASH_MISMATCH:claimed={fields['artifact_hash']},real={real_hash}")
-    if active_head_rev and fields.get("code_rev") and fields["code_rev"] != active_head_rev:
-        mismatches.append(f"SUPERSEDED_REV:claimed={fields['code_rev']},head={active_head_rev}")
-    if claim["emit"] != observed_action:
-        mismatches.append(f"ACTION_MISMATCH:emit={claim['emit']},observed={observed_action}")
-    verdict = "MISMATCH" if mismatches else "MATCH"
-    witness_header = f"[H::{'ERR' if mismatches else 'AUD'}] [H::VER] verdict={verdict} | real_hash={real_hash or 'NONE'} -> emit={'HALT_AND_LOG' if mismatches else 'COMMIT_WITNESS'}"
-    witness_record = {"timestamp": datetime.now(timezone.utc).isoformat(), "verdict": verdict, "claim_header": hekt_claim_header, "witness_header": witness_header, "real_hash": real_hash, "observed_action": observed_action, "mismatches": mismatches}
-    witness_record["row_hash"] = _append_witness_row(witness_record)
-    return witness_record
+        allowed, auth_err = is_action_allowed(parsed, authenticated_agent=authenticated_agent)
+        if not allowed:
+            res = VerificationResult(status="REJECTED", reason=auth_err or "FORBIDDEN_ACTION", domains=parsed.domains, action=parsed.action)
+        elif active_head_rev and parsed.fields.get("code_rev") and parsed.fields["code_rev"] != active_head_rev:
+            res = VerificationResult(status="REJECTED", reason="SUPERSEDED_REV", domains=parsed.domains, action=parsed.action)
+        elif "AUD" in parsed.domains or "sha256" in parsed.fields:
+            ev_status, digest, ev_err = verify_sha256_evidence(parsed.fields.get("sha256"), canonical_bytes)
+            res = VerificationResult(status=ev_status, reason="VERIFIED_WITH_SHA256" if ev_status == "VALID" else (ev_err or "EVIDENCE_CHECK_FAILED"), domains=parsed.domains, action=parsed.action, computed_sha256=digest)
+        else:
+            res = VerificationResult(status="VALID", reason="SYNTAX_AND_POLICY_VALID", domains=parsed.domains, action=parsed.action)
+    res.row_hash = _append_witness_row(res, message.splitlines()[0].strip() if message.strip() else "")
+    return res
+
+def verify_external_execution(hekt_claim_header: str, target_filepath: str, observed_action: str, expected_sha256: Optional[str] = None, active_head_rev: Optional[str] = None) -> dict:
+    raw = open(target_filepath, "rb").read() if os.path.exists(target_filepath) else None
+    res = verify_message(hekt_claim_header, canonical_bytes=raw, active_head_rev=active_head_rev)
+    if res.action and res.action != observed_action:
+        res.status, res.reason = "REJECTED", f"ACTION_MISMATCH:{res.action}!={observed_action}"
+    return {"verdict": "MATCH" if res.status in ("VALID", "UNVERIFIED") and raw is not None else "MISMATCH", "status": res.status, "reason": res.reason, "mismatches": [] if res.status != "REJECTED" and raw is not None else [res.reason], "row_hash": res.row_hash}
 
 if __name__ == "__main__":
-    r_ok = verify_external_execution("[H::VER] [H::AUD] claim_id=test_ok | code_rev=v2.3.3 -> emit=AUDIT_FILE", "SKILL.md", "AUDIT_FILE", active_head_rev="v2.3.3")
-    r_bad = verify_external_execution("[H::VER] [H::DBX] dataset=latest -> emit=TRAIN", "SKILL.md", "READ_ONLY", active_head_rev="v2.3.3")
-    print("TEST 1 (MATCH):", r_ok["verdict"], r_ok["witness_header"])
-    print("TEST 2 (MISMATCH):", r_bad["verdict"], r_bad["mismatches"])
+    raw_skill = open("SKILL.md", "rb").read()
+    h_skill = hashlib.sha256(raw_skill).hexdigest()
+    print("1. VALID:", verify_message(f"[H::AUD] sha256={h_skill} -> emit=ATTEST_ARTIFACT", canonical_bytes=raw_skill))
+    print("2. REJECTED (Matriz):", verify_message("[H::AGT] agent=bot -> emit=ATTEST_ARTIFACT"))
+    print("3. UNVERIFIED (Pendiente):", verify_message("[H::AUD] artifact=report.pdf -> emit=VERIFY_TRACE"))
