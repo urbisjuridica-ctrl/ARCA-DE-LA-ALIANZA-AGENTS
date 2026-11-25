@@ -26,9 +26,10 @@ DOMAIN_ACTION_MATRIX: Dict[str, Set[str]] = {
     "EPI": {"ASSERT", "HYPOTHESIZE", "REPORT"},
 }
 
-HEADER_RE = re.compile(r"^(\[H::[A-Z]{3}\]) (.+) -> emit=([A-Z0-9_]+)$")
-KEY_RE = re.compile(r"^[a-z][a-z0-9_]*$")
-SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
+HEADER_RE = re.compile(r"^(\[H::[A-Z]{3}\]) (.+) -> emit=([A-Z0-9_]+)\Z")
+KEY_RE = re.compile(r"^[a-z][a-z0-9_]*\Z")
+SHA256_RE = re.compile(r"^[0-9a-f]{64}\Z")
+SIG_RE = re.compile(r"^[0-9a-f]{128}\Z")
 BAD_PCT_RE = re.compile(r"%(?![0-9A-Fa-f]{2})")
 
 @dataclass
@@ -192,7 +193,7 @@ def verify_message(message: str, canonical_bytes: Optional[bytes] = None, authen
             res = VerificationResult(status="REJECTED", reason="BODY_SHA256_REQUIRED", domains=parsed.domains, action=parsed.action)
         elif expected_audience and parsed.fields.get("aud") != expected_audience:
             res = VerificationResult(status="REJECTED", reason="AUDIENCE_MISMATCH", domains=parsed.domains, action=parsed.action)
-        elif "ts" in parsed.fields and not re.fullmatch(r"[0-9]{1,10}", parsed.fields["ts"]):
+        elif "ts" in parsed.fields and not re.fullmatch(r"[1-9][0-9]{0,9}\Z", parsed.fields["ts"]):
             res = VerificationResult(status="REJECTED", reason="INVALID_TIMESTAMP_FORMAT", domains=parsed.domains, action=parsed.action)
         elif seen_nonces is not None and "nonce" in parsed.fields and parsed.fields["nonce"] in seen_nonces:
             res = VerificationResult(status="REJECTED", reason="REPLAY_DETECTED", domains=parsed.domains, action=parsed.action)
@@ -204,6 +205,8 @@ def verify_message(message: str, canonical_bytes: Optional[bytes] = None, authen
                 kid, sig = parsed.fields.get("kid"), parsed.fields.get("sig")
                 if not sig:
                     res = VerificationResult(status="REJECTED", reason="MISSING_SIGNATURE", domains=parsed.domains, action=parsed.action)
+                elif not SIG_RE.match(sig):
+                    res = VerificationResult(status="REJECTED", reason="INVALID_SIGNATURE_FORMAT", domains=parsed.domains, action=parsed.action)
                 elif not kid or not trusted_keys or kid not in trusted_keys:
                     res = VerificationResult(status="REJECTED", reason="UNKNOWN_KEY_ID", domains=parsed.domains, action=parsed.action)
                 elif not is_valid_ed25519_pubkey(trusted_keys[kid]):
