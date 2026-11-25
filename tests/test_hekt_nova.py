@@ -59,3 +59,15 @@ def test_deepseek_handshake_and_full_percent_encoding():
     parsed, err = h.parse_hekt_header(hdr)
     assert err is None and res.status == "VALID" and res.action == "INTRO"
     assert "|" in parsed.fields["syntax"] and ">" in parsed.fields["syntax"]
+
+def test_ed25519_adversarial_wrong_key_and_field_tamper():
+    priv_a, pub_a = h.generate_keypair()
+    _, pub_attacker = h.generate_keypair()
+    hdr = "[H::AUD] artifact=SKILL.md | nonce=9f82a1 -> emit=ATTEST_ARTIFACT"
+    sig = h.sign_header_payload(hdr, priv_a)
+    assert h.verify_header_signature(hdr, sig, pub_a)
+    # 1. Sustitución de clave pública del atacante debe fallar
+    assert not h.verify_header_signature(hdr, sig, pub_attacker)
+    # 2. Alteración sutil de un campo tras la firma debe fallar
+    tampered = "[H::AUD] artifact=README.md | nonce=9f82a1 -> emit=ATTEST_ARTIFACT"
+    assert not h.verify_header_signature(tampered, sig, pub_a)

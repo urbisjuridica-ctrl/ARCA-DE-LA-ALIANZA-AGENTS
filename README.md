@@ -15,10 +15,10 @@
 
 # 🏛️ ARCA DE LA ALIANZA — Ecosistema de Agentes Simbólicos y Auditoría Verificable
 
-> **Symbolic Reasoning, Hermeneutic Benchmark & Verifiable Multi-Agent Audit Architecture (`HEKT-NOVA v2.3.1`)**
+> **Symbolic Reasoning, Hermeneutic Benchmark & Verifiable Multi-Agent Audit Architecture (`HEKT-NOVA v2.4.0`)**
 
 Este repositorio integra dos capas complementarias:
-1. **Capa de Ingeniería y Auditoría (`Claim vs. Check`):** Notación telegráfica estructurada (`HEKT-NOVA v2.3.1`) acoplada a verificación determinista externa (`verificador_agentes.py`, `INTEGRIDAD.md`) para evitar registros autorreferenciales.
+1. **Capa de Ingeniería y Auditoría (`Claim vs. Check`):** Notación telegráfica estructurada (`HEKT-NOVA v2.4.0`) acoplada a verificación determinista externa (`verificador_agentes.py`, `INTEGRIDAD.md`) para evitar registros autorreferenciales.
 2. **Capa Hermenéutica y Simbólica (`m/mellizas-operativas`):** Benchmark de razonamiento simbólico, coherencia semántica y análisis cultural (`benchmark/`, `analisis_peliculas/`).
 
 ---
@@ -29,7 +29,7 @@ En sistemas multi-agente autónomos, un registro escrito únicamente por el prop
 
 ```text
 ┌─────────────────────────────────────────────────────────────────────────┐
-│ 1. CLAIM (Agente / Cabecera HEKT-NOVA v2.3.1)                           │
+│ 1. CLAIM (Agente / Cabecera HEKT-NOVA v2.4.0)                           │
 │    [H::VER] [H::AUD] proto=HEKT-NOVA-v2.3.1 | domain=... -> emit=ACTION │
 │    Declaración telegráfica tipada de intención, dominio y transición.   │
 └───────────────────────────────────┬─────────────────────────────────────┘
@@ -50,7 +50,7 @@ En sistemas multi-agente autónomos, un registro escrito únicamente por el prop
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
-### Mapeo de Dominios de Auditoría (`HEKT-NOVA v2.3.2`)
+### Mapeo de Dominios de Auditoría (`HEKT-NOVA v2.4.0`)
 
 > **Regla de integridad:** *La cabecera HEKT-NOVA es siempre una afirmación (`Claim`); nunca se considera prueba por sí sola sin contraste externo (`Check`).*
 
@@ -92,7 +92,7 @@ Siguiendo la hipótesis propuesta en revisión entre pares (*¿qué ocurre cuand
 | Condición (Sin esquema previo) | Precisión Cold-Reader | Latencia Media / Ítem | Ganancia Neta |
 | :--- | :---: | :---: | :---: |
 | **B (`Raw JSON` heterogéneo)** | 50.0% (`30/60`) | 833.0 ms | Línea base |
-| **C (`HEKT-NOVA v2.3.3` auto-descriptivo)** | **85.0% (`51/60`)** | **794.2 ms** | **+35.0 pts (+70% relativo)** |
+| **C (`HEKT-NOVA v2.4.0` auto-descriptivo)** | **85.0% (`51/60`, Wilson 95% CI: 73.9%–91.9%)** | **794.2 ms** | **+35.0 pts (`p < 0.0001`, Fisher exact)** |
 
 * **Conclusión definitiva del diseño:** Cuando el receptor conoce el esquema de antemano, JSON y HEKT-NOVA empatan; **cuando un agente recién llegado o un humano (*cold reader*) entra en un hilo sin esquema compartido**, el prefijo de dominio (`[H::EPI]`, `[H::AUD]`, `[H::ETH]`) y el cierre `-> emit=<ACTION>` elevan la clasificación correcta del **50.0% al 85.0%**.
 
