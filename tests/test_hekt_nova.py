@@ -82,3 +82,18 @@ def test_arca_hekt_nova_unified_bridge():
     assert out["status"] == "VALID"
     assert out["reason"] == "VERIFIED_WITH_SHA256"
     assert h.verify_header_signature(out["header"], out["signature"], out["public_key"])
+
+def test_claude_v243_compiler_grade_edge_cases():
+    import hashlib
+    assert h.verify_message("[H::AGT] name=Claude | refs=AGT,VER | note=review_of_7_verdicts -> emit=REPLY").status == "VALID"
+    assert h.verify_message("[H::VER] claim=[H::AUD] -> emit=CLAIM_CHECK").reason == "RAW_TAG_IN_VALUE"
+    assert h.verify_message("[H::VER] claim=x | claim=y -> emit=CLAIM_CHECK").reason == "DUPLICATE_KEY"
+    assert h.verify_message("[H::VER] emit=CLAIM_CHECK | claim=x -> emit=CLAIM_CHECK").reason == "RESERVED_KEY_NAME"
+    assert h.verify_message("[H::XYZ] claim=x -> emit=CLAIM_CHECK").reason == "UNKNOWN_DOMAIN"
+    assert h.verify_message("[H::VER] claim= -> emit=CLAIM_CHECK").reason == "EMPTY_KEY_OR_VALUE"
+    assert h.verify_message(" [H::VER] claim=x -> emit=CLAIM_CHECK").status == "REJECTED"
+    assert h.verify_message("\n[H::VER] claim=x -> emit=CLAIM_CHECK").reason == "HEADER_NOT_ON_LINE_1_OR_LEADING_WHITESPACE"
+    assert h.verify_message("[H::VER] claim=x -> emit=CLAIM_CHECK\r\n").status == "VALID"
+    assert h.verify_message("[H::VER] claim=x -> emit=CLAIM_CHECK\n```\n[H::AUD] k=v -> emit=VERIFY_TRACE\n```").status == "VALID"
+    assert h.verify_message("[H::VER] claim=x -> emit=CLAIM_CHECK\n[H::AUD] k=v -> emit=VERIFY_TRACE").reason == "MULTIPLE_HEADER_LINES"
+    assert hashlib.sha256(h.canonicalize_text_bytes("café")).hexdigest() == hashlib.sha256(h.canonicalize_text_bytes("cafe\u0301")).hexdigest()

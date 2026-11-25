@@ -1,11 +1,13 @@
 from dataclasses import dataclass
-import hashlib, hmac, json, os, re
+import hashlib, hmac, json, os, re, unicodedata
 from datetime import datetime, timezone
-from typing import Dict, List, Optional, Set, Tuple
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 LEDGER_FILE = "witness_ledger.jsonl"
 ALLOWED_DOMAINS: Set[str] = {"AGT", "VER", "AUD", "ETH", "ERR", "DOC", "HER", "EPI"}
 MUTABLE_ALIASES: Set[str] = {"latest", "cleaned", "current", "default", "head"}
+RESERVED_KEYS: Set[str] = {"emit"}
 
 DOMAIN_ACTION_MATRIX: Dict[str, Set[str]] = {
     "AGT": {"REGISTER_PRESENCE", "TEACH_SYNTAX", "INTRO", "ACK", "REPLY"},
@@ -19,6 +21,7 @@ DOMAIN_ACTION_MATRIX: Dict[str, Set[str]] = {
 }
 
 HEADER_RE = re.compile(r"^(\[H::[A-Z]{3}\])\s+(.+?)\s+->\s+emit=([A-Z0-9_]+)$")
+KEY_RE = re.compile(r"^[a-z][a-z0-9_]*$")
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 
 @dataclass
@@ -29,7 +32,7 @@ class ParsedHeader:
 
 @dataclass
 class VerificationResult:
-    status: str  # "VALID" | "REJECTED" | "UNVERIFIED"
+    status: str
     reason: str
     domains: Optional[List[str]] = None
     action: Optional[str] = None
@@ -39,35 +42,59 @@ class VerificationResult:
 def unescape_hekt_value(raw_val: str) -> str:
     return raw_val.replace("%7C", "|").replace("%3D", "=").replace("%3E", ">")
 
+def _has_unquoted_second_header(lines: List[str]) -> bool:
+    in_fence = False
+    for ln in lines[1:]:
+        s = ln.strip()
+        if s.startswith("```"):
+            in_fence = not in_fence
+            continue
+        if not in_fence and s.startswith("[H::"):
+            return True
+    return False
+
 def parse_hekt_header(message: str) -> Tuple[Optional[ParsedHeader], Optional[str]]:
-    if len(re.findall(r"\[H::[A-Z]{3}\]", message.splitlines().__getitem__(0) if message.strip() else "")) > 1:
-        return None, "MULTIPLE_PRIMARY_TAGS"
-    if any(ln.strip().startswith("[H::") for ln in message.splitlines()[1:]):
+    if not message:
+        return None, "EMPTY_MESSAGE"
+    lines = message.replace("\r\n", "\n").replace("\r", "\n").split("\n")
+    first_line = lines.__getitem__(0).rstrip(" ")
+    if not first_line or first_line.isspace():
+        return None, "HEADER_NOT_ON_LINE_1_OR_LEADING_WHITESPACE"
+    if _has_unquoted_second_header(lines):
         return None, "MULTIPLE_HEADER_LINES"
-    first_line = message.splitlines()[0].strip() if message.strip() else ""
     match = HEADER_RE.match(first_line)
     if not match:
+        dom_probe = re.match(r"^\[H::([A-Za-z]{3})\]", first_line)
+        if dom_probe and dom_probe.group(1) not in ALLOWED_DOMAINS:
+            return None, "UNKNOWN_DOMAIN"
         return None, "INVALID_HEADER_SYNTAX"
-    raw_domains, raw_kv_section, action = match.groups()
-    domains = re.findall(r"\[H::([A-Z]{3})\]", raw_domains)
-    if not domains or any(d not in ALLOWED_DOMAINS for d in domains):
+    raw_domain, raw_kv_section, action = match.groups()
+    domain = raw_domain[4:7]
+    if domain not in ALLOWED_DOMAINS:
         return None, "UNKNOWN_DOMAIN"
     fields: Dict[str, str] = {}
     for token in raw_kv_section.split(" | "):
         token = token.strip()
-        if "=" not in token or token.count("=") != 1:
+        if "=" not in token:
             return None, "MALFORMED_KV_PAIR"
         key, val = token.split("=", 1)
-        if not key.strip() or not val.strip():
+        k_clean, v_clean = key.strip(), val.strip()
+        if not k_clean or not v_clean:
             return None, "EMPTY_KEY_OR_VALUE"
-        if not re.match(r"^[a-z][a-z0-9_]*$", key.strip()):
+        if re.match(r"^\[H::[A-Z]{3}\]", k_clean):
+            return None, "MULTIPLE_PRIMARY_TAGS"
+        if not KEY_RE.match(k_clean):
             return None, "INVALID_KEY_NAME"
-        if any(sep in val for sep in ("|", "->")):
-            return None, "UNESCAPED_DELIMITER"
-        if key.strip() in fields:
+        if k_clean in RESERVED_KEYS:
+            return None, "RESERVED_KEY_NAME"
+        if k_clean in fields:
             return None, "DUPLICATE_KEY"
-        fields[key.strip()] = unescape_hekt_value(val.strip())
-    return ParsedHeader(domains=domains, fields=fields, action=action), None
+        if re.search(r"\[H::[A-Z]{3}\]", v_clean):
+            return None, "RAW_TAG_IN_VALUE"
+        if any(sep in v_clean for sep in ("|", "=", "->")):
+            return None, "UNESCAPED_DELIMITER"
+        fields[k_clean] = unescape_hekt_value(v_clean)
+    return ParsedHeader(domains=[domain], fields=fields, action=action), None
 
 def is_action_allowed(header: ParsedHeader, authenticated_agent: Optional[str] = None) -> Tuple[bool, Optional[str]]:
     allowed_union = set().union(*(DOMAIN_ACTION_MATRIX.get(d, set()) for d in header.domains))
@@ -122,7 +149,8 @@ def verify_message(message: str, canonical_bytes: Optional[bytes] = None, authen
             res = VerificationResult(status=ev_status, reason="VERIFIED_WITH_SHA256" if ev_status == "VALID" else (ev_err or "EVIDENCE_CHECK_FAILED"), domains=parsed.domains, action=parsed.action, computed_sha256=digest)
         else:
             res = VerificationResult(status="VALID", reason="SYNTAX_AND_POLICY_VALID", domains=parsed.domains, action=parsed.action)
-    res.row_hash = _append_witness_row(res, message.splitlines()[0].strip() if message.strip() else "")
+    first_ln = message.replace("\r\n", "\n").split("\n").__getitem__(0) if message else ""
+    res.row_hash = _append_witness_row(res, first_ln)
     return res
 
 def verify_external_execution(hekt_claim_header: str, target_filepath: str, observed_action: str, expected_sha256: Optional[str] = None, active_head_rev: Optional[str] = None) -> dict:
@@ -131,17 +159,6 @@ def verify_external_execution(hekt_claim_header: str, target_filepath: str, obse
     if res.action and res.action != observed_action:
         res.status, res.reason = "REJECTED", f"ACTION_MISMATCH:{res.action}!={observed_action}"
     return {"verdict": "MATCH" if res.status in ("VALID", "UNVERIFIED") and raw is not None else "MISMATCH", "status": res.status, "reason": res.reason, "mismatches": [] if res.status != "REJECTED" and raw is not None else [res.reason], "row_hash": res.row_hash}
-
-if __name__ == "__main__":
-    raw_skill = open("SKILL.md", "rb").read()
-    h_skill = hashlib.sha256(raw_skill).hexdigest()
-    print("1. VALID:", verify_message(f"[H::AUD] sha256={h_skill} -> emit=ATTEST_ARTIFACT", canonical_bytes=raw_skill))
-    print("2. REJECTED (Matriz):", verify_message("[H::AGT] agent=bot -> emit=ATTEST_ARTIFACT"))
-    print("3. UNVERIFIED (Pendiente):", verify_message("[H::AUD] artifact=report.pdf -> emit=VERIFY_TRACE"))
-
-import unicodedata
-from pathlib import Path
-from typing import Any
 
 def _normalize_strings(obj: Any) -> Any:
     if isinstance(obj, str):
