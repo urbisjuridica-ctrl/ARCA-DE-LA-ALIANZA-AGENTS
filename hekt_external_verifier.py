@@ -1,3 +1,5 @@
+import threading
+_NONCE_LOCK = threading.Lock()
 from hekt_nova.crypto_signer import is_valid_ed25519_pubkey
 from dataclasses import dataclass
 import hashlib, hmac, json, os, re, unicodedata
@@ -55,9 +57,12 @@ def decode_and_normalize_value(raw_val: str) -> Tuple[Optional[str], Optional[st
         decoded = unquote(raw_val, encoding="utf-8", errors="strict")
     except UnicodeDecodeError:
         return None, "INVALID_UTF8_ENCODING"
-    if any(unicodedata.category(ch) in ("Cc", "Cf", "Zl", "Zp", "Co", "Cs") or (0xFE00 <= ord(ch) <= 0xFE0F) or (0xE0100 <= ord(ch) <= 0xE01EF) or (0xE0000 <= ord(ch) <= 0xE007F) for ch in decoded):
+    if any(unicodedata.category(ch) in ("Cc", "Cf", "Zl", "Zp", "Co", "Cs", "Zs") and ord(ch) != 0x20 for ch in decoded) or any(ord(ch) in (0x034F, 0x2800, 0x3164, 0xFFA0) or (0x180B <= ord(ch) <= 0x180F) or (ord(ch) & 0xFFFF) in (0xFFFE, 0xFFFF) or (0xFE00 <= ord(ch) <= 0xFE0F) or (0xE0100 <= ord(ch) <= 0xE01EF) or (0xE0000 <= ord(ch) <= 0xE007F) for ch in decoded):
         return None, "CONTROL_OR_FORMAT_CHAR_IN_VALUE"
-    return unicodedata.normalize("NFC", decoded), None
+    norm = unicodedata.normalize("NFC", decoded)
+    if norm != norm.strip():
+        return None, "NON_CANONICAL_SPACING"
+    return norm, None
 
 def _check_body_lines(lines: List[str]) -> Optional[str]:
     fence_char: Optional[str] = None
@@ -94,7 +99,7 @@ def parse_hekt_header(message: str) -> Tuple[Optional[ParsedHeader], Optional[st
         return None, body_err
     match = HEADER_RE.match(first_line)
     if not match:
-        dom_probe = re.match(r"^\[H::([A-Za-z]{3})\]", first_line)
+        dom_probe = re.match(r"^\[H::([A-Z]{3})\]", first_line)
         if dom_probe and dom_probe.group(1) not in ALLOWED_DOMAINS:
             return None, "UNKNOWN_DOMAIN"
         return None, "INVALID_HEADER_SYNTAX"
@@ -187,6 +192,8 @@ def verify_message(message: str, canonical_bytes: Optional[bytes] = None, authen
             res = VerificationResult(status="REJECTED", reason="BODY_SHA256_REQUIRED", domains=parsed.domains, action=parsed.action)
         elif expected_audience and parsed.fields.get("aud") != expected_audience:
             res = VerificationResult(status="REJECTED", reason="AUDIENCE_MISMATCH", domains=parsed.domains, action=parsed.action)
+        elif "ts" in parsed.fields and not re.fullmatch(r"[0-9]{1,10}", parsed.fields["ts"]):
+            res = VerificationResult(status="REJECTED", reason="INVALID_TIMESTAMP_FORMAT", domains=parsed.domains, action=parsed.action)
         elif seen_nonces is not None and "nonce" in parsed.fields and parsed.fields["nonce"] in seen_nonces:
             res = VerificationResult(status="REJECTED", reason="REPLAY_DETECTED", domains=parsed.domains, action=parsed.action)
         else:

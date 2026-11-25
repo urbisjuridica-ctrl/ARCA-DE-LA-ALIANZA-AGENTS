@@ -98,3 +98,15 @@ def test_v290_small_order_ed25519_and_body_trailing_lf():
     assert h.verify_message(f"[H::VER] sha256={s1} -> emit=CLAIM_CHECK\n{b1}").status == "VALID"
     assert h.verify_message(f"[H::VER] sha256={s1} -> emit=CLAIM_CHECK\n{b2}").reason == "SHA256_MISMATCH"
     assert h.verify_message(f"[H::VER] sha256={s2} -> emit=CLAIM_CHECK\n{b2}").status == "VALID"
+
+def test_v300_torsion_noncanonical_y_and_unicode_probes():
+    from hekt_nova.crypto_signer import is_valid_ed25519_pubkey
+    P = 2**255 - 19
+    for pk in ("01"+"00"*31, "ec"+"ff"*30+"7f", "00"*32, "00"*31+"80", P.to_bytes(32,"little").hex(), (P+1).to_bytes(32,"little").hex(), ((P-1)|(1<<255)).to_bytes(32,"little").hex()):
+        assert not is_valid_ed25519_pubkey(pk)
+    assert h.verify_message(" [H::VER] claim=x -> emit=CLAIM_CHECK").reason == "LEADING_WHITESPACE"
+    assert h.verify_message("[H::ver] claim=x -> emit=CLAIM_CHECK").reason == "INVALID_HEADER_SYNTAX"
+    assert h.verify_message("[H::VER] claim=a%20 -> emit=CLAIM_CHECK").reason == "NON_CANONICAL_SPACING"
+    for inv in ("a%C2%A0b", "a%CD%8Fb", "a%E1%A0%8Bb", "a%E3%85%A4b", "a%E2%A0%80b", "a%EF%BF%BFb"):
+        assert h.verify_message(f"[H::VER] claim={inv} -> emit=CLAIM_CHECK").reason == "CONTROL_OR_FORMAT_CHAR_IN_VALUE"
+    assert h.verify_message("[H::VER] ts=\u00b2 | nonce=n1 | claim=x -> emit=CLAIM_CHECK", seen_nonces=set()).reason == "INVALID_TIMESTAMP_FORMAT"
