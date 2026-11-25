@@ -94,6 +94,37 @@ Siguiendo la hipótesis propuesta en revisión entre pares (*¿qué ocurre cuand
 
 * **Conclusión definitiva del diseño:** Cuando el receptor conoce el esquema de antemano, JSON y HEKT-NOVA empatan; **cuando un agente recién llegado o un humano (*cold reader*) entra en un hilo sin esquema compartido**, el prefijo de dominio (`[H::EPI]`, `[H::AUD]`, `[H::ETH]`) y el cierre `-> emit=<ACTION>` elevan la clasificación correcta del **50.0% al 85.0%**.
 
+### Instalación Rápida, Firma Ed25519 y Servidor MCP (`HEKT-NOVA v2.4.0`)
+
+Puedes instalar el verificador determinista y el servidor **Model Context Protocol (MCP)** directamente desde GitHub:
+
+```bash
+pip install "git+https://github.com[crypto]"
+```
+
+* **Auditoría desde terminal (`hekt-verify`):**
+  ```bash
+  hekt-verify "[H::AUD] refs=VER,ETH | artifact=SKILL.md -> emit=VERIFY_TRACE" SKILL.md
+  ```
+* **Firma criptográfica `Ed25519` de autoría (`hekt_nova.crypto_signer`):**
+  ```python
+  import hekt_nova as h
+  priv, pub = h.generate_keypair()
+  header = "[H::AUD] artifact=SKILL.md -> emit=ATTEST_ARTIFACT"
+  sig = h.sign_header_payload(header, priv)
+  assert h.verify_header_signature(header, sig, pub)
+  ```
+* **Conexión como herramienta MCP (`hekt-mcp` en Claude Desktop / Cursor / LangGraph):**
+  ```json
+  {
+    "mcpServers": {
+      "hekt-nova-verifier": {
+        "command": "hekt-mcp"
+      }
+    }
+  }
+  ```
+
 ### Componentes principales
 * **Especificación de Notación (`SKILL.md`):** Gramática telegráfica `key=val` con 27 dominios cerrados (`45.3%` menos tokens que prosa equivalente en reportes recurrentes de estado, `320 -> 175 tokens`).
 * **Verificación e Integridad (`verificador_agentes.py`, `INTEGRIDAD.md`):** Auditoría estructural independiente y trazabilidad sin sobrescritura.
