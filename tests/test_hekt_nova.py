@@ -110,3 +110,14 @@ def test_v300_torsion_noncanonical_y_and_unicode_probes():
     for inv in ("a%C2%A0b", "a%CD%8Fb", "a%E1%A0%8Bb", "a%E3%85%A4b", "a%E2%A0%80b", "a%EF%BF%BFb"):
         assert h.verify_message(f"[H::VER] claim={inv} -> emit=CLAIM_CHECK").reason == "CONTROL_OR_FORMAT_CHAR_IN_VALUE"
     assert h.verify_message("[H::VER] ts=\u00b2 | nonce=n1 | claim=x -> emit=CLAIM_CHECK", seen_nonces=set()).reason == "INVALID_TIMESTAMP_FORMAT"
+
+def test_official_139_conformance_vectors():
+    import json
+    vecs = json.load(open("tests/hekt_conformance_vectors.json", encoding="utf-8"))["vectors"]
+    pv = {"VALID", "WELL_FORMED", "UNVERIFIED"}
+    oos = {"BODY_SHA256_REQUIRED", "AUDIENCE_MISMATCH", "REPLAY_DETECTED", "AGENT_IDENTITY_MISMATCH", "MUTABLE_ALIAS_REJECTED", "SUPERSEDED_REV", "SIGNATURE_REQUIRED_FOR_DOMAIN", "MISSING_SIGNATURE", "UNKNOWN_KEY_ID", "SMALL_ORDER_PUBLIC_KEY", "SIGNATURE_MISMATCH", "MISSING_SHA256", "INVALID_SHA256_FORMAT", "MISSING_CANONICAL_EVIDENCE", "SHA256_MISMATCH", "INVALID_SIGNATURE_FORMAT", "INVALID_TIMESTAMP_FORMAT", "PERCENT_ENCODING_FORBIDDEN_IN_FIXED_FIELD", "UNPINNED_REFERENCE", "MISPLACED_SIGNATURE_FIELD"}
+    for r in vecs:
+        if not r.get("implementation_defined"):
+            res = h.verify_message(bytes.fromhex(r["message_utf8_hex"]).decode("utf-8"))
+            got = "PASS" if (res.status in pv or res.reason in oos) else res.reason
+            assert got == r["expected"], f"Failed vector {r['id']}: expected {r['expected']}, got {got}"
