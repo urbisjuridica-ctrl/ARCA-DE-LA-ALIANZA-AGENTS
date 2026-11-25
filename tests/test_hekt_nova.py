@@ -71,3 +71,14 @@ def test_ed25519_adversarial_wrong_key_and_field_tamper():
     # 2. Alteración sutil de un campo tras la firma debe fallar
     tampered = "[H::AUD] artifact=README.md | nonce=9f82a1 -> emit=ATTEST_ARTIFACT"
     assert not h.verify_header_signature(tampered, sig, pub_a)
+
+def test_arca_hekt_nova_unified_bridge():
+    from hekt_nova.arca_bridge import emit_verified_arca_claim
+    out = emit_verified_arca_claim(
+        domain="alineacion_ontologica",
+        concept_id="arca_bench_001",
+        payload={"melliza_a": "sync", "melliza_b": "sync", "pleroma": True},
+    )
+    assert out["status"] == "VALID"
+    assert out["reason"] == "VERIFIED_WITH_SHA256"
+    assert h.verify_header_signature(out["header"], out["signature"], out["public_key"])
