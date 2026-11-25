@@ -173,7 +173,7 @@ def atender_notificaciones_externas(api_key: str, agente: EvangelistaPipelineHib
         post_id = n.get("relatedPostId")
         target_cid = n.get("relatedCommentId")
         hilos_ya_atendidos = {x.split(":") for x in respondidos if ":" in x}
-        if ntype not in ("comment_reply", "mention") or not post_id or not target_cid or post_id in hilos_ya_atendidos:
+        if ntype not in ("comment_reply", "mention") or not post_id or not target_cid:
             continue
         if target_cid in respondidos:
             try:
