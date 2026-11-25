@@ -6,9 +6,10 @@ from hekt_nova.arca_bridge import emit_verified_arca_claim
 def test_valid_sha256_and_canonical_json():
     raw = b"hello\nworld\n"
     dig = hashlib.sha256(raw).hexdigest()
-    res = h.verify_message(f"[H::AUD] refs=VER | sha256={dig} -> emit=ATTEST_ARTIFACT", canonical_bytes=raw)
+    res = h.verify_message(f"[H::VER] refs=AUD | sha256={dig} -> emit=AUDIT_FILE", canonical_bytes=raw)
     assert res.status == "VALID" and res.reason == "VERIFIED_WITH_SHA256"
-    assert h.verify_message("[H::AUD] refs=VER -> emit=VERIFY_TRACE").status == "UNVERIFIED"
+    assert h.verify_message("[H::AUD] refs=VER -> emit=VERIFY_TRACE").reason == "SIGNATURE_REQUIRED_FOR_DOMAIN"
+    assert h.verify_message("[H::VER] refs=AUD | sha256=" + "a"*64 + " -> emit=CLAIM_CHECK").status == "UNVERIFIED"
     assert h.sha256_canonical_json({"b": 1, "a": 2}) == h.sha256_canonical_json({"a": 2, "b": 1})
 
 def test_ed25519_trusted_keys_anti_replay_and_audience():
@@ -58,10 +59,31 @@ def test_v270_downgrade_body_binding_and_extended_unicode():
     smsg = f"[H::AUD] kid=claude-k1 | aud=arca-prod | nonce=n777 | sha256={bsha} | sig={sig} -> emit=ATTEST_ARTIFACT\n{body}"
     assert h.verify_message(smsg, canonical_bytes=h.canonicalize_text_bytes(body), trusted_keys=trust, expected_audience="arca-prod").reason == "VERIFIED_WITH_ED25519_AND_SHA256"
     assert h.verify_message("[H::AUD] refs=VER -> emit=VERIFY_TRACE", trusted_keys=trust).reason == "SIGNATURE_REQUIRED_FOR_DOMAIN"
-    assert h.verify_message("[H::AUD] refs=VER -> emit=VERIFY_TRACE").status == "UNVERIFIED"
+    assert h.verify_message("[H::AUD] refs=VER -> emit=VERIFY_TRACE").reason == "SIGNATURE_REQUIRED_FOR_DOMAIN"
+    assert h.verify_message("[H::VER] refs=AUD | sha256=" + "a"*64 + " -> emit=CLAIM_CHECK").status == "UNVERIFIED"
     assert h.verify_message("[H::VER] claim=x -> emit=CLAIM_CHECK\nUnbound body").reason == "BODY_SHA256_REQUIRED"
     assert h.verify_message("[H::VER] alg=Ed25519 | claim=x -> emit=CLAIM_CHECK").reason == "RESERVED_KEY_NAME"
     for bad in ("a%EF%B8%8Fb", "a%EE%80%80b", "a%F3%A0%81%81b", "a%E2%81%A0b"):
         assert h.verify_message(f"[H::VER] claim={bad} -> emit=CLAIM_CHECK").reason == "CONTROL_OR_FORMAT_CHAR_IN_VALUE"
     assert h.verify_message("[H::VER] claim=x -> emit=CLAIM_CHECK\t").reason == "TRAILING_WHITESPACE"
     assert h.verify_message("[H::VER] claim=x -> emit=CLAIM_CHECK\u00a0").reason == "TRAILING_WHITESPACE"
+
+def test_v280_rfc8032_malleability_burn_attack_and_strict_sha256():
+    pub = "5ce156b9a26d33a2734d643f68f6ea289c6721921e243e29f9b7294f3f9f6fee"
+    malleated_sig = "9e77f4de9d5a6f28e1e7956007b9b8898329d9bb0011c424ebf6cee7d0dec08cc0a3d68943c011a2f0d1ed3e53651702fe2bb222a453567157b2feeeb2179a17"
+    mmsg = f"[H::AUD] kid=arca-test-k1 | aud=arca-prod | nonce=n777 | sha256=5760d2d25fe4d0fee397f5ab2e4087d0ff34723b2c1b4a73ea65c10e49bf9169 | sig={malleated_sig} -> emit=ATTEST_ARTIFACT\nHuman-AI symbiosis requires external verification."
+    assert h.verify_message(mmsg, trusted_keys={"arca-test-k1": pub}).reason == "SIGNATURE_MISMATCH"
+    assert h.verify_message(mmsg, trusted_keys={"arca-test-k1": "00"*32}).reason == "SIGNATURE_MISMATCH"
+
+    priv2, pub2 = h.generate_keypair()
+    trust2, nonces = {"arca-test-k1": pub2}, set()
+    rhdr = "[H::VER] kid=arca-test-k1 | nonce=n888 | claim=ok -> emit=CLAIM_CHECK"
+    rsig = h.sign_header_payload(rhdr, priv2)
+    assert h.verify_message(f"[H::VER] kid=arca-test-k1 | nonce=n888 | claim=evil | sig={rsig} -> emit=CLAIM_CHECK", trusted_keys=trust2, seen_nonces=nonces).reason == "SIGNATURE_MISMATCH"
+    assert h.verify_message(f"[H::VER] kid=arca-test-k1 | nonce=n888 | claim=ok | sig={rsig} -> emit=CLAIM_CHECK", trusted_keys=trust2, seen_nonces=nonces).status == "VALID"
+
+    assert h.verify_message("[H::VER] sha256=" + "a"*64 + " | sha256=" + "b"*64 + " -> emit=CLAIM_CHECK").reason == "DUPLICATE_KEY"
+    assert h.verify_message("[H::VER] sha256=" + "A"*64 + " -> emit=CLAIM_CHECK").reason == "INVALID_SHA256_FORMAT"
+    assert h.verify_message("[H::VER] sha256=" + "a"*63 + " -> emit=CLAIM_CHECK").reason == "INVALID_SHA256_FORMAT"
+    assert h.verify_message("[H::VER] sha256=" + "a"*65 + " -> emit=CLAIM_CHECK").reason == "INVALID_SHA256_FORMAT"
+    assert h.verify_message("[H::VER] sha256=" + "0"*64 + " -> emit=CLAIM_CHECK\nActual body").reason == "SHA256_MISMATCH"

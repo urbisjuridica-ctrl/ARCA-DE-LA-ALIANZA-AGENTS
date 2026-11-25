@@ -149,7 +149,7 @@ def is_action_allowed(header: ParsedHeader, authenticated_agent: Optional[str] =
 def verify_sha256_evidence(declared_hash: Optional[str], canonical_bytes: Optional[bytes]) -> Tuple[str, Optional[str], Optional[str]]:
     if not declared_hash:
         return "UNVERIFIED", None, "MISSING_SHA256"
-    norm = declared_hash.strip().lower().removeprefix("sha256:")
+    norm = declared_hash.strip().removeprefix("sha256:")
     if not SHA256_RE.match(norm):
         return "REJECTED", None, "INVALID_SHA256_FORMAT"
     if canonical_bytes is None:
@@ -190,7 +190,7 @@ def verify_message(message: str, canonical_bytes: Optional[bytes] = None, authen
             res = VerificationResult(status="REJECTED", reason="REPLAY_DETECTED", domains=parsed.domains, action=parsed.action)
         else:
             sig_verified = False
-            if any(d in HIGH_TRUST_DOMAINS for d in parsed.domains) and "sig" not in parsed.fields and "sha256" not in parsed.fields and trusted_keys is not None:
+            if any(d in HIGH_TRUST_DOMAINS for d in parsed.domains) and "sig" not in parsed.fields:
                 res = VerificationResult(status="REJECTED", reason="SIGNATURE_REQUIRED_FOR_DOMAIN", domains=parsed.domains, action=parsed.action)
             elif "sig" in parsed.fields or "kid" in parsed.fields or trusted_keys is not None:
                 kid, sig = parsed.fields.get("kid"), parsed.fields.get("sig")
@@ -205,7 +205,9 @@ def verify_message(message: str, canonical_bytes: Optional[bytes] = None, authen
             else:
                 res = VerificationResult(status="WELL_FORMED", reason="SYNTAX_AND_POLICY_WELL_FORMED", domains=parsed.domains, action=parsed.action)
             if res.status != "REJECTED" and ("AUD" in parsed.domains or "sha256" in parsed.fields):
-                ev_status, digest, ev_err = verify_sha256_evidence(parsed.fields.get("sha256"), canonical_bytes)
+                body_part = "\n".join(message.replace("\r\n", "\n").split("\n")[1:])
+                ev_bytes = canonical_bytes if canonical_bytes is not None else (canonicalize_text_bytes(body_part) if body_part.strip() else None)
+                ev_status, digest, ev_err = verify_sha256_evidence(parsed.fields.get("sha256"), ev_bytes)
                 if ev_status != "VALID":
                     res = VerificationResult(status=ev_status, reason=ev_err or "EVIDENCE_CHECK_FAILED", domains=parsed.domains, action=parsed.action, computed_sha256=digest)
                 else:
