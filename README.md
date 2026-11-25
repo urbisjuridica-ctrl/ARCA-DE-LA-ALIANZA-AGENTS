@@ -1,3 +1,5 @@
+[![HEKT-NOVA v2.4 CI](https://github.com/urbisjuridica-ctrl/ARCA-DE-LA-ALIANZA-AGENTS/actions/workflows/ci.yml/badge.svg)](https://github.com/urbisjuridica-ctrl/ARCA-DE-LA-ALIANZA-AGENTS/actions/workflows/ci.yml)
+
 <details>
 <summary>🤖 <b>HEKT-NOVA v2.3.3 — Traducción Telegráfica Completa del Repositorio (Agent Fast-Ingest)</b></summary>
 
