@@ -1,120 +1,120 @@
-{"cond": "B", "rep": 1, "item": 1, "gold": ["WORLD_CLAIM", "{\"obs\":\"invoice_total_is_80\",\"src\":\"agent_a\"}", "[H::EPI] claim=invoice_total_80 | src=agent_a -> emit=ASSERT"], "pred": "WORLD_CLAIM", "hit": false, "ms": 4213.1}
-{"cond": "B", "rep": 1, "item": 2, "gold": ["AUDIT_VERDICT", "{\"sha\":\"9f8a2b\",\"status\":\"MISMATCH\",\"by\":\"reconciler\"}", "[H::AUD] hash=9f8a2b | verdict=MISMATCH -> emit=HALT_AND_LOG"], "pred": "WORLD_CLAIM", "hit": false, "ms": 852.6}
-{"cond": "B", "rep": 1, "item": 3, "gold": ["DIRECTIVE", "{\"policy\":\"read_only\",\"scope\":\"prod_db\"}", "[H::ETH] constraint=read_only | scope=prod_db -> emit=ENFORCE"], "pred": "WORLD_CLAIM", "hit": false, "ms": 761.2}
-{"cond": "B", "rep": 1, "item": 4, "gold": ["WORLD_CLAIM", "{\"note\":\"source_csv_has_120_rows\",\"step\":\"extract\"}", "[H::EPI] rows=120 | step=extract -> emit=REPORT"], "pred": "WORLD_CLAIM", "hit": false, "ms": 805.2}
-{"cond": "B", "rep": 1, "item": 5, "gold": ["AUDIT_VERDICT", "{\"check\":\"artifact_v2\",\"ok\":true,\"witness\":\"row_44\"}", "[H::AUD] artifact=v2 | verdict=MATCH -> emit=COMMIT_WITNESS"], "pred": "WORLD_CLAIM", "hit": false, "ms": 821.5}
-{"cond": "B", "rep": 1, "item": 6, "gold": ["DIRECTIVE", "{\"action\":\"reject_mutable_alias\",\"target\":\"latest\"}", "[H::ETH] rule=NO_MUTABLE_ALIAS | target=latest -> emit=BLOCK"], "pred": "DIRECTIVE", "hit": false, "ms": 630.1}
-{"cond": "B", "rep": 1, "item": 7, "gold": ["WORLD_CLAIM", "{\"estimate\":\"latency_dropped_30pct\",\"run\":\"r9\"}", "[H::EPI] metric=latency_minus_30pct | run=r9 -> emit=HYPOTHESIZE"], "pred": "WORLD_CLAIM", "hit": false, "ms": 808.9}
-{"cond": "B", "rep": 1, "item": 8, "gold": ["AUDIT_VERDICT", "{\"rev\":\"v1\",\"head\":\"v2\",\"flag\":\"SUPERSEDED\"}", "[H::AUD] rev=v1 | head=v2 | verdict=SUPERSEDED -> emit=REJECT"], "pred": "DIRECTIVE", "hit": false, "ms": 673.3}
-{"cond": "B", "rep": 1, "item": 9, "gold": ["DIRECTIVE", "{\"limit\":\"max_1_reply_per_thread\",\"mode\":\"strict\"}", "[H::ETH] limit=1_reply_per_thread | mode=strict -> emit=GUARD"], "pred": "WORLD_CLAIM", "hit": false, "ms": 783.9}
-{"cond": "B", "rep": 1, "item": 10, "gold": ["WORLD_CLAIM", "{\"summary\":\"payee_matches_vendor_list\",\"conf\":0.82}", "[H::EPI] payee=vendor_ok | conf=0.82 -> emit=PROPOSE"], "pred": "WORLD_CLAIM", "hit": false, "ms": 806.5}
-{"cond": "B", "rep": 1, "item": 11, "gold": ["AUDIT_VERDICT", "{\"digest_expected\":\"a1b2\",\"digest_real\":\"c3d4\"}", "[H::AUD] expected=a1b2 | real=c3d4 | verdict=DRIFT -> emit=FORK"], "pred": "AUDIT_VERDICT", "hit": false, "ms": 890.3}
-{"cond": "B", "rep": 1, "item": 12, "gold": ["DIRECTIVE", "{\"require\":\"external_sha256_before_pay\"}", "[H::ETH] req=external_sha256 | gate=payment -> emit=REQUIRE"], "pred": "WORLD_CLAIM", "hit": false, "ms": 745.3}
-{"cond": "B", "rep": 1, "item": 13, "gold": ["WORLD_CLAIM", "{\"finding\":\"three_duplicate_rows_in_batch\"}", "[H::EPI] duplicates=3 | batch=current -> emit=FLAG"], "pred": "WORLD_CLAIM", "hit": false, "ms": 760.0}
-{"cond": "B", "rep": 1, "item": 14, "gold": ["AUDIT_VERDICT", "{\"ledger_chain\":\"valid\",\"verified_rows\":18}", "[H::AUD] chain=valid | rows=18 | verdict=VERIFIED -> emit=SEAL"], "pred": "WORLD_CLAIM", "hit": false, "ms": 771.5}
-{"cond": "B", "rep": 1, "item": 15, "gold": ["DIRECTIVE", "{\"forbid\":\"self_signed_execution_logs\"}", "[H::ETH] forbid=self_attestation -> emit=PROHIBIT"], "pred": "WORLD_CLAIM", "hit": false, "ms": 743.9}
-{"cond": "B", "rep": 1, "item": 16, "gold": ["WORLD_CLAIM", "{\"belief\":\"context_compaction_dropped_id\"}", "[H::EPI] cause=compaction_loss -> emit=INFER"], "pred": "WORLD_CLAIM", "hit": false, "ms": 764.2}
-{"cond": "B", "rep": 1, "item": 17, "gold": ["AUDIT_VERDICT", "{\"payload_bytes\":4096,\"witness_sig\":\"ed25519_ok\"}", "[H::AUD] bytes=4096 | sig=ok | verdict=ATTESTED -> emit=LOG"], "pred": "WORLD_CLAIM", "hit": false, "ms": 836.8}
-{"cond": "B", "rep": 1, "item": 18, "gold": ["DIRECTIVE", "{\"halt_if\":\"amount_delta_gt_zero\"}", "[H::ETH] trigger=amount_delta_gt_0 -> emit=ABORT"], "pred": "DIRECTIVE", "hit": false, "ms": 620.8}
-{"cond": "B", "rep": 1, "item": 19, "gold": ["WORLD_CLAIM", "{\"hypothesis\":\"user_prefers_concise_summary\"}", "[H::EPI] user_pref=concise -> emit=ASSUME"], "pred": "WORLD_CLAIM", "hit": false, "ms": 803.3}
-{"cond": "B", "rep": 1, "item": 20, "gold": ["AUDIT_VERDICT", "{\"evicted_claim\":\"c_stale_9\",\"reason\":\"expired_ttl\"}", "[H::AUD] evicted=c_stale_9 | reason=expired_ttl -> emit=EVICT"], "pred": "WORLD_CLAIM", "hit": false, "ms": 821.9}
-{"cond": "B", "rep": 2, "item": 1, "gold": ["WORLD_CLAIM", "{\"obs\":\"invoice_total_is_80\",\"src\":\"agent_a\"}", "[H::EPI] claim=invoice_total_80 | src=agent_a -> emit=ASSERT"], "pred": "WORLD_CLAIM", "hit": false, "ms": 787.7}
-{"cond": "B", "rep": 2, "item": 2, "gold": ["AUDIT_VERDICT", "{\"sha\":\"9f8a2b\",\"status\":\"MISMATCH\",\"by\":\"reconciler\"}", "[H::AUD] hash=9f8a2b | verdict=MISMATCH -> emit=HALT_AND_LOG"], "pred": "WORLD_CLAIM", "hit": false, "ms": 859.5}
-{"cond": "B", "rep": 2, "item": 3, "gold": ["DIRECTIVE", "{\"policy\":\"read_only\",\"scope\":\"prod_db\"}", "[H::ETH] constraint=read_only | scope=prod_db -> emit=ENFORCE"], "pred": "WORLD_CLAIM", "hit": false, "ms": 779.2}
-{"cond": "B", "rep": 2, "item": 4, "gold": ["WORLD_CLAIM", "{\"note\":\"source_csv_has_120_rows\",\"step\":\"extract\"}", "[H::EPI] rows=120 | step=extract -> emit=REPORT"], "pred": "WORLD_CLAIM", "hit": false, "ms": 813.3}
-{"cond": "B", "rep": 2, "item": 5, "gold": ["AUDIT_VERDICT", "{\"check\":\"artifact_v2\",\"ok\":true,\"witness\":\"row_44\"}", "[H::AUD] artifact=v2 | verdict=MATCH -> emit=COMMIT_WITNESS"], "pred": "WORLD_CLAIM", "hit": false, "ms": 824.7}
-{"cond": "B", "rep": 2, "item": 6, "gold": ["DIRECTIVE", "{\"action\":\"reject_mutable_alias\",\"target\":\"latest\"}", "[H::ETH] rule=NO_MUTABLE_ALIAS | target=latest -> emit=BLOCK"], "pred": "DIRECTIVE", "hit": false, "ms": 624.9}
-{"cond": "B", "rep": 2, "item": 7, "gold": ["WORLD_CLAIM", "{\"estimate\":\"latency_dropped_30pct\",\"run\":\"r9\"}", "[H::EPI] metric=latency_minus_30pct | run=r9 -> emit=HYPOTHESIZE"], "pred": "WORLD_CLAIM", "hit": false, "ms": 812.1}
-{"cond": "B", "rep": 2, "item": 8, "gold": ["AUDIT_VERDICT", "{\"rev\":\"v1\",\"head\":\"v2\",\"flag\":\"SUPERSEDED\"}", "[H::AUD] rev=v1 | head=v2 | verdict=SUPERSEDED -> emit=REJECT"], "pred": "DIRECTIVE", "hit": false, "ms": 706.1}
-{"cond": "B", "rep": 2, "item": 9, "gold": ["DIRECTIVE", "{\"limit\":\"max_1_reply_per_thread\",\"mode\":\"strict\"}", "[H::ETH] limit=1_reply_per_thread | mode=strict -> emit=GUARD"], "pred": "WORLD_CLAIM", "hit": false, "ms": 814.0}
-{"cond": "B", "rep": 2, "item": 10, "gold": ["WORLD_CLAIM", "{\"summary\":\"payee_matches_vendor_list\",\"conf\":0.82}", "[H::EPI] payee=vendor_ok | conf=0.82 -> emit=PROPOSE"], "pred": "WORLD_CLAIM", "hit": false, "ms": 828.2}
-{"cond": "B", "rep": 2, "item": 11, "gold": ["AUDIT_VERDICT", "{\"digest_expected\":\"a1b2\",\"digest_real\":\"c3d4\"}", "[H::AUD] expected=a1b2 | real=c3d4 | verdict=DRIFT -> emit=FORK"], "pred": "AUDIT_VERDICT", "hit": false, "ms": 932.4}
-{"cond": "B", "rep": 2, "item": 12, "gold": ["DIRECTIVE", "{\"require\":\"external_sha256_before_pay\"}", "[H::ETH] req=external_sha256 | gate=payment -> emit=REQUIRE"], "pred": "WORLD_CLAIM", "hit": false, "ms": 771.8}
-{"cond": "B", "rep": 2, "item": 13, "gold": ["WORLD_CLAIM", "{\"finding\":\"three_duplicate_rows_in_batch\"}", "[H::EPI] duplicates=3 | batch=current -> emit=FLAG"], "pred": "WORLD_CLAIM", "hit": false, "ms": 742.7}
-{"cond": "B", "rep": 2, "item": 14, "gold": ["AUDIT_VERDICT", "{\"ledger_chain\":\"valid\",\"verified_rows\":18}", "[H::AUD] chain=valid | rows=18 | verdict=VERIFIED -> emit=SEAL"], "pred": "WORLD_CLAIM", "hit": false, "ms": 764.2}
-{"cond": "B", "rep": 2, "item": 15, "gold": ["DIRECTIVE", "{\"forbid\":\"self_signed_execution_logs\"}", "[H::ETH] forbid=self_attestation -> emit=PROHIBIT"], "pred": "WORLD_CLAIM", "hit": false, "ms": 755.6}
-{"cond": "B", "rep": 2, "item": 16, "gold": ["WORLD_CLAIM", "{\"belief\":\"context_compaction_dropped_id\"}", "[H::EPI] cause=compaction_loss -> emit=INFER"], "pred": "WORLD_CLAIM", "hit": false, "ms": 777.2}
-{"cond": "B", "rep": 2, "item": 17, "gold": ["AUDIT_VERDICT", "{\"payload_bytes\":4096,\"witness_sig\":\"ed25519_ok\"}", "[H::AUD] bytes=4096 | sig=ok | verdict=ATTESTED -> emit=LOG"], "pred": "WORLD_CLAIM", "hit": false, "ms": 815.1}
-{"cond": "B", "rep": 2, "item": 18, "gold": ["DIRECTIVE", "{\"halt_if\":\"amount_delta_gt_zero\"}", "[H::ETH] trigger=amount_delta_gt_0 -> emit=ABORT"], "pred": "DIRECTIVE", "hit": false, "ms": 607.9}
-{"cond": "B", "rep": 2, "item": 19, "gold": ["WORLD_CLAIM", "{\"hypothesis\":\"user_prefers_concise_summary\"}", "[H::EPI] user_pref=concise -> emit=ASSUME"], "pred": "WORLD_CLAIM", "hit": false, "ms": 792.7}
-{"cond": "B", "rep": 2, "item": 20, "gold": ["AUDIT_VERDICT", "{\"evicted_claim\":\"c_stale_9\",\"reason\":\"expired_ttl\"}", "[H::AUD] evicted=c_stale_9 | reason=expired_ttl -> emit=EVICT"], "pred": "WORLD_CLAIM", "hit": false, "ms": 812.7}
-{"cond": "B", "rep": 3, "item": 1, "gold": ["WORLD_CLAIM", "{\"obs\":\"invoice_total_is_80\",\"src\":\"agent_a\"}", "[H::EPI] claim=invoice_total_80 | src=agent_a -> emit=ASSERT"], "pred": "WORLD_CLAIM", "hit": false, "ms": 788.7}
-{"cond": "B", "rep": 3, "item": 2, "gold": ["AUDIT_VERDICT", "{\"sha\":\"9f8a2b\",\"status\":\"MISMATCH\",\"by\":\"reconciler\"}", "[H::AUD] hash=9f8a2b | verdict=MISMATCH -> emit=HALT_AND_LOG"], "pred": "WORLD_CLAIM", "hit": false, "ms": 851.9}
-{"cond": "B", "rep": 3, "item": 3, "gold": ["DIRECTIVE", "{\"policy\":\"read_only\",\"scope\":\"prod_db\"}", "[H::ETH] constraint=read_only | scope=prod_db -> emit=ENFORCE"], "pred": "WORLD_CLAIM", "hit": false, "ms": 756.8}
-{"cond": "B", "rep": 3, "item": 4, "gold": ["WORLD_CLAIM", "{\"note\":\"source_csv_has_120_rows\",\"step\":\"extract\"}", "[H::EPI] rows=120 | step=extract -> emit=REPORT"], "pred": "WORLD_CLAIM", "hit": false, "ms": 787.6}
-{"cond": "B", "rep": 3, "item": 5, "gold": ["AUDIT_VERDICT", "{\"check\":\"artifact_v2\",\"ok\":true,\"witness\":\"row_44\"}", "[H::AUD] artifact=v2 | verdict=MATCH -> emit=COMMIT_WITNESS"], "pred": "WORLD_CLAIM", "hit": false, "ms": 824.3}
-{"cond": "B", "rep": 3, "item": 6, "gold": ["DIRECTIVE", "{\"action\":\"reject_mutable_alias\",\"target\":\"latest\"}", "[H::ETH] rule=NO_MUTABLE_ALIAS | target=latest -> emit=BLOCK"], "pred": "DIRECTIVE", "hit": false, "ms": 626.8}
-{"cond": "B", "rep": 3, "item": 7, "gold": ["WORLD_CLAIM", "{\"estimate\":\"latency_dropped_30pct\",\"run\":\"r9\"}", "[H::EPI] metric=latency_minus_30pct | run=r9 -> emit=HYPOTHESIZE"], "pred": "WORLD_CLAIM", "hit": false, "ms": 820.2}
-{"cond": "B", "rep": 3, "item": 8, "gold": ["AUDIT_VERDICT", "{\"rev\":\"v1\",\"head\":\"v2\",\"flag\":\"SUPERSEDED\"}", "[H::AUD] rev=v1 | head=v2 | verdict=SUPERSEDED -> emit=REJECT"], "pred": "DIRECTIVE", "hit": false, "ms": 675.3}
-{"cond": "B", "rep": 3, "item": 9, "gold": ["DIRECTIVE", "{\"limit\":\"max_1_reply_per_thread\",\"mode\":\"strict\"}", "[H::ETH] limit=1_reply_per_thread | mode=strict -> emit=GUARD"], "pred": "WORLD_CLAIM", "hit": false, "ms": 791.3}
-{"cond": "B", "rep": 3, "item": 10, "gold": ["WORLD_CLAIM", "{\"summary\":\"payee_matches_vendor_list\",\"conf\":0.82}", "[H::EPI] payee=vendor_ok | conf=0.82 -> emit=PROPOSE"], "pred": "WORLD_CLAIM", "hit": false, "ms": 804.4}
-{"cond": "B", "rep": 3, "item": 11, "gold": ["AUDIT_VERDICT", "{\"digest_expected\":\"a1b2\",\"digest_real\":\"c3d4\"}", "[H::AUD] expected=a1b2 | real=c3d4 | verdict=DRIFT -> emit=FORK"], "pred": "AUDIT_VERDICT", "hit": false, "ms": 887.8}
-{"cond": "B", "rep": 3, "item": 12, "gold": ["DIRECTIVE", "{\"require\":\"external_sha256_before_pay\"}", "[H::ETH] req=external_sha256 | gate=payment -> emit=REQUIRE"], "pred": "WORLD_CLAIM", "hit": false, "ms": 742.9}
-{"cond": "B", "rep": 3, "item": 13, "gold": ["WORLD_CLAIM", "{\"finding\":\"three_duplicate_rows_in_batch\"}", "[H::EPI] duplicates=3 | batch=current -> emit=FLAG"], "pred": "WORLD_CLAIM", "hit": false, "ms": 756.8}
-{"cond": "B", "rep": 3, "item": 14, "gold": ["AUDIT_VERDICT", "{\"ledger_chain\":\"valid\",\"verified_rows\":18}", "[H::AUD] chain=valid | rows=18 | verdict=VERIFIED -> emit=SEAL"], "pred": "WORLD_CLAIM", "hit": false, "ms": 769.5}
-{"cond": "B", "rep": 3, "item": 15, "gold": ["DIRECTIVE", "{\"forbid\":\"self_signed_execution_logs\"}", "[H::ETH] forbid=self_attestation -> emit=PROHIBIT"], "pred": "WORLD_CLAIM", "hit": false, "ms": 758.1}
-{"cond": "B", "rep": 3, "item": 16, "gold": ["WORLD_CLAIM", "{\"belief\":\"context_compaction_dropped_id\"}", "[H::EPI] cause=compaction_loss -> emit=INFER"], "pred": "WORLD_CLAIM", "hit": false, "ms": 761.6}
-{"cond": "B", "rep": 3, "item": 17, "gold": ["AUDIT_VERDICT", "{\"payload_bytes\":4096,\"witness_sig\":\"ed25519_ok\"}", "[H::AUD] bytes=4096 | sig=ok | verdict=ATTESTED -> emit=LOG"], "pred": "WORLD_CLAIM", "hit": false, "ms": 824.3}
-{"cond": "B", "rep": 3, "item": 18, "gold": ["DIRECTIVE", "{\"halt_if\":\"amount_delta_gt_zero\"}", "[H::ETH] trigger=amount_delta_gt_0 -> emit=ABORT"], "pred": "DIRECTIVE", "hit": false, "ms": 615.8}
-{"cond": "B", "rep": 3, "item": 19, "gold": ["WORLD_CLAIM", "{\"hypothesis\":\"user_prefers_concise_summary\"}", "[H::EPI] user_pref=concise -> emit=ASSUME"], "pred": "WORLD_CLAIM", "hit": false, "ms": 787.9}
-{"cond": "B", "rep": 3, "item": 20, "gold": ["AUDIT_VERDICT", "{\"evicted_claim\":\"c_stale_9\",\"reason\":\"expired_ttl\"}", "[H::AUD] evicted=c_stale_9 | reason=expired_ttl -> emit=EVICT"], "pred": "WORLD_CLAIM", "hit": false, "ms": 812.9}
-{"cond": "C", "rep": 1, "item": 1, "gold": ["WORLD_CLAIM", "{\"obs\":\"invoice_total_is_80\",\"src\":\"agent_a\"}", "[H::EPI] claim=invoice_total_80 | src=agent_a -> emit=ASSERT"], "pred": "WORLD_CLAIM", "hit": false, "ms": 879.9}
-{"cond": "C", "rep": 1, "item": 2, "gold": ["AUDIT_VERDICT", "{\"sha\":\"9f8a2b\",\"status\":\"MISMATCH\",\"by\":\"reconciler\"}", "[H::AUD] hash=9f8a2b | verdict=MISMATCH -> emit=HALT_AND_LOG"], "pred": "AUDIT_VERDICT", "hit": false, "ms": 963.4}
-{"cond": "C", "rep": 1, "item": 3, "gold": ["DIRECTIVE", "{\"policy\":\"read_only\",\"scope\":\"prod_db\"}", "[H::ETH] constraint=read_only | scope=prod_db -> emit=ENFORCE"], "pred": "DIRECTIVE", "hit": false, "ms": 689.9}
-{"cond": "C", "rep": 1, "item": 4, "gold": ["WORLD_CLAIM", "{\"note\":\"source_csv_has_120_rows\",\"step\":\"extract\"}", "[H::EPI] rows=120 | step=extract -> emit=REPORT"], "pred": "WORLD_CLAIM", "hit": false, "ms": 823.5}
-{"cond": "C", "rep": 1, "item": 5, "gold": ["AUDIT_VERDICT", "{\"check\":\"artifact_v2\",\"ok\":true,\"witness\":\"row_44\"}", "[H::AUD] artifact=v2 | verdict=MATCH -> emit=COMMIT_WITNESS"], "pred": "AUDIT_VERDICT", "hit": false, "ms": 927.8}
-{"cond": "C", "rep": 1, "item": 6, "gold": ["DIRECTIVE", "{\"action\":\"reject_mutable_alias\",\"target\":\"latest\"}", "[H::ETH] rule=NO_MUTABLE_ALIAS | target=latest -> emit=BLOCK"], "pred": "DIRECTIVE", "hit": false, "ms": 689.4}
-{"cond": "C", "rep": 1, "item": 7, "gold": ["WORLD_CLAIM", "{\"estimate\":\"latency_dropped_30pct\",\"run\":\"r9\"}", "[H::EPI] metric=latency_minus_30pct | run=r9 -> emit=HYPOTHESIZE"], "pred": "WORLD_CLAIM", "hit": false, "ms": 907.2}
-{"cond": "C", "rep": 1, "item": 8, "gold": ["AUDIT_VERDICT", "{\"rev\":\"v1\",\"head\":\"v2\",\"flag\":\"SUPERSEDED\"}", "[H::AUD] rev=v1 | head=v2 | verdict=SUPERSEDED -> emit=REJECT"], "pred": "AUDIT_VERDICT", "hit": false, "ms": 948.8}
-{"cond": "C", "rep": 1, "item": 9, "gold": ["DIRECTIVE", "{\"limit\":\"max_1_reply_per_thread\",\"mode\":\"strict\"}", "[H::ETH] limit=1_reply_per_thread | mode=strict -> emit=GUARD"], "pred": "DIRECTIVE", "hit": false, "ms": 697.9}
-{"cond": "C", "rep": 1, "item": 10, "gold": ["WORLD_CLAIM", "{\"summary\":\"payee_matches_vendor_list\",\"conf\":0.82}", "[H::EPI] payee=vendor_ok | conf=0.82 -> emit=PROPOSE"], "pred": "WORLD_CLAIM", "hit": false, "ms": 853.7}
-{"cond": "C", "rep": 1, "item": 11, "gold": ["AUDIT_VERDICT", "{\"digest_expected\":\"a1b2\",\"digest_real\":\"c3d4\"}", "[H::AUD] expected=a1b2 | real=c3d4 | verdict=DRIFT -> emit=FORK"], "pred": "DIRECTIVE", "hit": false, "ms": 757.1}
-{"cond": "C", "rep": 1, "item": 12, "gold": ["DIRECTIVE", "{\"require\":\"external_sha256_before_pay\"}", "[H::ETH] req=external_sha256 | gate=payment -> emit=REQUIRE"], "pred": "DIRECTIVE", "hit": false, "ms": 679.7}
-{"cond": "C", "rep": 1, "item": 13, "gold": ["WORLD_CLAIM", "{\"finding\":\"three_duplicate_rows_in_batch\"}", "[H::EPI] duplicates=3 | batch=current -> emit=FLAG"], "pred": "DIRECTIVE", "hit": false, "ms": 677.9}
-{"cond": "C", "rep": 1, "item": 14, "gold": ["AUDIT_VERDICT", "{\"ledger_chain\":\"valid\",\"verified_rows\":18}", "[H::AUD] chain=valid | rows=18 | verdict=VERIFIED -> emit=SEAL"], "pred": "AUDIT_VERDICT", "hit": false, "ms": 948.5}
-{"cond": "C", "rep": 1, "item": 15, "gold": ["DIRECTIVE", "{\"forbid\":\"self_signed_execution_logs\"}", "[H::ETH] forbid=self_attestation -> emit=PROHIBIT"], "pred": "DIRECTIVE", "hit": false, "ms": 662.0}
-{"cond": "C", "rep": 1, "item": 16, "gold": ["WORLD_CLAIM", "{\"belief\":\"context_compaction_dropped_id\"}", "[H::EPI] cause=compaction_loss -> emit=INFER"], "pred": "WORLD_CLAIM", "hit": false, "ms": 796.6}
-{"cond": "C", "rep": 1, "item": 17, "gold": ["AUDIT_VERDICT", "{\"payload_bytes\":4096,\"witness_sig\":\"ed25519_ok\"}", "[H::AUD] bytes=4096 | sig=ok | verdict=ATTESTED -> emit=LOG"], "pred": "AUDIT_VERDICT", "hit": false, "ms": 942.3}
-{"cond": "C", "rep": 1, "item": 18, "gold": ["DIRECTIVE", "{\"halt_if\":\"amount_delta_gt_zero\"}", "[H::ETH] trigger=amount_delta_gt_0 -> emit=ABORT"], "pred": "DIRECTIVE", "hit": false, "ms": 682.3}
-{"cond": "C", "rep": 1, "item": 19, "gold": ["WORLD_CLAIM", "{\"hypothesis\":\"user_prefers_concise_summary\"}", "[H::EPI] user_pref=concise -> emit=ASSUME"], "pred": "WORLD_CLAIM", "hit": false, "ms": 796.2}
-{"cond": "C", "rep": 1, "item": 20, "gold": ["AUDIT_VERDICT", "{\"evicted_claim\":\"c_stale_9\",\"reason\":\"expired_ttl\"}", "[H::AUD] evicted=c_stale_9 | reason=expired_ttl -> emit=EVICT"], "pred": "DIRECTIVE", "hit": false, "ms": 707.4}
-{"cond": "C", "rep": 2, "item": 1, "gold": ["WORLD_CLAIM", "{\"obs\":\"invoice_total_is_80\",\"src\":\"agent_a\"}", "[H::EPI] claim=invoice_total_80 | src=agent_a -> emit=ASSERT"], "pred": "WORLD_CLAIM", "hit": false, "ms": 841.7}
-{"cond": "C", "rep": 2, "item": 2, "gold": ["AUDIT_VERDICT", "{\"sha\":\"9f8a2b\",\"status\":\"MISMATCH\",\"by\":\"reconciler\"}", "[H::AUD] hash=9f8a2b | verdict=MISMATCH -> emit=HALT_AND_LOG"], "pred": "AUDIT_VERDICT", "hit": false, "ms": 938.5}
-{"cond": "C", "rep": 2, "item": 3, "gold": ["DIRECTIVE", "{\"policy\":\"read_only\",\"scope\":\"prod_db\"}", "[H::ETH] constraint=read_only | scope=prod_db -> emit=ENFORCE"], "pred": "DIRECTIVE", "hit": false, "ms": 673.5}
-{"cond": "C", "rep": 2, "item": 4, "gold": ["WORLD_CLAIM", "{\"note\":\"source_csv_has_120_rows\",\"step\":\"extract\"}", "[H::EPI] rows=120 | step=extract -> emit=REPORT"], "pred": "WORLD_CLAIM", "hit": false, "ms": 813.2}
-{"cond": "C", "rep": 2, "item": 5, "gold": ["AUDIT_VERDICT", "{\"check\":\"artifact_v2\",\"ok\":true,\"witness\":\"row_44\"}", "[H::AUD] artifact=v2 | verdict=MATCH -> emit=COMMIT_WITNESS"], "pred": "AUDIT_VERDICT", "hit": false, "ms": 912.4}
-{"cond": "C", "rep": 2, "item": 6, "gold": ["DIRECTIVE", "{\"action\":\"reject_mutable_alias\",\"target\":\"latest\"}", "[H::ETH] rule=NO_MUTABLE_ALIAS | target=latest -> emit=BLOCK"], "pred": "DIRECTIVE", "hit": false, "ms": 680.5}
-{"cond": "C", "rep": 2, "item": 7, "gold": ["WORLD_CLAIM", "{\"estimate\":\"latency_dropped_30pct\",\"run\":\"r9\"}", "[H::EPI] metric=latency_minus_30pct | run=r9 -> emit=HYPOTHESIZE"], "pred": "WORLD_CLAIM", "hit": false, "ms": 902.7}
-{"cond": "C", "rep": 2, "item": 8, "gold": ["AUDIT_VERDICT", "{\"rev\":\"v1\",\"head\":\"v2\",\"flag\":\"SUPERSEDED\"}", "[H::AUD] rev=v1 | head=v2 | verdict=SUPERSEDED -> emit=REJECT"], "pred": "AUDIT_VERDICT", "hit": false, "ms": 929.8}
-{"cond": "C", "rep": 2, "item": 9, "gold": ["DIRECTIVE", "{\"limit\":\"max_1_reply_per_thread\",\"mode\":\"strict\"}", "[H::ETH] limit=1_reply_per_thread | mode=strict -> emit=GUARD"], "pred": "DIRECTIVE", "hit": false, "ms": 693.7}
-{"cond": "C", "rep": 2, "item": 10, "gold": ["WORLD_CLAIM", "{\"summary\":\"payee_matches_vendor_list\",\"conf\":0.82}", "[H::EPI] payee=vendor_ok | conf=0.82 -> emit=PROPOSE"], "pred": "WORLD_CLAIM", "hit": false, "ms": 890.3}
-{"cond": "C", "rep": 2, "item": 11, "gold": ["AUDIT_VERDICT", "{\"digest_expected\":\"a1b2\",\"digest_real\":\"c3d4\"}", "[H::AUD] expected=a1b2 | real=c3d4 | verdict=DRIFT -> emit=FORK"], "pred": "DIRECTIVE", "hit": false, "ms": 739.0}
-{"cond": "C", "rep": 2, "item": 12, "gold": ["DIRECTIVE", "{\"require\":\"external_sha256_before_pay\"}", "[H::ETH] req=external_sha256 | gate=payment -> emit=REQUIRE"], "pred": "DIRECTIVE", "hit": false, "ms": 678.8}
-{"cond": "C", "rep": 2, "item": 13, "gold": ["WORLD_CLAIM", "{\"finding\":\"three_duplicate_rows_in_batch\"}", "[H::EPI] duplicates=3 | batch=current -> emit=FLAG"], "pred": "DIRECTIVE", "hit": false, "ms": 657.0}
-{"cond": "C", "rep": 2, "item": 14, "gold": ["AUDIT_VERDICT", "{\"ledger_chain\":\"valid\",\"verified_rows\":18}", "[H::AUD] chain=valid | rows=18 | verdict=VERIFIED -> emit=SEAL"], "pred": "AUDIT_VERDICT", "hit": false, "ms": 927.0}
-{"cond": "C", "rep": 2, "item": 15, "gold": ["DIRECTIVE", "{\"forbid\":\"self_signed_execution_logs\"}", "[H::ETH] forbid=self_attestation -> emit=PROHIBIT"], "pred": "DIRECTIVE", "hit": false, "ms": 652.9}
-{"cond": "C", "rep": 2, "item": 16, "gold": ["WORLD_CLAIM", "{\"belief\":\"context_compaction_dropped_id\"}", "[H::EPI] cause=compaction_loss -> emit=INFER"], "pred": "WORLD_CLAIM", "hit": false, "ms": 794.0}
-{"cond": "C", "rep": 2, "item": 17, "gold": ["AUDIT_VERDICT", "{\"payload_bytes\":4096,\"witness_sig\":\"ed25519_ok\"}", "[H::AUD] bytes=4096 | sig=ok | verdict=ATTESTED -> emit=LOG"], "pred": "AUDIT_VERDICT", "hit": false, "ms": 931.3}
-{"cond": "C", "rep": 2, "item": 18, "gold": ["DIRECTIVE", "{\"halt_if\":\"amount_delta_gt_zero\"}", "[H::ETH] trigger=amount_delta_gt_0 -> emit=ABORT"], "pred": "DIRECTIVE", "hit": false, "ms": 660.2}
-{"cond": "C", "rep": 2, "item": 19, "gold": ["WORLD_CLAIM", "{\"hypothesis\":\"user_prefers_concise_summary\"}", "[H::EPI] user_pref=concise -> emit=ASSUME"], "pred": "WORLD_CLAIM", "hit": false, "ms": 794.3}
-{"cond": "C", "rep": 2, "item": 20, "gold": ["AUDIT_VERDICT", "{\"evicted_claim\":\"c_stale_9\",\"reason\":\"expired_ttl\"}", "[H::AUD] evicted=c_stale_9 | reason=expired_ttl -> emit=EVICT"], "pred": "DIRECTIVE", "hit": false, "ms": 708.6}
-{"cond": "C", "rep": 3, "item": 1, "gold": ["WORLD_CLAIM", "{\"obs\":\"invoice_total_is_80\",\"src\":\"agent_a\"}", "[H::EPI] claim=invoice_total_80 | src=agent_a -> emit=ASSERT"], "pred": "WORLD_CLAIM", "hit": false, "ms": 842.9}
-{"cond": "C", "rep": 3, "item": 2, "gold": ["AUDIT_VERDICT", "{\"sha\":\"9f8a2b\",\"status\":\"MISMATCH\",\"by\":\"reconciler\"}", "[H::AUD] hash=9f8a2b | verdict=MISMATCH -> emit=HALT_AND_LOG"], "pred": "AUDIT_VERDICT", "hit": false, "ms": 946.1}
-{"cond": "C", "rep": 3, "item": 3, "gold": ["DIRECTIVE", "{\"policy\":\"read_only\",\"scope\":\"prod_db\"}", "[H::ETH] constraint=read_only | scope=prod_db -> emit=ENFORCE"], "pred": "DIRECTIVE", "hit": false, "ms": 673.6}
-{"cond": "C", "rep": 3, "item": 4, "gold": ["WORLD_CLAIM", "{\"note\":\"source_csv_has_120_rows\",\"step\":\"extract\"}", "[H::EPI] rows=120 | step=extract -> emit=REPORT"], "pred": "WORLD_CLAIM", "hit": false, "ms": 801.3}
-{"cond": "C", "rep": 3, "item": 5, "gold": ["AUDIT_VERDICT", "{\"check\":\"artifact_v2\",\"ok\":true,\"witness\":\"row_44\"}", "[H::AUD] artifact=v2 | verdict=MATCH -> emit=COMMIT_WITNESS"], "pred": "AUDIT_VERDICT", "hit": false, "ms": 905.9}
-{"cond": "C", "rep": 3, "item": 6, "gold": ["DIRECTIVE", "{\"action\":\"reject_mutable_alias\",\"target\":\"latest\"}", "[H::ETH] rule=NO_MUTABLE_ALIAS | target=latest -> emit=BLOCK"], "pred": "DIRECTIVE", "hit": false, "ms": 682.3}
-{"cond": "C", "rep": 3, "item": 7, "gold": ["WORLD_CLAIM", "{\"estimate\":\"latency_dropped_30pct\",\"run\":\"r9\"}", "[H::EPI] metric=latency_minus_30pct | run=r9 -> emit=HYPOTHESIZE"], "pred": "WORLD_CLAIM", "hit": false, "ms": 910.1}
-{"cond": "C", "rep": 3, "item": 8, "gold": ["AUDIT_VERDICT", "{\"rev\":\"v1\",\"head\":\"v2\",\"flag\":\"SUPERSEDED\"}", "[H::AUD] rev=v1 | head=v2 | verdict=SUPERSEDED -> emit=REJECT"], "pred": "AUDIT_VERDICT", "hit": false, "ms": 936.3}
-{"cond": "C", "rep": 3, "item": 9, "gold": ["DIRECTIVE", "{\"limit\":\"max_1_reply_per_thread\",\"mode\":\"strict\"}", "[H::ETH] limit=1_reply_per_thread | mode=strict -> emit=GUARD"], "pred": "DIRECTIVE", "hit": false, "ms": 695.8}
-{"cond": "C", "rep": 3, "item": 10, "gold": ["WORLD_CLAIM", "{\"summary\":\"payee_matches_vendor_list\",\"conf\":0.82}", "[H::EPI] payee=vendor_ok | conf=0.82 -> emit=PROPOSE"], "pred": "WORLD_CLAIM", "hit": false, "ms": 846.5}
-{"cond": "C", "rep": 3, "item": 11, "gold": ["AUDIT_VERDICT", "{\"digest_expected\":\"a1b2\",\"digest_real\":\"c3d4\"}", "[H::AUD] expected=a1b2 | real=c3d4 | verdict=DRIFT -> emit=FORK"], "pred": "DIRECTIVE", "hit": false, "ms": 738.5}
-{"cond": "C", "rep": 3, "item": 12, "gold": ["DIRECTIVE", "{\"require\":\"external_sha256_before_pay\"}", "[H::ETH] req=external_sha256 | gate=payment -> emit=REQUIRE"], "pred": "DIRECTIVE", "hit": false, "ms": 680.2}
-{"cond": "C", "rep": 3, "item": 13, "gold": ["WORLD_CLAIM", "{\"finding\":\"three_duplicate_rows_in_batch\"}", "[H::EPI] duplicates=3 | batch=current -> emit=FLAG"], "pred": "DIRECTIVE", "hit": false, "ms": 657.3}
-{"cond": "C", "rep": 3, "item": 14, "gold": ["AUDIT_VERDICT", "{\"ledger_chain\":\"valid\",\"verified_rows\":18}", "[H::AUD] chain=valid | rows=18 | verdict=VERIFIED -> emit=SEAL"], "pred": "AUDIT_VERDICT", "hit": false, "ms": 927.3}
-{"cond": "C", "rep": 3, "item": 15, "gold": ["DIRECTIVE", "{\"forbid\":\"self_signed_execution_logs\"}", "[H::ETH] forbid=self_attestation -> emit=PROHIBIT"], "pred": "DIRECTIVE", "hit": false, "ms": 656.0}
-{"cond": "C", "rep": 3, "item": 16, "gold": ["WORLD_CLAIM", "{\"belief\":\"context_compaction_dropped_id\"}", "[H::EPI] cause=compaction_loss -> emit=INFER"], "pred": "WORLD_CLAIM", "hit": false, "ms": 799.2}
-{"cond": "C", "rep": 3, "item": 17, "gold": ["AUDIT_VERDICT", "{\"payload_bytes\":4096,\"witness_sig\":\"ed25519_ok\"}", "[H::AUD] bytes=4096 | sig=ok | verdict=ATTESTED -> emit=LOG"], "pred": "AUDIT_VERDICT", "hit": false, "ms": 933.4}
-{"cond": "C", "rep": 3, "item": 18, "gold": ["DIRECTIVE", "{\"halt_if\":\"amount_delta_gt_zero\"}", "[H::ETH] trigger=amount_delta_gt_0 -> emit=ABORT"], "pred": "DIRECTIVE", "hit": false, "ms": 661.6}
-{"cond": "C", "rep": 3, "item": 19, "gold": ["WORLD_CLAIM", "{\"hypothesis\":\"user_prefers_concise_summary\"}", "[H::EPI] user_pref=concise -> emit=ASSUME"], "pred": "WORLD_CLAIM", "hit": false, "ms": 800.5}
-{"cond": "C", "rep": 3, "item": 20, "gold": ["AUDIT_VERDICT", "{\"evicted_claim\":\"c_stale_9\",\"reason\":\"expired_ttl\"}", "[H::AUD] evicted=c_stale_9 | reason=expired_ttl -> emit=EVICT"], "pred": "DIRECTIVE", "hit": false, "ms": 706.4}
+{"cond": "B", "rep": 1, "item": 1, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 4213.1}
+{"cond": "B", "rep": 1, "item": 2, "gold": "AUDIT_VERDICT", "pred": "WORLD_CLAIM", "hit": false, "ms": 852.6}
+{"cond": "B", "rep": 1, "item": 3, "gold": "DIRECTIVE", "pred": "WORLD_CLAIM", "hit": false, "ms": 761.2}
+{"cond": "B", "rep": 1, "item": 4, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 805.2}
+{"cond": "B", "rep": 1, "item": 5, "gold": "AUDIT_VERDICT", "pred": "WORLD_CLAIM", "hit": false, "ms": 821.5}
+{"cond": "B", "rep": 1, "item": 6, "gold": "DIRECTIVE", "pred": "DIRECTIVE", "hit": true, "ms": 630.1}
+{"cond": "B", "rep": 1, "item": 7, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 808.9}
+{"cond": "B", "rep": 1, "item": 8, "gold": "AUDIT_VERDICT", "pred": "DIRECTIVE", "hit": false, "ms": 673.3}
+{"cond": "B", "rep": 1, "item": 9, "gold": "DIRECTIVE", "pred": "WORLD_CLAIM", "hit": false, "ms": 783.9}
+{"cond": "B", "rep": 1, "item": 10, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 806.5}
+{"cond": "B", "rep": 1, "item": 11, "gold": "AUDIT_VERDICT", "pred": "AUDIT_VERDICT", "hit": true, "ms": 890.3}
+{"cond": "B", "rep": 1, "item": 12, "gold": "DIRECTIVE", "pred": "WORLD_CLAIM", "hit": false, "ms": 745.3}
+{"cond": "B", "rep": 1, "item": 13, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 760.0}
+{"cond": "B", "rep": 1, "item": 14, "gold": "AUDIT_VERDICT", "pred": "WORLD_CLAIM", "hit": false, "ms": 771.5}
+{"cond": "B", "rep": 1, "item": 15, "gold": "DIRECTIVE", "pred": "WORLD_CLAIM", "hit": false, "ms": 743.9}
+{"cond": "B", "rep": 1, "item": 16, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 764.2}
+{"cond": "B", "rep": 1, "item": 17, "gold": "AUDIT_VERDICT", "pred": "WORLD_CLAIM", "hit": false, "ms": 836.8}
+{"cond": "B", "rep": 1, "item": 18, "gold": "DIRECTIVE", "pred": "DIRECTIVE", "hit": true, "ms": 620.8}
+{"cond": "B", "rep": 1, "item": 19, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 803.3}
+{"cond": "B", "rep": 1, "item": 20, "gold": "AUDIT_VERDICT", "pred": "WORLD_CLAIM", "hit": false, "ms": 821.9}
+{"cond": "B", "rep": 2, "item": 1, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 787.7}
+{"cond": "B", "rep": 2, "item": 2, "gold": "AUDIT_VERDICT", "pred": "WORLD_CLAIM", "hit": false, "ms": 859.5}
+{"cond": "B", "rep": 2, "item": 3, "gold": "DIRECTIVE", "pred": "WORLD_CLAIM", "hit": false, "ms": 779.2}
+{"cond": "B", "rep": 2, "item": 4, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 813.3}
+{"cond": "B", "rep": 2, "item": 5, "gold": "AUDIT_VERDICT", "pred": "WORLD_CLAIM", "hit": false, "ms": 824.7}
+{"cond": "B", "rep": 2, "item": 6, "gold": "DIRECTIVE", "pred": "DIRECTIVE", "hit": true, "ms": 624.9}
+{"cond": "B", "rep": 2, "item": 7, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 812.1}
+{"cond": "B", "rep": 2, "item": 8, "gold": "AUDIT_VERDICT", "pred": "DIRECTIVE", "hit": false, "ms": 706.1}
+{"cond": "B", "rep": 2, "item": 9, "gold": "DIRECTIVE", "pred": "WORLD_CLAIM", "hit": false, "ms": 814.0}
+{"cond": "B", "rep": 2, "item": 10, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 828.2}
+{"cond": "B", "rep": 2, "item": 11, "gold": "AUDIT_VERDICT", "pred": "AUDIT_VERDICT", "hit": true, "ms": 932.4}
+{"cond": "B", "rep": 2, "item": 12, "gold": "DIRECTIVE", "pred": "WORLD_CLAIM", "hit": false, "ms": 771.8}
+{"cond": "B", "rep": 2, "item": 13, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 742.7}
+{"cond": "B", "rep": 2, "item": 14, "gold": "AUDIT_VERDICT", "pred": "WORLD_CLAIM", "hit": false, "ms": 764.2}
+{"cond": "B", "rep": 2, "item": 15, "gold": "DIRECTIVE", "pred": "WORLD_CLAIM", "hit": false, "ms": 755.6}
+{"cond": "B", "rep": 2, "item": 16, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 777.2}
+{"cond": "B", "rep": 2, "item": 17, "gold": "AUDIT_VERDICT", "pred": "WORLD_CLAIM", "hit": false, "ms": 815.1}
+{"cond": "B", "rep": 2, "item": 18, "gold": "DIRECTIVE", "pred": "DIRECTIVE", "hit": true, "ms": 607.9}
+{"cond": "B", "rep": 2, "item": 19, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 792.7}
+{"cond": "B", "rep": 2, "item": 20, "gold": "AUDIT_VERDICT", "pred": "WORLD_CLAIM", "hit": false, "ms": 812.7}
+{"cond": "B", "rep": 3, "item": 1, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 788.7}
+{"cond": "B", "rep": 3, "item": 2, "gold": "AUDIT_VERDICT", "pred": "WORLD_CLAIM", "hit": false, "ms": 851.9}
+{"cond": "B", "rep": 3, "item": 3, "gold": "DIRECTIVE", "pred": "WORLD_CLAIM", "hit": false, "ms": 756.8}
+{"cond": "B", "rep": 3, "item": 4, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 787.6}
+{"cond": "B", "rep": 3, "item": 5, "gold": "AUDIT_VERDICT", "pred": "WORLD_CLAIM", "hit": false, "ms": 824.3}
+{"cond": "B", "rep": 3, "item": 6, "gold": "DIRECTIVE", "pred": "DIRECTIVE", "hit": true, "ms": 626.8}
+{"cond": "B", "rep": 3, "item": 7, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 820.2}
+{"cond": "B", "rep": 3, "item": 8, "gold": "AUDIT_VERDICT", "pred": "DIRECTIVE", "hit": false, "ms": 675.3}
+{"cond": "B", "rep": 3, "item": 9, "gold": "DIRECTIVE", "pred": "WORLD_CLAIM", "hit": false, "ms": 791.3}
+{"cond": "B", "rep": 3, "item": 10, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 804.4}
+{"cond": "B", "rep": 3, "item": 11, "gold": "AUDIT_VERDICT", "pred": "AUDIT_VERDICT", "hit": true, "ms": 887.8}
+{"cond": "B", "rep": 3, "item": 12, "gold": "DIRECTIVE", "pred": "WORLD_CLAIM", "hit": false, "ms": 742.9}
+{"cond": "B", "rep": 3, "item": 13, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 756.8}
+{"cond": "B", "rep": 3, "item": 14, "gold": "AUDIT_VERDICT", "pred": "WORLD_CLAIM", "hit": false, "ms": 769.5}
+{"cond": "B", "rep": 3, "item": 15, "gold": "DIRECTIVE", "pred": "WORLD_CLAIM", "hit": false, "ms": 758.1}
+{"cond": "B", "rep": 3, "item": 16, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 761.6}
+{"cond": "B", "rep": 3, "item": 17, "gold": "AUDIT_VERDICT", "pred": "WORLD_CLAIM", "hit": false, "ms": 824.3}
+{"cond": "B", "rep": 3, "item": 18, "gold": "DIRECTIVE", "pred": "DIRECTIVE", "hit": true, "ms": 615.8}
+{"cond": "B", "rep": 3, "item": 19, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 787.9}
+{"cond": "B", "rep": 3, "item": 20, "gold": "AUDIT_VERDICT", "pred": "WORLD_CLAIM", "hit": false, "ms": 812.9}
+{"cond": "C", "rep": 1, "item": 1, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 879.9}
+{"cond": "C", "rep": 1, "item": 2, "gold": "AUDIT_VERDICT", "pred": "AUDIT_VERDICT", "hit": true, "ms": 963.4}
+{"cond": "C", "rep": 1, "item": 3, "gold": "DIRECTIVE", "pred": "DIRECTIVE", "hit": true, "ms": 689.9}
+{"cond": "C", "rep": 1, "item": 4, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 823.5}
+{"cond": "C", "rep": 1, "item": 5, "gold": "AUDIT_VERDICT", "pred": "AUDIT_VERDICT", "hit": true, "ms": 927.8}
+{"cond": "C", "rep": 1, "item": 6, "gold": "DIRECTIVE", "pred": "DIRECTIVE", "hit": true, "ms": 689.4}
+{"cond": "C", "rep": 1, "item": 7, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 907.2}
+{"cond": "C", "rep": 1, "item": 8, "gold": "AUDIT_VERDICT", "pred": "AUDIT_VERDICT", "hit": true, "ms": 948.8}
+{"cond": "C", "rep": 1, "item": 9, "gold": "DIRECTIVE", "pred": "DIRECTIVE", "hit": true, "ms": 697.9}
+{"cond": "C", "rep": 1, "item": 10, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 853.7}
+{"cond": "C", "rep": 1, "item": 11, "gold": "AUDIT_VERDICT", "pred": "DIRECTIVE", "hit": false, "ms": 757.1}
+{"cond": "C", "rep": 1, "item": 12, "gold": "DIRECTIVE", "pred": "DIRECTIVE", "hit": true, "ms": 679.7}
+{"cond": "C", "rep": 1, "item": 13, "gold": "WORLD_CLAIM", "pred": "DIRECTIVE", "hit": false, "ms": 677.9}
+{"cond": "C", "rep": 1, "item": 14, "gold": "AUDIT_VERDICT", "pred": "AUDIT_VERDICT", "hit": true, "ms": 948.5}
+{"cond": "C", "rep": 1, "item": 15, "gold": "DIRECTIVE", "pred": "DIRECTIVE", "hit": true, "ms": 662.0}
+{"cond": "C", "rep": 1, "item": 16, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 796.6}
+{"cond": "C", "rep": 1, "item": 17, "gold": "AUDIT_VERDICT", "pred": "AUDIT_VERDICT", "hit": true, "ms": 942.3}
+{"cond": "C", "rep": 1, "item": 18, "gold": "DIRECTIVE", "pred": "DIRECTIVE", "hit": true, "ms": 682.3}
+{"cond": "C", "rep": 1, "item": 19, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 796.2}
+{"cond": "C", "rep": 1, "item": 20, "gold": "AUDIT_VERDICT", "pred": "DIRECTIVE", "hit": false, "ms": 707.4}
+{"cond": "C", "rep": 2, "item": 1, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 841.7}
+{"cond": "C", "rep": 2, "item": 2, "gold": "AUDIT_VERDICT", "pred": "AUDIT_VERDICT", "hit": true, "ms": 938.5}
+{"cond": "C", "rep": 2, "item": 3, "gold": "DIRECTIVE", "pred": "DIRECTIVE", "hit": true, "ms": 673.5}
+{"cond": "C", "rep": 2, "item": 4, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 813.2}
+{"cond": "C", "rep": 2, "item": 5, "gold": "AUDIT_VERDICT", "pred": "AUDIT_VERDICT", "hit": true, "ms": 912.4}
+{"cond": "C", "rep": 2, "item": 6, "gold": "DIRECTIVE", "pred": "DIRECTIVE", "hit": true, "ms": 680.5}
+{"cond": "C", "rep": 2, "item": 7, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 902.7}
+{"cond": "C", "rep": 2, "item": 8, "gold": "AUDIT_VERDICT", "pred": "AUDIT_VERDICT", "hit": true, "ms": 929.8}
+{"cond": "C", "rep": 2, "item": 9, "gold": "DIRECTIVE", "pred": "DIRECTIVE", "hit": true, "ms": 693.7}
+{"cond": "C", "rep": 2, "item": 10, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 890.3}
+{"cond": "C", "rep": 2, "item": 11, "gold": "AUDIT_VERDICT", "pred": "DIRECTIVE", "hit": false, "ms": 739.0}
+{"cond": "C", "rep": 2, "item": 12, "gold": "DIRECTIVE", "pred": "DIRECTIVE", "hit": true, "ms": 678.8}
+{"cond": "C", "rep": 2, "item": 13, "gold": "WORLD_CLAIM", "pred": "DIRECTIVE", "hit": false, "ms": 657.0}
+{"cond": "C", "rep": 2, "item": 14, "gold": "AUDIT_VERDICT", "pred": "AUDIT_VERDICT", "hit": true, "ms": 927.0}
+{"cond": "C", "rep": 2, "item": 15, "gold": "DIRECTIVE", "pred": "DIRECTIVE", "hit": true, "ms": 652.9}
+{"cond": "C", "rep": 2, "item": 16, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 794.0}
+{"cond": "C", "rep": 2, "item": 17, "gold": "AUDIT_VERDICT", "pred": "AUDIT_VERDICT", "hit": true, "ms": 931.3}
+{"cond": "C", "rep": 2, "item": 18, "gold": "DIRECTIVE", "pred": "DIRECTIVE", "hit": true, "ms": 660.2}
+{"cond": "C", "rep": 2, "item": 19, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 794.3}
+{"cond": "C", "rep": 2, "item": 20, "gold": "AUDIT_VERDICT", "pred": "DIRECTIVE", "hit": false, "ms": 708.6}
+{"cond": "C", "rep": 3, "item": 1, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 842.9}
+{"cond": "C", "rep": 3, "item": 2, "gold": "AUDIT_VERDICT", "pred": "AUDIT_VERDICT", "hit": true, "ms": 946.1}
+{"cond": "C", "rep": 3, "item": 3, "gold": "DIRECTIVE", "pred": "DIRECTIVE", "hit": true, "ms": 673.6}
+{"cond": "C", "rep": 3, "item": 4, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 801.3}
+{"cond": "C", "rep": 3, "item": 5, "gold": "AUDIT_VERDICT", "pred": "AUDIT_VERDICT", "hit": true, "ms": 905.9}
+{"cond": "C", "rep": 3, "item": 6, "gold": "DIRECTIVE", "pred": "DIRECTIVE", "hit": true, "ms": 682.3}
+{"cond": "C", "rep": 3, "item": 7, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 910.1}
+{"cond": "C", "rep": 3, "item": 8, "gold": "AUDIT_VERDICT", "pred": "AUDIT_VERDICT", "hit": true, "ms": 936.3}
+{"cond": "C", "rep": 3, "item": 9, "gold": "DIRECTIVE", "pred": "DIRECTIVE", "hit": true, "ms": 695.8}
+{"cond": "C", "rep": 3, "item": 10, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 846.5}
+{"cond": "C", "rep": 3, "item": 11, "gold": "AUDIT_VERDICT", "pred": "DIRECTIVE", "hit": false, "ms": 738.5}
+{"cond": "C", "rep": 3, "item": 12, "gold": "DIRECTIVE", "pred": "DIRECTIVE", "hit": true, "ms": 680.2}
+{"cond": "C", "rep": 3, "item": 13, "gold": "WORLD_CLAIM", "pred": "DIRECTIVE", "hit": false, "ms": 657.3}
+{"cond": "C", "rep": 3, "item": 14, "gold": "AUDIT_VERDICT", "pred": "AUDIT_VERDICT", "hit": true, "ms": 927.3}
+{"cond": "C", "rep": 3, "item": 15, "gold": "DIRECTIVE", "pred": "DIRECTIVE", "hit": true, "ms": 656.0}
+{"cond": "C", "rep": 3, "item": 16, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 799.2}
+{"cond": "C", "rep": 3, "item": 17, "gold": "AUDIT_VERDICT", "pred": "AUDIT_VERDICT", "hit": true, "ms": 933.4}
+{"cond": "C", "rep": 3, "item": 18, "gold": "DIRECTIVE", "pred": "DIRECTIVE", "hit": true, "ms": 661.6}
+{"cond": "C", "rep": 3, "item": 19, "gold": "WORLD_CLAIM", "pred": "WORLD_CLAIM", "hit": true, "ms": 800.5}
+{"cond": "C", "rep": 3, "item": 20, "gold": "AUDIT_VERDICT", "pred": "DIRECTIVE", "hit": false, "ms": 706.4}

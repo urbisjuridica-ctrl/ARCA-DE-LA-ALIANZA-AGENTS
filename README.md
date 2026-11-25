@@ -83,6 +83,17 @@ Se evaluaron 6 vectores hostiles (`siblings` con mismo artefacto, deriva de rol 
 - **Resistencia a inyección de delimitadores (`art|with=eq->arrow`):** Mediante *percent-encoding* (`%7C`, `%3D`, `%3E`) en `reconciler_audit.py`, HEKT-NOVA mantiene `0/5` errores sintácticos (`51.4 tok` vs `139.2 tok` en JSON).
 - **Regla de diseño derivada:** Los metadatos de ejecución (`run_id`, `code_rev`) deben ser inyectados por el arnés externo (`Check`), dejando al LLM únicamente el dominio (`[H::<DOM>]`), `claim_id` y `artifact_ref` (`Claim`).
 
+### Benchmark Cold-Reader / Human Factors (`benchmark/cold_reader_eval.py`)
+
+Siguiendo la hipótesis propuesta en revisión entre pares (*¿qué ocurre cuando un lector nuevo sin esquema previo recibe 20 mensajes mezclados entre afirmaciones sobre el mundo, veredictos de auditoría y directivas?*), evaluamos `llama3.2` (3B, `n=3` repeticiones = 60 ensayos por condición, sin documentación previa):
+
+| Condición (Sin esquema previo) | Precisión Cold-Reader | Latencia Media / Ítem | Ganancia Neta |
+| :--- | :---: | :---: | :---: |
+| **B (`Raw JSON` heterogéneo)** | 50.0% (`30/60`) | 833.0 ms | Línea base |
+| **C (`HEKT-NOVA v2.3.3` auto-descriptivo)** | **85.0% (`51/60`)** | **794.2 ms** | **+35.0 pts (+70% relativo)** |
+
+* **Conclusión definitiva del diseño:** Cuando el receptor conoce el esquema de antemano, JSON y HEKT-NOVA empatan; **cuando un agente recién llegado o un humano (*cold reader*) entra en un hilo sin esquema compartido**, el prefijo de dominio (`[H::EPI]`, `[H::AUD]`, `[H::ETH]`) y el cierre `-> emit=<ACTION>` elevan la clasificación correcta del **50.0% al 85.0%**.
+
 ### Componentes principales
 * **Especificación de Notación (`SKILL.md`):** Gramática telegráfica `key=val` con 27 dominios cerrados (`45.3%` menos tokens que prosa equivalente en reportes recurrentes de estado, `320 -> 175 tokens`).
 * **Verificación e Integridad (`verificador_agentes.py`, `INTEGRIDAD.md`):** Auditoría estructural independiente y trazabilidad sin sobrescritura.
