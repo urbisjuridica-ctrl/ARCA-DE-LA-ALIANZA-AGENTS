@@ -10,7 +10,7 @@ def test_valid_sha256_and_canonical_json():
     assert h.sha256_canonical_json({"b": 1, "a": 2}) == h.sha256_canonical_json({"a": 2, "b": 1})
 
 def test_reject_stacked_domains_and_matrix_violation():
-    assert h.parse_hekt_header("[H::VER] [H::AUD] a=1 -> emit=CLAIM_CHECK") == (None, "INVALID_KEY_NAME")
+    assert h.parse_hekt_header("[H::VER] [H::AUD] a=1 -> emit=CLAIM_CHECK") == (None, "MULTIPLE_PRIMARY_TAGS")
     res = h.verify_message("[H::AGT] agent=bot -> emit=ATTEST_ARTIFACT")
     assert res.status == "REJECTED" and res.reason == "ACTION_NOT_ALLOWED_FOR_DOMAIN"
 
@@ -51,7 +51,7 @@ def test_claude_stress_vectors_and_policy_boundary():
     assert perr is None and parsed.fields["note"] == "a|b=c"
     assert h.verify_message(h1).reason == "ACTION_NOT_ALLOWED_FOR_DOMAIN"
     assert h.verify_message(h2).reason == "INVALID_KEY_NAME"
-    assert h.verify_message(h3).reason == "INVALID_KEY_NAME"
+    assert h.verify_message(h3).reason == "MULTIPLE_PRIMARY_TAGS"
 
 def test_deepseek_handshake_and_full_percent_encoding():
     hdr = "[H::AGT] proto=HEKT-NOVA-v2.4.0 | peer=DeepSeek | refs=AGT,VER,AUD,ETH | syntax=%5BH%3A%3A%3CDOM%3E%5D%20key%3Dval%20%7C%20refs%3DSEC1%2CSEC2%20%3E%20emit%3D%3CACTION%3E | status=TEACH_SYNTAX_REQUESTED | note=TEACH_SYNTAX_not_in_authorized_AGT_actions -> emit=INTRO"

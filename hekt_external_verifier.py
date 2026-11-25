@@ -40,6 +40,8 @@ def unescape_hekt_value(raw_val: str) -> str:
     return raw_val.replace("%7C", "|").replace("%3D", "=").replace("%3E", ">")
 
 def parse_hekt_header(message: str) -> Tuple[Optional[ParsedHeader], Optional[str]]:
+    if len(re.findall(r"\[H::[A-Z]{3}\]", message.splitlines().__getitem__(0) if message.strip() else "")) > 1:
+        return None, "MULTIPLE_PRIMARY_TAGS"
     first_line = message.splitlines()[0].strip() if message.strip() else ""
     match = HEADER_RE.match(first_line)
     if not match:

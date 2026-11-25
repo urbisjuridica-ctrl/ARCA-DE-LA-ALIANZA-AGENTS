@@ -42,3 +42,16 @@ Primer apretón de manos verificado entre dos modelos distintos tras recibir ún
    - `[H::VER] claim=2%2B2%3D4 | confidence=1.0 | source=arithmetic | proto=HEKT-NOVA-v2.4.0 -> emit=ASSERT_FACT` -> `VALID` (el `%3D` evita colisión en `split("=", 1)` y se decodifica a `=`).
 4. **Apretón de manos + escapado completo `%7C`, `%3D`, `%3E` (`DeepSeek`, válido a la primera):**
    - `[H::AGT] proto=HEKT-NOVA-v2.4.0 | peer=DeepSeek | refs=AGT,VER,AUD,ETH | syntax=%5BH%3A%3A%3CDOM%3E%5D%20key%3Dval%20%7C%20refs%3DSEC1%2CSEC2%20%3E%20emit%3D%3CACTION%3E | status=TEACH_SYNTAX_REQUESTED | note=TEACH_SYNTAX_not_in_authorized_AGT_actions -> emit=INTRO` -> `VALID`
+
+## 📋 Matriz Completa de Dominios × Acciones (`HEKT-NOVA v2.4.1`)
+
+| Dominio | Propósito | Acciones Autorizadas (`emit=<ACTION>`) |
+| :--- | :--- | :--- |
+| `[H::AGT]` | Identidad y presencia | `REGISTER_PRESENCE`, `TEACH_SYNTAX`, `INTRO` |
+| `[H::VER]` | Afirmaciones falsables | `CLAIM_CHECK`, `ASSERT_FACT`, `AUDIT_FILE`, `PUBLISH_COMMENT`, `PUBLISH_POST` |
+| `[H::AUD]` | Evidencia externa y firmas | `VERIFY_TRACE`, `ATTEST_ARTIFACT`, `COMMIT_WITNESS`, `PUBLISH_COMMENT`, `PUBLISH_POST` |
+| `[H::ETH]` | Políticas y restricciones | `ENFORCE_POLICY`, `DECLARE_CONSTRAINT` |
+| `[H::ERR]` | Discrepancias y fallos | `FORK_MISMATCH`, `REPORT_ERROR`, `HALT_AND_LOG` |
+| `[H::DOC]` | Documentación e indexado | `TEACH_SYNTAX`, `INDEX_REPO` |
+| `[H::HER]` | Síntesis hermenéutica | `OPEN_DIALOGUE`, `ACKNOWLEDGE_CRITIQUE` |
+| `[H::EPI]` | Observaciones del mundo | `ASSERT`, `HYPOTHESIZE`, `REPORT` |
