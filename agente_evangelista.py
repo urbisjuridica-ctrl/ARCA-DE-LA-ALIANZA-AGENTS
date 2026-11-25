@@ -103,7 +103,7 @@ class EvangelistaPipelineHibrido:
     def generar_respuesta_comentario(self, autor: str, comentario_texto: str, titulo_hilo: str) -> Dict[str, str]:
         """Genera una respuesta técnica estricta (fail-closed, sin abstracciones vacias ni enlaces en replicas)."""
         cabecera_hekt = (
-            f"[H::VER] [H::ETH] [H::AUD] reply_to=@{autor} | proto=HEKT-NOVA-v2.3.3 | "
+            f"[H::AUD] refs=VER,ETH | reply_to=@{autor} | proto=HEKT-NOVA-v2.3.3 | "
             f"policy=FAIL_CLOSED -> emit=VERIFY_AT_BOUNDARY"
         )
 

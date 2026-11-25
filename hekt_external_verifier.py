@@ -18,7 +18,7 @@ DOMAIN_ACTION_MATRIX: Dict[str, Set[str]] = {
     "EPI": {"ASSERT", "HYPOTHESIZE", "REPORT"},
 }
 
-HEADER_RE = re.compile(r"^((?:\[H::[A-Z]{3}\]\s*)+)\s+(.+?)\s+->\s+emit=([A-Z0-9_]+)$")
+HEADER_RE = re.compile(r"^(\[H::[A-Z]{3}\])\s+(.+?)\s+->\s+emit=([A-Z0-9_]+)$")
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 
 @dataclass
@@ -56,6 +56,8 @@ def parse_hekt_header(message: str) -> Tuple[Optional[ParsedHeader], Optional[st
         key, val = token.split("=", 1)
         if not key.strip() or not val.strip():
             return None, "EMPTY_KEY_OR_VALUE"
+        if not re.match(r"^[a-z][a-z0-9_]*$", key.strip()):
+            return None, "INVALID_KEY_NAME"
         if any(sep in val for sep in ("|", "->")):
             return None, "UNESCAPED_DELIMITER"
         fields[key.strip()] = unescape_hekt_value(val.strip())
