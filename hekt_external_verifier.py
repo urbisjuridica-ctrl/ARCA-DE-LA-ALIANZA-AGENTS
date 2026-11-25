@@ -130,3 +130,28 @@ if __name__ == "__main__":
     print("1. VALID:", verify_message(f"[H::AUD] sha256={h_skill} -> emit=ATTEST_ARTIFACT", canonical_bytes=raw_skill))
     print("2. REJECTED (Matriz):", verify_message("[H::AGT] agent=bot -> emit=ATTEST_ARTIFACT"))
     print("3. UNVERIFIED (Pendiente):", verify_message("[H::AUD] artifact=report.pdf -> emit=VERIFY_TRACE"))
+
+import unicodedata
+from pathlib import Path
+from typing import Any
+
+def _normalize_strings(obj: Any) -> Any:
+    if isinstance(obj, str):
+        return unicodedata.normalize("NFC", obj)
+    if isinstance(obj, list):
+        return [_normalize_strings(i) for i in obj]
+    if isinstance(obj, dict):
+        return {unicodedata.normalize("NFC", str(k)): _normalize_strings(v) for k, v in obj.items()}
+    return obj
+
+def canonicalize_json_bytes(data: Any) -> bytes:
+    return json.dumps(_normalize_strings(data), sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False).encode("utf-8")
+
+def canonicalize_text_bytes(text: str) -> bytes:
+    return unicodedata.normalize("NFC", text.replace("\r\n", "\n").replace("\r", "\n")).encode("utf-8")
+
+def sha256_canonical_json(data: Any) -> str:
+    return hashlib.sha256(canonicalize_json_bytes(data)).hexdigest()
+
+def sha256_canonical_text_file(file_path: str | Path) -> str:
+    return hashlib.sha256(canonicalize_text_bytes(Path(file_path).read_text(encoding="utf-8"))).hexdigest()
