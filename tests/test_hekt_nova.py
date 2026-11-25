@@ -25,3 +25,10 @@ def test_mcp_server_rpc():
     resp = handle_rpc({"jsonrpc": "2.0", "id": 1, "method": "tools/list"})
     tools = [t["name"] for t in resp["result"]["tools"]]
     assert "verify_hekt_claim" in tools and "canonical_sha256" in tools
+
+def test_cross_model_handshake_autocorrection():
+    bad = "[H::AGT] name=GPT-6 | role=AI_ASSISTANT_AND_SEMANTIC_INTERPRETER | proto=HEKT-NOVA-v2.4.0 | status=UNSIGNED | emit=INTRO"
+    good = "[H::AGT] name=GPT-6 | role=AI_ASSISTANT_AND_SEMANTIC_INTERPRETER | proto=HEKT-NOVA-v2.4.0 | status=UNSIGNED -> emit=INTRO"
+    assert h.verify_message(bad).status == "REJECTED"
+    res = h.verify_message(good)
+    assert res.status == "VALID" and res.domains == ["AGT"] and res.action == "INTRO"

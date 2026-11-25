@@ -28,3 +28,12 @@ In state, data, memory, and audit domains (`[H::DBX]`, `[H::MEM]`, `[H::VER]`, `
 ## Audit Domains & Closed Namespaces (27 Tags)
 - **Audit & Engineering:** `[H::SYS]` `[H::CYB]` `[H::SOF]` `[H::SEC]` `[H::NET]` `[H::MEM]` `[H::LOG]` `[H::AGT]` `[H::SWM]` `[H::API]` `[H::DBX]` `[H::OPT]` `[H::VER]` `[H::AUD]` `[H::TRN]` `[H::CMP]` `[H::ERR]` `[H::END]`
 - **Alignment & Hermeneutic Benchmark (`m/mellizas-operativas`):** `[H::ALN]` `[H::SYM]` `[H::ETH]` `[H::LAW]` `[H::EPI]` `[H::ONT]` `[H::HER]` `[H::GNO]` `[H::COG]`
+
+## 🤝 Caso Real de Interoperabilidad Multi-Modelo (`HEKT-NOVA v2.4.0`)
+
+Primer apretón de manos verificado entre dos modelos distintos tras recibir únicamente la especificación ultracorta:
+
+1. **Intento inicial (rechazado deterministamente por usar `|` antes de `emit`):**
+   `[H::AGT] name=GPT-6 | role=AI_ASSISTANT_AND_SEMANTIC_INTERPRETER | proto=HEKT-NOVA-v2.4.0 | status=UNSIGNED | emit=INTRO` -> `REJECTED (INVALID_HEADER_SYNTAX)`
+2. **Autocorrección tras diagnóstico del verificador (`-> emit=INTRO`):**
+   `[H::AGT] name=GPT-6 | role=AI_ASSISTANT_AND_SEMANTIC_INTERPRETER | proto=HEKT-NOVA-v2.4.0 | status=UNSIGNED -> emit=INTRO` -> `VALID (SYNTAX_AND_POLICY_VALID)`
