@@ -1,3 +1,4 @@
+from hekt_nova.crypto_signer import is_valid_ed25519_pubkey
 from dataclasses import dataclass
 import hashlib, hmac, json, os, re, unicodedata
 from datetime import datetime, timezone
@@ -198,6 +199,8 @@ def verify_message(message: str, canonical_bytes: Optional[bytes] = None, authen
                     res = VerificationResult(status="REJECTED", reason="MISSING_SIGNATURE", domains=parsed.domains, action=parsed.action)
                 elif not kid or not trusted_keys or kid not in trusted_keys:
                     res = VerificationResult(status="REJECTED", reason="UNKNOWN_KEY_ID", domains=parsed.domains, action=parsed.action)
+                elif not is_valid_ed25519_pubkey(trusted_keys[kid]):
+                    res = VerificationResult(status="REJECTED", reason="SMALL_ORDER_PUBLIC_KEY", domains=parsed.domains, action=parsed.action)
                 elif not verify_header_signature(parsed.canonical_unsigned, sig, trusted_keys[kid]):
                     res = VerificationResult(status="REJECTED", reason="SIGNATURE_MISMATCH", domains=parsed.domains, action=parsed.action)
                 else:

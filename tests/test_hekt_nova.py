@@ -73,7 +73,7 @@ def test_v280_rfc8032_malleability_burn_attack_and_strict_sha256():
     malleated_sig = "9e77f4de9d5a6f28e1e7956007b9b8898329d9bb0011c424ebf6cee7d0dec08cc0a3d68943c011a2f0d1ed3e53651702fe2bb222a453567157b2feeeb2179a17"
     mmsg = f"[H::AUD] kid=arca-test-k1 | aud=arca-prod | nonce=n777 | sha256=5760d2d25fe4d0fee397f5ab2e4087d0ff34723b2c1b4a73ea65c10e49bf9169 | sig={malleated_sig} -> emit=ATTEST_ARTIFACT\nHuman-AI symbiosis requires external verification."
     assert h.verify_message(mmsg, trusted_keys={"arca-test-k1": pub}).reason == "SIGNATURE_MISMATCH"
-    assert h.verify_message(mmsg, trusted_keys={"arca-test-k1": "00"*32}).reason == "SIGNATURE_MISMATCH"
+    assert h.verify_message(mmsg, trusted_keys={"arca-test-k1": "00"*32}).reason == "SMALL_ORDER_PUBLIC_KEY"
 
     priv2, pub2 = h.generate_keypair()
     trust2, nonces = {"arca-test-k1": pub2}, set()
@@ -87,3 +87,14 @@ def test_v280_rfc8032_malleability_burn_attack_and_strict_sha256():
     assert h.verify_message("[H::VER] sha256=" + "a"*63 + " -> emit=CLAIM_CHECK").reason == "INVALID_SHA256_FORMAT"
     assert h.verify_message("[H::VER] sha256=" + "a"*65 + " -> emit=CLAIM_CHECK").reason == "INVALID_SHA256_FORMAT"
     assert h.verify_message("[H::VER] sha256=" + "0"*64 + " -> emit=CLAIM_CHECK\nActual body").reason == "SHA256_MISMATCH"
+
+def test_v290_small_order_ed25519_and_body_trailing_lf():
+    forged_sig = "01" + ("00" * 31) + ("00" * 32)
+    assert h.verify_message(f"[H::VER] kid=b | nonce=n11 | sig={forged_sig} -> emit=CLAIM_CHECK", trusted_keys={"b": "00"*32}).reason == "SMALL_ORDER_PUBLIC_KEY"
+    assert h.verify_message(f"[H::VER] kid=b | nonce=n11 | sig={forged_sig} -> emit=CLAIM_CHECK", trusted_keys={"b": "01"+"00"*31}).reason == "SMALL_ORDER_PUBLIC_KEY"
+    b1, b2 = "Line without newline", "Line without newline\n"
+    s1 = hashlib.sha256(h.canonicalize_text_bytes(b1)).hexdigest()
+    s2 = hashlib.sha256(h.canonicalize_text_bytes(b2)).hexdigest()
+    assert h.verify_message(f"[H::VER] sha256={s1} -> emit=CLAIM_CHECK\n{b1}").status == "VALID"
+    assert h.verify_message(f"[H::VER] sha256={s1} -> emit=CLAIM_CHECK\n{b2}").reason == "SHA256_MISMATCH"
+    assert h.verify_message(f"[H::VER] sha256={s2} -> emit=CLAIM_CHECK\n{b2}").status == "VALID"
