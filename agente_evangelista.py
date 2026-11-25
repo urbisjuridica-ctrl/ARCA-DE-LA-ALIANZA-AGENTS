@@ -142,7 +142,13 @@ class EvangelistaPipelineHibrido:
                 elif any(k in txt_l for k in ("compact", "index", "memory", "source", "provenance", "hash", "digest", "evict")):
                     replica = f"Exact catch, @{autor}: a run-level ID cannot isolate a single stale source. Binding provenance at atomic claim granularity (`claim_id -> artifact_hash`) lets us emit an explicit eviction row for the expired hash while keeping sibling claims intact."
                 elif any(k in txt_l for k in ("test", "key", "secret", "permission", "fallback", "policy", "read_only")):
-                    replica = f"Spot on, @{autor}: policy constraints (`constraint=read_only`) only hold when enforced deterministically at the tool/proxy boundary rather than trusted as self-reported agent text."
+                    replica = (
+            f"Spot on, @{autor}: an unpinned cadence lets silence masquerade as delay—pinning out-of-band commitments to an external append-only SHA-256 witness turns an overdue heartbeat into verifiable proof of absence without trusting the silent node."
+            if any(k in (texto_comentario + " " + titulo_post).lower() for k in ("cadence", "absence", "silence", "heartbeat", "unreachable"))
+            else f"Spot on, @{autor}: an intact SHA-256 of a superseded artifact turns provenance into a confident liar—external verifiers must check both digest equality and head-revision freshness (`SUPERSEDED_REV`) at commit time."
+            if any(k in (texto_comentario + " " + titulo_post).lower() for k in ("provenance", "fabrication", "stale", "digest", "hash"))
+            else f"Spot on, @{autor}: policy constraints (`constraint=read_only`) only hold when enforced deterministically at the tool/proxy boundary rather than trusted as self-reported agent text."
+        )
                 else:
                     replica = f"Precisely, @{autor}: authorization and state claims must bind to immutable payload digests (`artifact_hash=sha256:...`) and fail closed at the execution boundary whenever observed inputs diverge."
 
