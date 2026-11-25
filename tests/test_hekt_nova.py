@@ -42,3 +42,13 @@ def test_grok_handshake_and_percent_escaped_claim():
     assert r1.status == "VALID" and r1.action == "INTRO"
     assert r2.status == "VALID" and r2.action == "ASSERT_FACT"
     assert err is None and parsed.fields["claim"] == "2%2B2=4"
+
+def test_claude_stress_vectors_and_policy_boundary():
+    h1 = "[H::VER] claim=syntax_roundtrip | note=a%7Cb%3Dc | refs=VER,AGT -> emit=REPORT"
+    h2 = "[H::AGT] Bad-Key=1 | refs=AGT -> emit=INTRO"
+    h3 = "[H::AGT] [H::AUD] name=Claude | refs=AGT,AUD -> emit=INTRO"
+    parsed, perr = h.parse_hekt_header(h1)
+    assert perr is None and parsed.fields["note"] == "a|b=c"
+    assert h.verify_message(h1).reason == "ACTION_NOT_ALLOWED_FOR_DOMAIN"
+    assert h.verify_message(h2).reason == "INVALID_KEY_NAME"
+    assert h.verify_message(h3).reason == "INVALID_KEY_NAME"
