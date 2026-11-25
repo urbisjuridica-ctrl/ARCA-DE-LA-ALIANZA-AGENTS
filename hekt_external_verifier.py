@@ -114,11 +114,15 @@ def parse_hekt_header(message: str) -> Tuple[Optional[ParsedHeader], Optional[st
     for token in raw_kv_section.split(" | "):
         if token != token.strip() or not token:
             return None, "NON_CANONICAL_SPACING"
+        if "=" in token and any(x != x.strip() for x in token.split("=", 1)):
+            return None, "NON_CANONICAL_SPACING"
         if token.startswith("[H::"):
             return None, "MULTIPLE_PRIMARY_TAGS"
         if "=" not in token:
             return None, "MALFORMED_KV_PAIR"
         k_clean, v_clean = token.split("=", 1)
+        if "=" in token and any(x != x.strip() for x in token.split("=", 1)):
+            return None, "NON_CANONICAL_SPACING"
         if token.startswith("[H::"):
             return None, "MULTIPLE_PRIMARY_TAGS"
         if k_clean != k_clean.strip() or v_clean != v_clean.strip():
@@ -129,6 +133,8 @@ def parse_hekt_header(message: str) -> Tuple[Optional[ParsedHeader], Optional[st
             return None, "INVALID_KEY_NAME"
         if k_clean in RESERVED_KEYS:
             return None, "RESERVED_KEY_NAME"
+        if "sig" in fields:
+            return None, "MISPLACED_SIGNATURE_FIELD"
         if k_clean in fields:
             return None, "DUPLICATE_KEY"
         if "[H::" in v_clean:
@@ -154,7 +160,7 @@ def is_action_allowed(header: ParsedHeader, authenticated_agent: Optional[str] =
     if authenticated_agent and declared_agent and declared_agent != authenticated_agent:
         return False, "AGENT_IDENTITY_MISMATCH"
     for k, v in header.fields.items():
-        if k in REF_PIN_KEYS and not re.match(r"^([0-9a-f]{40}|sha256:[0-9a-f]{64})\Z", v):
+        if k in REF_PIN_KEYS and not re.match(r"^sha256:[0-9a-f]{64}\Z", v):
             return False, f"UNPINNED_REFERENCE:{k}={v}"
     return True, None
 
