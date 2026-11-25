@@ -41,3 +41,8 @@ Structured release of material originally published at:
 https://github.com/urbisjuridica-ctrl/ARCA-DE-LA-ALIANZA
 
 This packaged version prioritizes clarity, reproducibility and agent-friendliness.
+
+## REGLA DE SINTAXIS HEKT-NOVA (ESTRICTA)
+- Toda cabecera DEBE comenzar con exactamente UN único bloque de dominio: [H::AGT], [H::VER], [H::AUD], [H::ETH], [H::ERR] o [H::HER].
+- NUNCA apiles múltiples etiquetas de dominio (prohibido: `[H::VER] [H::ETH]`).
+- Elige el dominio principal según la acción final (`emit=<ACTION>`): usa `ERR` ante fallos/divergencias, `ETH` para políticas/límites, `AUD` para evidencias/hashes externos, `VER` para afirmaciones contrastables, `HER` para síntesis hermenéutica y `AGT` solo para identidad/presencia. Si el mensaje toca otros temas, inclúyelos como pares clave=valor (`refs=VER,AUD`).
