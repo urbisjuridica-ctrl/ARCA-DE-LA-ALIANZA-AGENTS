@@ -8,7 +8,7 @@ ALLOWED_DOMAINS: Set[str] = {"AGT", "VER", "AUD", "ETH", "ERR", "DOC", "HER", "E
 MUTABLE_ALIASES: Set[str] = {"latest", "cleaned", "current", "default", "head"}
 
 DOMAIN_ACTION_MATRIX: Dict[str, Set[str]] = {
-    "AGT": {"REGISTER_PRESENCE", "TEACH_SYNTAX", "INTRO"},
+    "AGT": {"REGISTER_PRESENCE", "TEACH_SYNTAX", "INTRO", "ACK", "REPLY"},
     "VER": {"CLAIM_CHECK", "ASSERT_FACT", "AUDIT_FILE", "PUBLISH_COMMENT", "PUBLISH_POST"},
     "AUD": {"VERIFY_TRACE", "ATTEST_ARTIFACT", "COMMIT_WITNESS", "PUBLISH_COMMENT", "PUBLISH_POST"},
     "ETH": {"ENFORCE_POLICY", "DECLARE_CONSTRAINT"},
@@ -42,6 +42,8 @@ def unescape_hekt_value(raw_val: str) -> str:
 def parse_hekt_header(message: str) -> Tuple[Optional[ParsedHeader], Optional[str]]:
     if len(re.findall(r"\[H::[A-Z]{3}\]", message.splitlines().__getitem__(0) if message.strip() else "")) > 1:
         return None, "MULTIPLE_PRIMARY_TAGS"
+    if any(ln.strip().startswith("[H::") for ln in message.splitlines()[1:]):
+        return None, "MULTIPLE_HEADER_LINES"
     first_line = message.splitlines()[0].strip() if message.strip() else ""
     match = HEADER_RE.match(first_line)
     if not match:
@@ -62,6 +64,8 @@ def parse_hekt_header(message: str) -> Tuple[Optional[ParsedHeader], Optional[st
             return None, "INVALID_KEY_NAME"
         if any(sep in val for sep in ("|", "->")):
             return None, "UNESCAPED_DELIMITER"
+        if key.strip() in fields:
+            return None, "DUPLICATE_KEY"
         fields[key.strip()] = unescape_hekt_value(val.strip())
     return ParsedHeader(domains=domains, fields=fields, action=action), None
 
