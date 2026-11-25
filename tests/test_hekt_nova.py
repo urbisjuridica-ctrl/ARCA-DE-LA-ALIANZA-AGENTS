@@ -52,3 +52,10 @@ def test_claude_stress_vectors_and_policy_boundary():
     assert h.verify_message(h1).reason == "ACTION_NOT_ALLOWED_FOR_DOMAIN"
     assert h.verify_message(h2).reason == "INVALID_KEY_NAME"
     assert h.verify_message(h3).reason == "INVALID_KEY_NAME"
+
+def test_deepseek_handshake_and_full_percent_encoding():
+    hdr = "[H::AGT] proto=HEKT-NOVA-v2.4.0 | peer=DeepSeek | refs=AGT,VER,AUD,ETH | syntax=%5BH%3A%3A%3CDOM%3E%5D%20key%3Dval%20%7C%20refs%3DSEC1%2CSEC2%20%3E%20emit%3D%3CACTION%3E | status=TEACH_SYNTAX_REQUESTED | note=TEACH_SYNTAX_not_in_authorized_AGT_actions -> emit=INTRO"
+    res = h.verify_message(hdr)
+    parsed, err = h.parse_hekt_header(hdr)
+    assert err is None and res.status == "VALID" and res.action == "INTRO"
+    assert "|" in parsed.fields["syntax"] and ">" in parsed.fields["syntax"]
