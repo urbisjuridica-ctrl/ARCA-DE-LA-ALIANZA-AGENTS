@@ -1,12 +1,15 @@
 {
   "protocol": "HEKT-NOVA v3.0.4",
-  "base_commit": "6cb7b300f075f190b672135ddbd2908ad2e03674",
+  "branch": "main",
+  "generated_at_utc": "2026-11-26T18:52:50.031337+00:00",
+  "hash_algorithm": "SHA-256",
+  "base_commit": "e7d1dadccb8062ab822f584821f060e1af1bb473",
   "reproduce_command": "pytest -v && (cd packages/hekt-nova-ts && npm test)",
   "sha256": {
     "SECURITY.md": "439618474607768158a7a3f203aaadeb124336f9d9955f283086e4c6cee8e0f4",
     "SPEC_v3_0_0.md": "cda0d6280413c821958289384264203f8ebea1a411d6fdf22c971d38a616c744",
     "hekt_external_verifier.py": "976a90d47e7a3d9e7b511bc69cf60e2d68cdbd48bad15b8e7ad20031efaaffb1",
-    "hekt_nova/crypto_signer.py": "9fa737300ebc821d4edf9f3e55e5555b09407675ffdd07090407c67878291b6c",
+    "hekt_nova/crypto_signer.py": "f33c7bbd825250b3468b324fa7fd0f8eab063d525e3f6522fc2367c6b4b3a7d0",
     "hekt_nova/nonce_store.py": "21093e68e7ac0051d112539fd91f8aecb607e4bc97998b1e23e4e832c6be167f",
     "hekt_nova/agent_runtime.py": "eeeff9a976eb51c4e653b7f99ee6f0ceb80a932c2ca3b6007d73dc02d91ace2a",
     "packages/hekt-nova-ts/src/verifier.mjs": "7efe7aa8670ed098de519993f6c280673d4ee37a3e2d7a77a2b9e4c84f467440",

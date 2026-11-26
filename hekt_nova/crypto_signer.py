@@ -54,8 +54,7 @@ def generate_keypair() -> Tuple[str, str]:
     if HAS_ED25519:
         priv = Ed25519PrivateKey.generate()
         return priv.private_bytes(serialization.Encoding.Raw, serialization.PrivateFormat.Raw, serialization.NoEncryption()).hex(), priv.public_key().public_bytes(serialization.Encoding.Raw, serialization.PublicFormat.Raw).hex()
-    seed = os.urandom(32).hex()
-    return seed, hashlib.sha256(seed.encode()).hexdigest()
+    raise RuntimeError("Ed25519 cryptography backend required; fail-closed")
 
 def sign_header_payload(canonical_header: str, private_key_hex: str) -> str:
     if not HAS_ED25519:
@@ -71,6 +70,6 @@ def verify_header_signature(header_without_sig: str, sig_hex: str, public_hex: s
         if HAS_ED25519:
             Ed25519PublicKey.from_public_bytes(bytes.fromhex(public_hex)).verify(bytes.fromhex(sig_hex), msg)
             return True
-        return hmac.compare_digest(hmac.new(bytes.fromhex(public_hex), msg, hashlib.sha256).hexdigest(), sig_hex.lower())
+        return False
     except Exception:
         return False
