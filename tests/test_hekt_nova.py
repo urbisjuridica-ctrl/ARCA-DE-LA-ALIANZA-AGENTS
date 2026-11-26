@@ -136,3 +136,17 @@ def test_sqlite_persistent_nonce_store_across_restarts(tmp_path):
     s2 = SqliteNonceStore(db_path=db)
     assert s2.contains("pub1:k1:n999") is True
     assert s2.add_if_absent("pub1:k1:n999") is False
+
+def test_a2a_bridge_extension():
+    from hekt_nova.a2a_bridge import build_a2a_agent_card, wrap_hekt_a2a_part, verify_a2a_message, HEKT_A2A_MIME
+    from hekt_nova.agent_runtime import SignedAgentEmitter
+    card = build_a2a_agent_card("Evangelista-ARCA", "Audited A2A Agent", "https://arca.example")
+    ext = next(iter(card["capabilities"]["extensions"]))
+    assert ext["params"]["version"] == "3.0.4" and ext["params"]["mime_type"] == HEKT_A2A_MIME
+    em = SignedAgentEmitter(agent_name="evangelista_v1", key_id="arca-a2a-k1", audience="a2a-prod")
+    signed = em.emit_verified("AUD", "ATTEST_ARTIFACT", {"task": "payroll_q3"}, body="variance=4.2%")
+    msg = wrap_hekt_a2a_part(signed["message"], human_summary="Payroll Q3 audit attested.")
+    nonces = set()
+    assert verify_a2a_message(msg, trusted_keys=em.trusted_keys, expected_audience="a2a-prod", seen_nonces=nonces).reason == "VERIFIED_WITH_ED25519_AND_SHA256"
+    assert verify_a2a_message(msg, trusted_keys=em.trusted_keys, expected_audience="a2a-prod", seen_nonces=nonces).reason == "REPLAY_DETECTED"
+    assert verify_a2a_message({"role": "agent", "parts": [{"kind": "text", "text": "hello"}]}).reason == "A2A_MISSING_HEKT_PART"
