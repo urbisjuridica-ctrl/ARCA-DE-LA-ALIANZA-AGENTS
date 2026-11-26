@@ -1,6 +1,6 @@
 import threading, time
 _NONCE_LOCK = threading.Lock()
-from hekt_nova.nonce_store import SqliteNonceStore
+from hekt_nova.nonce_store import SqliteNonceStore, ReserveResult
 _DEFAULT_NONCE_STORE = SqliteNonceStore()
 _NONCE_LOCK = threading.Lock()
 from hekt_nova.crypto_signer import is_valid_ed25519_pubkey
@@ -211,7 +211,7 @@ def verify_message(message: str, canonical_bytes: Optional[bytes] = None, authen
             res = VerificationResult(status="REJECTED", reason="INVALID_TIMESTAMP_FORMAT", domains=parsed.domains, action=parsed.action)
         elif "ts" in parsed.fields and abs(int(time.time()) - int(parsed.fields["ts"])) > 300:
             res = VerificationResult(status="REJECTED", reason="EXPIRED_OR_FUTURE_TIMESTAMP", domains=parsed.domains, action=parsed.action)
-        elif "nonce" in parsed.fields and ((seen_nonces is not None and parsed.fields["nonce"] in seen_nonces) or (seen_nonces is None and f"{(trusted_keys or {}).get(parsed.fields.get('kid',''),'')}:{parsed.fields.get('kid','')}:{parsed.fields['nonce']}" in _DEFAULT_NONCE_STORE if isinstance(_DEFAULT_NONCE_STORE, set) else _DEFAULT_NONCE_STORE.contains(f"{(trusted_keys or {}).get(parsed.fields.get('kid',''),'')}:{parsed.fields.get('kid','')}:{parsed.fields['nonce']}"))):
+        elif "nonce" in parsed.fields and ((seen_nonces is not None and parsed.fields["nonce"] in seen_nonces) or (seen_nonces is None and _DEFAULT_NONCE_STORE.contains(f"{(trusted_keys or {}).get(parsed.fields.get('kid',''),'')}:{parsed.fields.get('kid','')}:{parsed.fields['nonce']}"))):
             res = VerificationResult(status="REJECTED", reason="REPLAY_DETECTED", domains=parsed.domains, action=parsed.action)
         else:
             sig_verified = False
@@ -247,12 +247,11 @@ def verify_message(message: str, canonical_bytes: Optional[bytes] = None, authen
                         seen_nonces.add(parsed.fields["nonce"])
                     else:
                         nk = f"{(trusted_keys or {}).get(parsed.fields.get('kid',''),'')}:{parsed.fields.get('kid','')}:{parsed.fields['nonce']}"
-                        try:
-                            inserted = _DEFAULT_NONCE_STORE.add_if_absent(nk)
-                        except Exception:
-                            inserted = False
-                        if not inserted:
+                        rr = _DEFAULT_NONCE_STORE.reserve(nk)
+                        if rr == ReserveResult.DUPLICATE:
                             res = VerificationResult(status='REJECTED', reason='REPLAY_DETECTED', domains=parsed.domains, action=parsed.action)
+                        elif rr != ReserveResult.RESERVED:
+                            res = VerificationResult(status='REJECTED', reason='NONCE_STORE_UNAVAILABLE', domains=parsed.domains, action=parsed.action)
     first_ln = message.replace("\r\n", "\n").split("\n")[0] if message else ""
     res.row_hash = _append_witness_row(res, first_ln)
     return res
