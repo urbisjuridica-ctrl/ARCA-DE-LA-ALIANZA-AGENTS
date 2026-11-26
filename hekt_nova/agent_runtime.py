@@ -5,7 +5,8 @@ import hekt_nova as h
 class SignedAgentEmitter:
     def __init__(self, agent_name: str, key_id: str = "arca-runtime-k1", audience: str = "arca-prod"):
         self.agent_name, self.key_id, self.audience = agent_name, key_id, audience
-        env_priv = os.getenv('HEKT_PRIVATE_KEY_HEX', '').strip()
+        key_file = os.getenv('HEKT_PRIVATE_KEY_FILE', '').strip()
+        env_priv = open(key_file, encoding='utf-8').read().strip() if (key_file and os.path.exists(key_file)) else os.getenv('HEKT_PRIVATE_KEY_HEX', '').strip()
         if len(env_priv) == 64:
             from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
             self.priv_hex = env_priv

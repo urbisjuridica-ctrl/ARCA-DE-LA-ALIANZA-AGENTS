@@ -6,9 +6,9 @@ DEFAULT_DB_PATH = os.getenv("HEKT_NONCE_DB", "hekt_nonces.sqlite3")
 class SqliteNonceStore:
     """Almacén persistente y atómico de nonces anti-replay (SQLite WAL, retención >= 600s)."""
 
-    def __init__(self, db_path: str = DEFAULT_DB_PATH, retention_seconds: int = 600):
+    def __init__(self, db_path: str = DEFAULT_DB_PATH, retention_seconds: int = 900):
         self.db_path = db_path
-        self.retention_seconds = max(600, retention_seconds)
+        self.retention_seconds = max(900, retention_seconds)
         self._init_db()
 
     def _connect(self) -> sqlite3.Connection:

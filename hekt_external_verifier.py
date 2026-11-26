@@ -247,7 +247,11 @@ def verify_message(message: str, canonical_bytes: Optional[bytes] = None, authen
                         seen_nonces.add(parsed.fields["nonce"])
                     else:
                         nk = f"{(trusted_keys or {}).get(parsed.fields.get('kid',''),'')}:{parsed.fields.get('kid','')}:{parsed.fields['nonce']}"
-                        if not _DEFAULT_NONCE_STORE.add_if_absent(nk):
+                        try:
+                            inserted = _DEFAULT_NONCE_STORE.add_if_absent(nk)
+                        except Exception:
+                            inserted = False
+                        if not inserted:
                             res = VerificationResult(status='REJECTED', reason='REPLAY_DETECTED', domains=parsed.domains, action=parsed.action)
     first_ln = message.replace("\r\n", "\n").split("\n")[0] if message else ""
     res.row_hash = _append_witness_row(res, first_ln)
