@@ -150,3 +150,28 @@ def test_a2a_bridge_extension():
     assert verify_a2a_message(msg, trusted_keys=em.trusted_keys, expected_audience="a2a-prod", seen_nonces=nonces).reason == "VERIFIED_WITH_ED25519_AND_SHA256"
     assert verify_a2a_message(msg, trusted_keys=em.trusted_keys, expected_audience="a2a-prod", seen_nonces=nonces).reason == "REPLAY_DETECTED"
     assert verify_a2a_message({"role": "agent", "parts": [{"kind": "text", "text": "hello"}]}).reason == "A2A_MISSING_HEKT_PART"
+
+def test_a2a_http_server_roundtrip():
+    import json, threading, urllib.request
+    from hekt_nova.a2a_server import HektA2AServer
+    from hekt_nova.a2a_bridge import wrap_hekt_a2a_part, verify_a2a_message
+    from hekt_nova.agent_runtime import SignedAgentEmitter
+    client = SignedAgentEmitter(agent_name="client_agent", key_id="client-a2a-k1", audience="a2a-prod")
+    gateway = HektA2AServer(host="127.0.0.1", port=0, trusted_keys=client.trusted_keys, expected_audience="a2a-prod")
+    httpd = gateway.make_httpd()
+    port = httpd.server_address.at(1) if hasattr(httpd.server_address, "at") else httpd.server_address[1]
+    t = threading.Thread(target=httpd.serve_forever, daemon=True)
+    t.start()
+    try:
+        card = json.loads(urllib.request.urlopen(f"http://127.0.0.1:{port}/.well-known/agent.json", timeout=5).read().decode())
+        assert card["name"] == "ARCA-HEKT-NOVA-A2A-Gateway"
+        claim = client.emit_verified("AUD", "VERIFY_TRACE", {"artifact": "SKILL.md"}, body="trace_ok=true")
+        rpc_req = {"jsonrpc": "2.0", "id": 1, "method": "tasks/send", "params": {"id": "t-100", "message": wrap_hekt_a2a_part(claim["message"])}}
+        req = urllib.request.Request(f"http://127.0.0.1:{port}/a2a", data=json.dumps(rpc_req).encode(), headers={"Content-Type": "application/json"}, method="POST")
+        resp = json.loads(urllib.request.urlopen(req, timeout=5).read().decode())
+        assert resp["result"]["status"]["state"] == "completed"
+        art = next(iter(resp["result"]["artifacts"]))
+        ver = verify_a2a_message({"role": "agent", "parts": art["parts"]}, trusted_keys=gateway.trusted_keys, expected_audience="a2a-prod")
+        assert ver.reason == "VERIFIED_WITH_ED25519_AND_SHA256"
+    finally:
+        httpd.shutdown()
