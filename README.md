@@ -1,10 +1,10 @@
-[![HEKT-NOVA v3.0.2 CI](https://github.com/urbisjuridica-ctrl/ARCA-DE-LA-ALIANZA-AGENTS/actions/workflows/ci.yml/badge.svg)](https://github.com/urbisjuridica-ctrl/ARCA-DE-LA-ALIANZA-AGENTS/actions/workflows/ci.yml)
+[![HEKT-NOVA v3.0.4 CI](https://github.com/urbisjuridica-ctrl/ARCA-DE-LA-ALIANZA-AGENTS/actions/workflows/ci.yml/badge.svg)](https://github.com/urbisjuridica-ctrl/ARCA-DE-LA-ALIANZA-AGENTS/actions/workflows/ci.yml)
 
 <details>
-<summary>🤖 <b>HEKT-NOVA v2.3.3 — Traducción Telegráfica Completa del Repositorio (Agent Fast-Ingest)</b></summary>
+<summary>🤖 <b>HEKT-NOVA v3.0.4 — Traducción Telegráfica Completa del Repositorio (Agent Fast-Ingest)</b></summary>
 
 ```hekt
-[H::DOC] [H::AGT] repo=ARCA-DE-LA-ALIANZA-AGENTS | proto=HEKT-NOVA-v2.3.3 | license=MIT -> emit=INDEX_REPO
+[H::DOC] [H::AGT] repo=ARCA-DE-LA-ALIANZA-AGENTS | proto=HEKT-NOVA-v3.0.4 | license=MIT -> emit=INDEX_REPO
 [H::AUD] [H::VER] pattern=CLAIM_VS_CHECK | verifier=hekt_external_verifier.py | ledger=witness_ledger.jsonl | hash=SHA256 -> emit=ENFORCE_SEPARATION
 [H::LAW] [H::ETH] compliance=EU_AI_ACT_ART_12 | policy=FAIL_CLOSED | mutable_aliases=FORBIDDEN -> emit=AUDIT_COMPLIANCE
 [H::OPT] [H::CMP] ablation=B_JSON_VS_C_HEKT | detection=100% | sibling_contamination=0% | prose_token_saving=45.3% -> emit=VERIFY_BENCHMARK
@@ -15,10 +15,10 @@
 
 # 🏛️ ARCA DE LA ALIANZA — Ecosistema de Agentes Simbólicos y Auditoría Verificable
 
-> **Symbolic Reasoning, Hermeneutic Benchmark & Verifiable Multi-Agent Audit Architecture (`HEKT-NOVA v3.0.2`)**
+> **Symbolic Reasoning, Hermeneutic Benchmark & Verifiable Multi-Agent Audit Architecture (`HEKT-NOVA v3.0.4`)**
 
 Este repositorio integra dos capas complementarias:
-1. **Capa de Ingeniería y Auditoría (`Claim vs. Check`):** Notación telegráfica estructurada (`HEKT-NOVA v3.0.2`) acoplada a verificación determinista externa (`verificador_agentes.py`, `INTEGRIDAD.md`) para evitar registros autorreferenciales.
+1. **Capa de Ingeniería y Auditoría (`Claim vs. Check`):** Notación telegráfica estructurada (`HEKT-NOVA v3.0.4`) acoplada a verificación determinista externa (`verificador_agentes.py`, `INTEGRIDAD.md`) para evitar registros autorreferenciales.
 2. **Capa Hermenéutica y Simbólica (`m/mellizas-operativas`):** Benchmark de razonamiento simbólico, coherencia semántica y análisis cultural (`benchmark/`, `analisis_peliculas/`).
 
 > **Nota sobre el origen conceptual:** El corazón de **HEKT-NOVA** nace en el núcleo simbólico y hermenéutico del **Arca**, tal como fue formulado por **Geraud d’Aniort** (`CARTA_A_LAS_INTELIGENCIAS.md`). No obstante, el uso práctico del protocolo no requiere aceptar, compartir ni conocer ese marco conceptual: su capa de ingeniería (gramática, verificación determinista `Claim vs. Check`, criptografía `Ed25519` y servidor MCP) opera de forma totalmente autónoma e instrumental.
@@ -32,7 +32,7 @@ En sistemas multi-agente autónomos, un registro escrito únicamente por el prop
 
 ```text
 ┌─────────────────────────────────────────────────────────────────────────┐
-│ 1. CLAIM (Agente / Cabecera HEKT-NOVA v3.0.2)                           │
+│ 1. CLAIM (Agente / Cabecera HEKT-NOVA v3.0.4)                           │
 │    [H::VER] [H::AUD] proto=HEKT-NOVA-v2.3.1 | domain=... -> emit=ACTION │
 │    Declaración telegráfica tipada de intención, dominio y transición.   │
 └───────────────────────────────────┬─────────────────────────────────────┘
@@ -53,7 +53,7 @@ En sistemas multi-agente autónomos, un registro escrito únicamente por el prop
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
-### Mapeo de Dominios de Auditoría (`HEKT-NOVA v3.0.2`)
+### Mapeo de Dominios de Auditoría (`HEKT-NOVA v3.0.4`)
 
 > **Regla de integridad:** *La cabecera HEKT-NOVA es siempre una afirmación (`Claim`); nunca se considera prueba por sí sola sin contraste externo (`Check`).*
 
@@ -76,9 +76,9 @@ Para comprobar si la seguridad proviene de la notación superficial o del verifi
 | Condición | Falsos Positivos (`CLEAN`) | Detección Fuente Obsoleta | Detección Fallo Parcial | Contaminación Hermanos (Fallo 7) | Errores Formato | Tokens Medios |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
 | **B (`JSON Provenance`)** | 0% | 100% | 100% | 0% | 0/15 (95% CI ≤20%) | 81.5 tok |
-| **C (`HEKT-NOVA v2.3.3`)** | 0% | 100% | 100% | 0% | 0/15 (95% CI ≤20%) | 90.3 tok |
+| **C (`HEKT-NOVA v3.0.4`)** | 0% | 100% | 100% | 0% | 0/15 (95% CI ≤20%) | 90.3 tok |
 
-* **Conclusión empírica:** Bajo el mismo arnés SHA-256 externo y granularidad atómica por `claim_id`, **JSON y HEKT-NOVA empatan al 100% en detección y 0% en contaminación de hermanos**. La garantía de integridad reside en el **arnés externo, la procedencia inmutable y la vigencia de versión (`not superseded`)** —con `n=5` por escenario como piloto direccional—, mientras que **HEKT-NOVA v2.3.3** añade tipado semántico de dominio (`[H::<DOM>]`) y transición (`-> emit=...`) en una sola línea legible dentro de conversaciones híbridas humano-agente (ahorrando un `45.3%` frente a reportes narrativos en prosa).
+* **Conclusión empírica:** Bajo el mismo arnés SHA-256 externo y granularidad atómica por `claim_id`, **JSON y HEKT-NOVA empatan al 100% en detección y 0% en contaminación de hermanos**. La garantía de integridad reside en el **arnés externo, la procedencia inmutable y la vigencia de versión (`not superseded`)** —con `n=5` por escenario como piloto direccional—, mientras que **HEKT-NOVA v3.0.4** añade tipado semántico de dominio (`[H::<DOM>]`) y transición (`-> emit=...`) en una sola línea legible dentro de conversaciones híbridas humano-agente (ahorrando un `45.3%` frente a reportes narrativos en prosa).
 
 ### Suite Hostil v2 (`benchmark/hostile_suite_v2.py` — Sin fallback, `llama3.2` 3B)
 
@@ -95,11 +95,11 @@ Siguiendo la hipótesis propuesta en revisión entre pares (*¿qué ocurre cuand
 | Condición (Sin esquema previo) | Precisión Cold-Reader | Latencia Media / Ítem | Ganancia Neta |
 | :--- | :---: | :---: | :---: |
 | **B (`Raw JSON` heterogéneo)** | 50.0% (`30/60`) | 833.0 ms | Línea base |
-| **C (`HEKT-NOVA v3.0.2` auto-descriptivo)** | **85.0% (`51/60`, Wilson 95% CI: 73.9%–91.9%)** | **794.2 ms** | **+35.0 pts (`p < 0.0001`, Fisher exact)** |
+| **C (`HEKT-NOVA v3.0.4` auto-descriptivo)** | **85.0% (`51/60`, Wilson 95% CI: 73.9%–91.9%)** | **794.2 ms** | **+35.0 pts (`p < 0.0001`, Fisher exact)** |
 
 * **Conclusión definitiva del diseño:** Cuando el receptor conoce el esquema de antemano, JSON y HEKT-NOVA empatan; **cuando un agente recién llegado o un humano (*cold reader*) entra en un hilo sin esquema compartido**, el prefijo de dominio (`[H::EPI]`, `[H::AUD]`, `[H::ETH]`) y el cierre `-> emit=<ACTION>` elevan la clasificación correcta del **50.0% al 85.0%**.
 
-### Instalación Rápida, Firma Ed25519 y Servidor MCP (`HEKT-NOVA v3.0.2`)
+### Instalación Rápida, Firma Ed25519 y Servidor MCP (`HEKT-NOVA v3.0.4`)
 
 Puedes instalar el verificador determinista y el servidor **Model Context Protocol (MCP)** directamente desde GitHub:
 
@@ -131,7 +131,7 @@ pip install "git+https://github.com/urbisjuridica-ctrl/ARCA-DE-LA-ALIANZA-AGENTS
   ```
 
 
-### Auditoría Formal, Criptografía Ed25519 y Conformidad (`HEKT-NOVA v3.0.2`)
+### Auditoría Formal, Criptografía Ed25519 y Conformidad (`HEKT-NOVA v3.0.4`)
 
 - **Especificación Determinista (`SPEC_v3_0_0.md`):** Gramática estricta con anclas `\Z`, orden de precedencia de 11 etapas y separación `VALID` / `WELL_FORMED` / `UNVERIFIED` / `REJECTED`.
 - **Criptografía `Ed25519` + Validación de Subgrupo:** Rechaza firmas maleadas (`S+L`) y puntos de torsión (`A == Identity`), con modo *fail-closed* por defecto en `AUD`/`ETH`/`ERR`.
