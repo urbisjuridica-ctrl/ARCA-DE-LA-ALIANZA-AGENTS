@@ -5,7 +5,13 @@ import hekt_nova as h
 class SignedAgentEmitter:
     def __init__(self, agent_name: str, key_id: str = "arca-runtime-k1", audience: str = "arca-prod"):
         self.agent_name, self.key_id, self.audience = agent_name, key_id, audience
-        self.priv_hex, self.pub_hex = h.generate_keypair()
+        env_priv = os.getenv('HEKT_PRIVATE_KEY_HEX', '').strip()
+        if len(env_priv) == 64:
+            from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+            self.priv_hex = env_priv
+            self.pub_hex = Ed25519PrivateKey.from_private_bytes(bytes.fromhex(env_priv)).public_key().public_bytes_raw().hex()
+        else:
+            self.priv_hex, self.pub_hex = h.generate_keypair()
         self.trusted_keys: Dict[str, str] = {self.key_id: self.pub_hex}
         self.seen_nonces: Set[str] = set()
 

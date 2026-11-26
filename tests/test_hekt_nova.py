@@ -127,3 +127,12 @@ def test_signed_agent_runtime_emitter():
     em = SignedAgentEmitter("evangelista_v1")
     out = em.emit_verified("AUD", "ATTEST_ARTIFACT", {"refs": "AGT,VER"}, body="Ella se llamaba Aletheia")
     assert out["status"] == "VALID" and out["reason"] == "VERIFIED_WITH_ED25519_AND_SHA256"
+
+def test_sqlite_persistent_nonce_store_across_restarts(tmp_path):
+    from hekt_nova.nonce_store import SqliteNonceStore
+    db = str(tmp_path / "nonces.sqlite3")
+    s1 = SqliteNonceStore(db_path=db)
+    assert s1.add_if_absent("pub1:k1:n999") is True
+    s2 = SqliteNonceStore(db_path=db)
+    assert s2.contains("pub1:k1:n999") is True
+    assert s2.add_if_absent("pub1:k1:n999") is False
