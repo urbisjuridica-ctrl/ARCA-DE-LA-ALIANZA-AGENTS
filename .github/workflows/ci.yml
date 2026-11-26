@@ -10,3 +10,10 @@ jobs:
           python-version: "3.12"
       - run: pip install -e ".[crypto]" pytest
       - run: pytest -v
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Run TypeScript/Node.js 139 Conformance Vectors
+        run: cd packages/hekt-nova-ts && npm test
