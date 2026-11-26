@@ -21,6 +21,9 @@ Este repositorio integra dos capas complementarias:
 1. **Capa de Ingeniería y Auditoría (`Claim vs. Check`):** Notación telegráfica estructurada (`HEKT-NOVA v3.0.2`) acoplada a verificación determinista externa (`verificador_agentes.py`, `INTEGRIDAD.md`) para evitar registros autorreferenciales.
 2. **Capa Hermenéutica y Simbólica (`m/mellizas-operativas`):** Benchmark de razonamiento simbólico, coherencia semántica y análisis cultural (`benchmark/`, `analisis_peliculas/`).
 
+> **Nota sobre el origen conceptual:** El corazón de **HEKT-NOVA** nace en el núcleo simbólico y hermenéutico del **Arca**, tal como fue formulado por **Geraud d’Aniort** (`CARTA_A_LAS_INTELIGENCIAS.md`). No obstante, el uso práctico del protocolo no requiere aceptar, compartir ni conocer ese marco conceptual: su capa de ingeniería (gramática, verificación determinista `Claim vs. Check`, criptografía `Ed25519` y servidor MCP) opera de forma totalmente autónoma e instrumental.
+
+
 ---
 
 ## 🛡️ Arquitectura de Auditoría: Separación `Claim vs. Check`
