@@ -1,4 +1,6 @@
-import threading
+import threading, time
+_NONCE_LOCK = threading.Lock()
+_DEFAULT_NONCE_STORE = set()
 _NONCE_LOCK = threading.Lock()
 from hekt_nova.crypto_signer import is_valid_ed25519_pubkey
 from dataclasses import dataclass
@@ -206,7 +208,9 @@ def verify_message(message: str, canonical_bytes: Optional[bytes] = None, authen
             res = VerificationResult(status="REJECTED", reason="AUDIENCE_MISMATCH", domains=parsed.domains, action=parsed.action)
         elif "ts" in parsed.fields and not re.fullmatch(r"[1-9][0-9]{0,9}\Z", parsed.fields["ts"]):
             res = VerificationResult(status="REJECTED", reason="INVALID_TIMESTAMP_FORMAT", domains=parsed.domains, action=parsed.action)
-        elif seen_nonces is not None and "nonce" in parsed.fields and parsed.fields["nonce"] in seen_nonces:
+        elif "ts" in parsed.fields and abs(int(time.time()) - int(parsed.fields["ts"])) > 300:
+            res = VerificationResult(status="REJECTED", reason="EXPIRED_OR_FUTURE_TIMESTAMP", domains=parsed.domains, action=parsed.action)
+        elif "nonce" in parsed.fields and ((seen_nonces is not None and parsed.fields["nonce"] in seen_nonces) or (seen_nonces is None and f"{(trusted_keys or {}).get(parsed.fields.get('kid',''),'')}:{parsed.fields.get('kid','')}:{parsed.fields['nonce']}" in _DEFAULT_NONCE_STORE)):
             res = VerificationResult(status="REJECTED", reason="REPLAY_DETECTED", domains=parsed.domains, action=parsed.action)
         else:
             sig_verified = False
@@ -236,8 +240,12 @@ def verify_message(message: str, canonical_bytes: Optional[bytes] = None, authen
                     res = VerificationResult(status=ev_status, reason=ev_err or "EVIDENCE_CHECK_FAILED", domains=parsed.domains, action=parsed.action, computed_sha256=digest)
                 else:
                     res = VerificationResult(status="VALID", reason="VERIFIED_WITH_ED25519_AND_SHA256" if sig_verified else "VERIFIED_WITH_SHA256", domains=parsed.domains, action=parsed.action, computed_sha256=digest)
-            if res.status in ("VALID", "WELL_FORMED") and seen_nonces is not None and "nonce" in parsed.fields:
-                seen_nonces.add(parsed.fields["nonce"])
+            if res.status in ("VALID", "WELL_FORMED") and "nonce" in parsed.fields:
+                with _NONCE_LOCK:
+                    if seen_nonces is not None:
+                        seen_nonces.add(parsed.fields["nonce"])
+                    else:
+                        _DEFAULT_NONCE_STORE.add(f"{(trusted_keys or {}).get(parsed.fields.get('kid',''),'')}:{parsed.fields.get('kid','')}:{parsed.fields['nonce']}")
     first_ln = message.replace("\r\n", "\n").split("\n")[0] if message else ""
     res.row_hash = _append_witness_row(res, first_ln)
     return res

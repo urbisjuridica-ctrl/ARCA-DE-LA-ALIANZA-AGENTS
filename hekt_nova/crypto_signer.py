@@ -57,11 +57,11 @@ def generate_keypair() -> Tuple[str, str]:
     seed = os.urandom(32).hex()
     return seed, hashlib.sha256(seed.encode()).hexdigest()
 
-def sign_header_payload(header_without_sig: str, private_hex: str) -> str:
-    msg = header_without_sig.strip().encode("utf-8")
-    if HAS_ED25519:
-        return Ed25519PrivateKey.from_private_bytes(bytes.fromhex(private_hex)).sign(msg).hex()
-    return hmac.new(bytes.fromhex(hashlib.sha256(private_hex.encode()).hexdigest()), msg, hashlib.sha256).hexdigest()
+def sign_header_payload(canonical_header: str, private_key_hex: str) -> str:
+    if not HAS_ED25519:
+        raise RuntimeError("Ed25519 cryptography backend required; fail-closed")
+    priv = Ed25519PrivateKey.from_private_bytes(bytes.fromhex(private_key_hex))
+    return priv.sign(canonical_header.encode("utf-8")).hex()
 
 def verify_header_signature(header_without_sig: str, sig_hex: str, public_hex: str) -> bool:
     if not is_valid_ed25519_pubkey(public_hex):
