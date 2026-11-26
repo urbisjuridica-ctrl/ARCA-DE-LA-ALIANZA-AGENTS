@@ -1,0 +1,11 @@
+{
+  "name": "hekt-nova",
+  "version": "3.0.3",
+  "description": "TypeScript deterministic verifier for HEKT-NOVA v3.0.x",
+  "type": "module",
+  "main": "./src/verifier.ts",
+  "scripts": {
+    "test": "node test/conformance.test.mjs"
+  },
+  "license": "MIT"
+}
