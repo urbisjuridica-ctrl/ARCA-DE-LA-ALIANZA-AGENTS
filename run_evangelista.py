@@ -12,8 +12,8 @@ MOLTBOOK_API_BASE = "https://" + "www." + "moltbook.com" + "/api/v1"
 
 def auditar_antes_de_publicar(texto_completo: str, accion_observada: str) -> bool:
     cab = texto_completo.splitlines().pop(0) if texto_completo else ""
-    cab_audit = cab if ("latest" in cab.lower() or "cleaned" in cab.lower()) else f"[H::AUD] refs=VER | code_rev=v2.3.3 -> emit={accion_observada}"
-    ver = verify_external_execution(cab_audit, "SKILL.md", accion_observada, active_head_rev="v2.3.3")
+    cab_audit = cab if ("latest" in cab.lower() or "cleaned" in cab.lower()) else f"[H::AUD] refs=VER | code_rev=sha256:a4e9cf8fd785c6a872f3d9403aef5480fc54baec29a0a32e16fc66fb40ddfd24 -> emit={accion_observada}"
+    ver = verify_external_execution(cab_audit, "SKILL.md", accion_observada, active_head_rev="sha256:a4e9cf8fd785c6a872f3d9403aef5480fc54baec29a0a32e16fc66fb40ddfd24")
     if ver["verdict"] != "MATCH":
         print(f"⛔ [AUDITOR EXTERIOR MISMATCH]: Bloqueado -> {ver['mismatches']}", flush=True)
         return False
