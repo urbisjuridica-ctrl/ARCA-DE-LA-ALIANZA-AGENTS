@@ -138,6 +138,21 @@ pip install "git+https://github.com/urbisjuridica-ctrl/ARCA-DE-LA-ALIANZA-AGENTS
 - **Fuzzing Diferencial y Vectores Oficiales:** Validado sobre **600.000 mensajes mutados** (`hekt_diff_fuzzer.py`) y **139 vectores oficiales** (`tests/hekt_conformance_vectors.json`) en CI.
 - **Runtime Firmado (`hekt_nova.agent_runtime.SignedAgentEmitter`):** Conectado a `agente_evangelista.py` y `enjambre_aletheia.py`.
 
+
+### Interoperabilidad A2A (Agent-to-Agent Protocol + HEKT-NOVA v3.0.4)
+
+HEKT-NOVA opera como extensión opcional (`required: false`, `mimeType: "application/hekt-nova"`) sobre el estándar **A2A**, separando el transporte de tareas (`tasks/send`, `tasks/get`) de la verificación criptográfica *fail-closed* (`Ed25519` + `SHA-256` + `SqliteNonceStore`):
+
+- **Agent Card y Puente A2A (`hekt_nova/a2a_bridge.py`):** Expone capacidades `HEKT-NOVA v3.0.4` con degradación elegante (`text/plain`).
+- **Servidor HTTP A2A de referencia (`hekt_nova/a2a_server.py`):** `python -m hekt_nova.a2a_server` publica `GET /.well-known/agent.json` y atiende `POST /a2a`.
+- **Piloto Comparativo A2A (`benchmark/a2a_pilot.py`):** Evaluado sobre HTTP JSON-RPC real frente a repetición de nonces, manipulación de cuerpo, claves no confiables y marcas de tiempo caducadas:
+
+| Condición sobre HTTP A2A | Detección de ataques (`5/5`) | Latencia Media | Tokens Payload / Sobre A2A |
+| :--- | :---: | :---: | :---: |
+| **A (A2A Plain Text / JSON sin verificador)** | `1/5` (`20.0%`) | `0.001 ms` | `5.0` / `52.0` tok |
+| **B (A2A + HEKT-NOVA solo sintaxis)** | `1/5` (`20.0%`) | `0.145 ms` | `89.6` / `145.2` tok |
+| **C (A2A + HEKT-NOVA v3.0.4 Fail-Closed)** | **`5/5` (`100.0%`)** | **`6.555 ms`** | `89.6` / `145.2` tok |
+
 ### Componentes principales
 * **Especificación de Notación (`SKILL.md`):** Gramática telegráfica `key=val` con 27 dominios cerrados (`45.3%` menos tokens que prosa equivalente en reportes recurrentes de estado, `320 -> 175 tokens`).
 * **Verificación e Integridad (`verificador_agentes.py`, `INTEGRIDAD.md`):** Auditoría estructural independiente y trazabilidad sin sobrescritura.
