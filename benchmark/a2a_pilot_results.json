@@ -1,0 +1,20 @@
+{
+  "A_plain_a2a": {
+    "security_accuracy": "1/5 (20.0%)",
+    "avg_latency_ms": 0.001,
+    "avg_payload_tokens": 5.0,
+    "avg_a2a_envelope_tokens": 52.0
+  },
+  "B_hekt_syntax_only": {
+    "security_accuracy": "1/5 (20.0%)",
+    "avg_latency_ms": 0.145,
+    "avg_payload_tokens": 89.6,
+    "avg_a2a_envelope_tokens": 145.2
+  },
+  "C_hekt_v304_fail_closed": {
+    "security_accuracy": "5/5 (100.0%)",
+    "avg_latency_ms": 6.555,
+    "avg_payload_tokens": 89.6,
+    "avg_a2a_envelope_tokens": 145.2
+  }
+}

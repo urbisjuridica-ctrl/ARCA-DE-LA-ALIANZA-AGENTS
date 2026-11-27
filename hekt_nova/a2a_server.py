@@ -15,6 +15,7 @@ class HektA2AServer:
         if trusted_keys:
             self.trusted_keys.update(trusted_keys)
         self.expected_audience = expected_audience
+        self.tasks: Dict[str, Dict[str, Any]] = {}
         self.card = build_a2a_agent_card(
             name="ARCA-HEKT-NOVA-A2A-Gateway",
             description="A2A Agent endpoint protected by HEKT-NOVA v3.0.4 Ed25519 + SQLite WAL verification",
@@ -24,10 +25,16 @@ class HektA2AServer:
 
     def handle_rpc(self, payload: Dict[str, Any]) -> Dict[str, Any]:
         req_id = payload.get("id")
-        if payload.get("method") != "tasks/send":
-            return {"jsonrpc": "2.0", "id": req_id, "error": {"code": -32601, "message": "Method not found"}}
+        method = payload.get("method")
         params = payload.get("params") or {}
-        task_id = params.get("id", "unknown-task")
+        if method == "tasks/get":
+            tid = str(params.get("id", ""))
+            if tid not in self.tasks:
+                return {"jsonrpc": "2.0", "id": req_id, "error": {"code": -32002, "message": "Task not found"}}
+            return {"jsonrpc": "2.0", "id": req_id, "result": self.tasks[tid]}
+        if method != "tasks/send":
+            return {"jsonrpc": "2.0", "id": req_id, "error": {"code": -32601, "message": "Method not found"}}
+        task_id = str(params.get("id", "unknown-task"))
         msg = params.get("message") or {}
         res = verify_a2a_message(msg, trusted_keys=self.trusted_keys, expected_audience=self.expected_audience)
         if res.status != "VALID":
@@ -39,15 +46,13 @@ class HektA2AServer:
             body=f"task={task_id} verified_reason={res.reason} row_hash={res.row_hash}",
         )
         reply_msg = wrap_hekt_a2a_part(attest["message"], human_summary=f"Task {task_id} verified ({res.reason}).")
-        return {
-            "jsonrpc": "2.0",
-            "id": req_id,
-            "result": {
-                "id": task_id,
-                "status": {"state": "completed"},
-                "artifacts": [{"name": "hekt-attestation", "parts": reply_msg["parts"]}],
-            },
+        task_obj = {
+            "id": task_id,
+            "status": {"state": "completed"},
+            "artifacts": [{"name": "hekt-attestation", "parts": reply_msg["parts"]}],
         }
+        self.tasks[task_id] = task_obj
+        return {"jsonrpc": "2.0", "id": req_id, "result": task_obj}
 
     def make_httpd(self) -> ThreadingHTTPServer:
         gateway = self
