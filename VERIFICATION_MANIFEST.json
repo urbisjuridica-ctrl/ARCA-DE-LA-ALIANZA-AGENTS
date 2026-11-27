@@ -2,9 +2,9 @@
   "protocol": "HEKT-NOVA v3.0.4",
   "version": "3.0.4",
   "branch": "main",
-  "generated_at_utc": "2026-11-27T17:23:02.893773+00:00",
+  "generated_at_utc": "2026-11-27T17:42:36.274833+00:00",
   "hash_algorithm": "SHA-256",
-  "base_commit": "ff7fec36b6070125e087d9df56345798e3dae90a",
+  "base_commit": "7a484a0c6997d1d08e2d785aba8fb1eea96b32af",
   "reproduce_command": "pytest -v && (cd packages/hekt-nova-ts && npm test) && python3 benchmark/a2a_pilot.py",
   "sha256": {
     "README.md": "b3d52da690cdd3d1246abc6da1f4e98f2ec26d61b2bba719cdd14420931b016f",
