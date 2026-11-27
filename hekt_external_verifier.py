@@ -1,6 +1,6 @@
 import threading, time
 _NONCE_LOCK = threading.Lock()
-from hekt_nova.nonce_store import SqliteNonceStore, ReserveResult
+from hekt_nova.nonce_store import SqliteNonceStore, ReserveResult, NonceStore
 _DEFAULT_NONCE_STORE = SqliteNonceStore()
 _NONCE_LOCK = threading.Lock()
 from hekt_nova.crypto_signer import is_valid_ed25519_pubkey
@@ -193,7 +193,7 @@ def _append_witness_row(res: VerificationResult, header_line: str) -> str:
         f.write(json.dumps(rec, ensure_ascii=False) + "\n")
     return rec["row_hash"]
 
-def verify_message(message: str, canonical_bytes: Optional[bytes] = None, authenticated_agent: Optional[str] = None, active_head_rev: Optional[str] = None, trusted_keys: Optional[Dict[str, str]] = None, expected_audience: Optional[str] = None, seen_nonces: Optional[Set[str]] = None) -> VerificationResult:
+def verify_message(message: str, canonical_bytes: Optional[bytes] = None, authenticated_agent: Optional[str] = None, active_head_rev: Optional[str] = None, trusted_keys: Optional[Dict[str, str]] = None, expected_audience: Optional[str] = None, seen_nonces: Optional[Set[str]] = None, nonce_store: Optional[NonceStore] = None, now_ts: Optional[int] = None, max_clock_skew: int = 300) -> VerificationResult:
     parsed, parse_err = parse_hekt_header(message)
     if parse_err or parsed is None:
         res = VerificationResult(status="REJECTED", reason=parse_err or "PARSE_ERROR")
@@ -209,9 +209,9 @@ def verify_message(message: str, canonical_bytes: Optional[bytes] = None, authen
             res = VerificationResult(status="REJECTED", reason="AUDIENCE_MISMATCH", domains=parsed.domains, action=parsed.action)
         elif "ts" in parsed.fields and not re.fullmatch(r"[1-9][0-9]{0,9}\Z", parsed.fields["ts"]):
             res = VerificationResult(status="REJECTED", reason="INVALID_TIMESTAMP_FORMAT", domains=parsed.domains, action=parsed.action)
-        elif "ts" in parsed.fields and abs(int(time.time()) - int(parsed.fields["ts"])) > 300:
+        elif "ts" in parsed.fields and abs((int(time.time()) if now_ts is None else now_ts) - int(parsed.fields["ts"])) > max_clock_skew:
             res = VerificationResult(status="REJECTED", reason="EXPIRED_OR_FUTURE_TIMESTAMP", domains=parsed.domains, action=parsed.action)
-        elif "nonce" in parsed.fields and ((seen_nonces is not None and parsed.fields["nonce"] in seen_nonces) or (seen_nonces is None and _DEFAULT_NONCE_STORE.contains(f"{(trusted_keys or {}).get(parsed.fields.get('kid',''),'')}:{parsed.fields.get('kid','')}:{parsed.fields['nonce']}"))):
+        elif "nonce" in parsed.fields and ((seen_nonces is not None and parsed.fields["nonce"] in seen_nonces) or (seen_nonces is None and nonce_store is None and _DEFAULT_NONCE_STORE.contains(f"{(trusted_keys or {}).get(parsed.fields.get('kid',''),'')}:{parsed.fields.get('kid','')}:{parsed.fields['nonce']}"))):
             res = VerificationResult(status="REJECTED", reason="REPLAY_DETECTED", domains=parsed.domains, action=parsed.action)
         else:
             sig_verified = False
@@ -247,7 +247,7 @@ def verify_message(message: str, canonical_bytes: Optional[bytes] = None, authen
                         seen_nonces.add(parsed.fields["nonce"])
                     else:
                         nk = f"{(trusted_keys or {}).get(parsed.fields.get('kid',''),'')}:{parsed.fields.get('kid','')}:{parsed.fields['nonce']}"
-                        rr = _DEFAULT_NONCE_STORE.reserve(nk)
+                        rr = (nonce_store or _DEFAULT_NONCE_STORE).reserve(nk)
                         if rr == ReserveResult.DUPLICATE:
                             res = VerificationResult(status='REJECTED', reason='REPLAY_DETECTED', domains=parsed.domains, action=parsed.action)
                         elif rr != ReserveResult.RESERVED:

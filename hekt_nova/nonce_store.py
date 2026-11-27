@@ -1,6 +1,6 @@
 import hashlib, os, sqlite3, time
 from enum import Enum
-from typing import Optional
+from typing import Any, Optional, Protocol, runtime_checkable
 
 DEFAULT_DB_PATH = os.getenv("HEKT_NONCE_DB", "hekt_nonces.sqlite3")
 
@@ -9,8 +9,14 @@ class ReserveResult(str, Enum):
     DUPLICATE = "DUPLICATE"
     STORE_UNAVAILABLE = "STORE_UNAVAILABLE"
 
+@runtime_checkable
+class NonceStore(Protocol):
+    """Contrato atómico y fail-closed para almacenes de nonces (single-host o multi-réplica)."""
+    def reserve(self, nonce_key: str, now_ts: Optional[int] = None) -> ReserveResult: ...
+    def contains(self, nonce_key: str, now_ts: Optional[int] = None) -> bool: ...
+
 class SqliteNonceStore:
-    """Almacén persistente y atómico de nonces anti-replay (SQLite WAL, retención >= 900s, fail-closed)."""
+    """Almacén persistente y atómico de nonces anti-replay para un solo nodo (SQLite WAL, >=900s, fail-closed)."""
 
     def __init__(self, db_path: str = DEFAULT_DB_PATH, retention_seconds: int = 900):
         self.db_path = db_path
@@ -67,3 +73,27 @@ class SqliteNonceStore:
 
     def add_if_absent(self, nonce_key: str, now_ts: Optional[int] = None) -> bool:
         return self.reserve(nonce_key, now_ts=now_ts) == ReserveResult.RESERVED
+
+class RedisNonceStore:
+    """Adaptador distribuido fail-closed (SET key '1' NX EX <ttl>) para verificadores multi-réplica."""
+
+    def __init__(self, redis_client: Any, prefix: str = "hekt:nonce:", retention_seconds: int = 900):
+        self.client = redis_client
+        self.prefix = prefix
+        self.retention_seconds = max(900, retention_seconds)
+
+    def _redis_key(self, nonce_key: str) -> str:
+        return f"{self.prefix}{hashlib.sha256(nonce_key.encode('utf-8')).hexdigest()}"
+
+    def contains(self, nonce_key: str, now_ts: Optional[int] = None) -> bool:
+        try:
+            return bool(self.client.exists(self._redis_key(nonce_key)))
+        except Exception:
+            return True  # fail-closed: ante indisponibilidad, tratar como no disponible/ocupado
+
+    def reserve(self, nonce_key: str, now_ts: Optional[int] = None) -> ReserveResult:
+        try:
+            ok = self.client.set(self._redis_key(nonce_key), "1", nx=True, ex=self.retention_seconds)
+            return ReserveResult.RESERVED if ok else ReserveResult.DUPLICATE
+        except Exception:
+            return ReserveResult.STORE_UNAVAILABLE

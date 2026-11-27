@@ -175,3 +175,38 @@ def test_a2a_http_server_roundtrip():
         assert ver.reason == "VERIFIED_WITH_ED25519_AND_SHA256"
     finally:
         httpd.shutdown()
+
+def test_distributed_redis_nonce_store_and_dual_key_rollover():
+    from hekt_nova.nonce_store import RedisNonceStore
+    class FakeRedis:
+        def __init__(self):
+            self.kv = {}
+            self.down = False
+        def exists(self, k):
+            if self.down: raise ConnectionError("down")
+            return 1 if k in self.kv else 0
+        def set(self, k, v, nx=False, ex=None):
+            if self.down: raise ConnectionError("down")
+            if nx and k in self.kv: return None
+            self.kv[k] = (v, ex)
+            return True
+    r = FakeRedis()
+    sa, sb = RedisNonceStore(r), RedisNonceStore(r)
+    priv1, pub1 = h.generate_keypair()
+    priv2, pub2 = h.generate_keypair()
+    trust = {"arca-k1": pub1, "arca-k2": pub2}
+    now = 1795800000
+    h1 = f"[H::VER] kid=arca-k1 | aud=a2a-prod | ts={now - 25} | nonce=r100 -> emit=CLAIM_CHECK"
+    m1 = f"[H::VER] kid=arca-k1 | aud=a2a-prod | ts={now - 25} | nonce=r100 | sig={h.sign_header_payload(h1, priv1)} -> emit=CLAIM_CHECK"
+    assert h.verify_message(m1, trusted_keys=trust, expected_audience="a2a-prod", nonce_store=sa, now_ts=now, max_clock_skew=30).reason == "VERIFIED_WITH_ED25519"
+    assert h.verify_message(m1, trusted_keys=trust, expected_audience="a2a-prod", nonce_store=sb, now_ts=now, max_clock_skew=30).reason == "REPLAY_DETECTED"
+    h2 = f"[H::VER] kid=arca-k2 | aud=a2a-prod | ts={now} | nonce=r101 -> emit=CLAIM_CHECK"
+    m2 = f"[H::VER] kid=arca-k2 | aud=a2a-prod | ts={now} | nonce=r101 | sig={h.sign_header_payload(h2, priv2)} -> emit=CLAIM_CHECK"
+    assert h.verify_message(m2, trusted_keys=trust, expected_audience="a2a-prod", nonce_store=sb, now_ts=now, max_clock_skew=30).reason == "VERIFIED_WITH_ED25519"
+    ho = f"[H::VER] kid=arca-k2 | aud=a2a-prod | ts={now - 35} | nonce=r102 -> emit=CLAIM_CHECK"
+    mo = f"[H::VER] kid=arca-k2 | aud=a2a-prod | ts={now - 35} | nonce=r102 | sig={h.sign_header_payload(ho, priv2)} -> emit=CLAIM_CHECK"
+    assert h.verify_message(mo, trusted_keys=trust, expected_audience="a2a-prod", nonce_store=sb, now_ts=now, max_clock_skew=30).reason == "EXPIRED_OR_FUTURE_TIMESTAMP"
+    r.down = True
+    h3 = f"[H::VER] kid=arca-k2 | aud=a2a-prod | ts={now} | nonce=r103 -> emit=CLAIM_CHECK"
+    m3 = f"[H::VER] kid=arca-k2 | aud=a2a-prod | ts={now} | nonce=r103 | sig={h.sign_header_payload(h3, priv2)} -> emit=CLAIM_CHECK"
+    assert h.verify_message(m3, trusted_keys=trust, expected_audience="a2a-prod", nonce_store=sb, now_ts=now, max_clock_skew=30).reason == "NONCE_STORE_UNAVAILABLE"
